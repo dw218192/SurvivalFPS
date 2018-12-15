@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class NavAgentExample : MonoBehaviour
+public class NavAgentNoRootMotion : MonoBehaviour
 {
     public NavMeshAgent Agent;
     public AIWaypointNetwork Network;
@@ -16,13 +16,18 @@ public class NavAgentExample : MonoBehaviour
     public bool IsLinkBeingHandled = false;
     public NavMeshPathStatus PathStatus = NavMeshPathStatus.PathInvalid;
     public AnimationCurve JumpCurve;
+    public Animator AnimationController;
+    private float m_OriginalMaxSpeed = 0.0f;
 
 	// Use this for initialization
 	void Start ()
     {
         Agent = GetComponent<NavMeshAgent>();
+        AnimationController = GetComponent<Animator>();
         SetNextDestination(false);
-	}
+        if (Agent) m_OriginalMaxSpeed = Agent.speed;
+
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -37,18 +42,47 @@ public class NavAgentExample : MonoBehaviour
             SetNextDestination(true);
         */
 
+        /*
         if (IsOnOffMeshLink && !IsLinkBeingHandled)
         {
             StartCoroutine(Jump(1.0f));
             return;
         }
+        */
 
-        if ((Mathf.Approximately(Agent.remainingDistance, Agent.stoppingDistance) && !PathPending) || PathStatus == NavMeshPathStatus.PathInvalid)
+        if ((Agent.remainingDistance <= Agent.stoppingDistance && !PathPending) || PathStatus == NavMeshPathStatus.PathInvalid)
+        {
             SetNextDestination(true);
+        }
 
         else if (Agent.isPathStale)
+        {
             SetNextDestination(false);
-	}
+        }
+
+        int turnOnSpot = 0;
+
+        Vector3 cross = Vector3.Cross(Agent.velocity.normalized, Agent.desiredVelocity.normalized); //sin value of the angle between two vectors
+        float turnAmount = cross.y < 0 ? -cross.magnitude * 2.32f : cross.magnitude * 2.32f;
+        
+        Debug.DrawLine(Agent.transform.position, Agent.transform.position + Agent.velocity, Color.red);
+        Debug.DrawLine(Agent.transform.position, Agent.transform.position + Agent.desiredVelocity, Color.blue);
+
+        if(Vector3.Angle(transform.forward, Agent.desiredVelocity) > 100.0f)
+        {
+            Agent.speed = 0.1f;
+            turnOnSpot = (int)Mathf.Sign(turnAmount);
+            AnimationController.SetInteger("TurnOnSpot", turnOnSpot);
+        }
+        else
+        {
+            Agent.speed = m_OriginalMaxSpeed;
+            turnOnSpot = 0;
+            AnimationController.SetInteger("TurnOnSpot", turnOnSpot);
+            AnimationController.SetFloat("Vertical", Agent.desiredVelocity.magnitude, 1.0f, Time.deltaTime);
+            AnimationController.SetFloat("Horizontal", turnAmount, 0.5f, Time.deltaTime);
+        }
+    }
 
     private void SetNextDestination(bool increment)
     {
@@ -66,6 +100,7 @@ public class NavAgentExample : MonoBehaviour
         }
     }
 
+    /*
     IEnumerator Jump(float duration)
     {
         if (!IsLinkBeingHandled) IsLinkBeingHandled = true;
@@ -86,4 +121,5 @@ public class NavAgentExample : MonoBehaviour
         Agent.CompleteOffMeshLink();
         IsLinkBeingHandled = false;
     }
+    */
 }

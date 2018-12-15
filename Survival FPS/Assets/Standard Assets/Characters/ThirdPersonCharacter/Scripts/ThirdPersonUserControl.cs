@@ -39,6 +39,9 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
+
+            m_Cam.transform.position = transform.position + transform.forward * -2.0f + transform.up * 3.0f;
+            m_Cam.transform.LookAt(transform.position + transform.up * 2.0f);
         }
 
 

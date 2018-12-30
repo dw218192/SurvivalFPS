@@ -9,7 +9,7 @@ namespace SurvivalFPS.Utility
         private static T _instance;
         public static T Instance { get { return _instance; } }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             if (_instance != null)
             {
@@ -21,7 +21,7 @@ namespace SurvivalFPS.Utility
             }
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (_instance == this)
             {

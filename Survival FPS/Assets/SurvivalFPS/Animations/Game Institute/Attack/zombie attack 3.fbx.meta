@@ -207,7 +207,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves:
-      - name: LeftHand
+      - name: Left Hand Hit
         curve:
           serializedVersion: 2
           curve:
@@ -250,7 +250,7 @@ ModelImporter:
           preInfinity: 2
           postInfinity: 2
           rotationOrder: 4
-      - name: RightHand
+      - name: Right Hand Hit
         curve:
           serializedVersion: 2
           curve:

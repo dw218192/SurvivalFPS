@@ -7,7 +7,7 @@ using SurvivalFPS.Utility;
 namespace SurvivalFPS.AI
 {
     public enum AIStateType { None, Idle, Alerted, Patrol, Attack, Feeding, Pursuit, Dead }
-    public enum AITargetType { None, Waypoint, Visual_Player, Visual_Light, Visual_Food, Audio }
+    public enum AITargetType { None, Waypoint, Aggravator }
     public enum AITriggerEventType { Enter, Stay, Exit }
 
     public class AITarget
@@ -20,7 +20,7 @@ namespace SurvivalFPS.AI
 
         public AITargetType type { get { return m_Type; } }
         public Collider collider { get { return m_Collider; } }
-        public Vector3 lastKnownPosition { get { return m_LastKnownPosition; } }
+        public Vector3 lastKnownPosition { get { return m_LastKnownPosition; } set { m_LastKnownPosition = value; } }
         public float distance { get { return m_Distance; } set { m_Distance = value; } }
         public float time { get { return m_Time; } }
 
@@ -48,34 +48,47 @@ namespace SurvivalFPS.AI
     /// </summary>
     public abstract class AIStateMachine : MonoBehaviour
     {
-        //public fields set by child states each frame
-        //they represent the potential targets for the AI
-        [HideInInspector] public AITarget VisualThreat = new AITarget();
-        [HideInInspector] public AITarget AudioThreat = new AITarget();
+        //----public fields set by child states each frame----
+        [HideInInspector] public ZombieVisualAggravator visualThreat = null;
+        [HideInInspector] public ZombieAudioAggravator audioThreat = null;
 
-        //protected
+        //----protected internals----
         protected Dictionary<AIStateType, AIState> m_States = new Dictionary<AIStateType, AIState>();
         protected AITarget m_Target = new AITarget(); //actual target of the AI
         protected AIState m_CurrentState = null;
+        //flags
+        protected bool m_IsTargetReached; //has the AI reached its destination?
+        protected bool m_IsInMeleeRange; //is the AI able to melee attack?
+        //animator related
         protected int m_RootRotationRefCount = 0;
         protected int m_RootPositionRefCount = 0;
-
-        [SerializeField] protected AIStateType m_CurrentStateType = AIStateType.Idle; 
-        [SerializeField] protected SphereCollider m_TargetTrigger = null; //the sphere trigger at the AI's target position
-        [SerializeField] protected SphereCollider m_SensorTrigger = null; //the sphere trigger representing the AI's sensory range
-
-        [SerializeField] [Range(0.0f, 15.0f)] protected float m_StoppingDistance = 1.0f;
-
         //component cache
         protected Animator m_Animator = null;
         protected NavMeshAgent m_navAgent = null;
         protected Collider m_Collider = null;   //the collider representing the AI character; it should be in a layer where it can only collides with designated objects
         protected Transform m_Transform = null;
 
-        //public properties
+        //----inspector configurable variables----
+        [SerializeField] protected AIStateType m_CurrentStateType = AIStateType.Idle;
+        //triggers
+        [SerializeField] protected SphereCollider m_TargetTrigger = null; //the sphere trigger at the AI's target position
+        [SerializeField] protected SphereCollider m_SensorTrigger = null; //the sphere trigger representing the AI's sensory range
+        [SerializeField] protected AIDamageTrigger m_RightHandAttackTrigger = null;
+        [SerializeField] protected AIDamageTrigger m_LeftHandAttackTrigger = null;
+        [SerializeField] protected AIDamageTrigger m_MouthTrigger = null;
+        [SerializeField] [Range(0.0f, 15.0f)] protected float m_StoppingDistance = 1.0f;
+
+        //----public properties----
         public Animator animator { get { return m_Animator; } }
         public NavMeshAgent navAgent { get { return m_navAgent; } }
         public AITargetType currentTargetType { get { return m_Target.type; } }
+        public bool hasTarget { get { return (m_Target.type != AITargetType.None); } }
+
+        public bool isInMeeleRange { get { return m_IsInMeleeRange; } set { m_IsInMeleeRange = value; } }
+        public bool isTargetReached { get { return m_IsTargetReached; } set { m_IsTargetReached = value; } }  
+
+        //debugging
+        public SphereCollider targetTrigger { get { return m_TargetTrigger; } }
 
         /// <summary>
         /// the position of the center of the AI sensor trigger in world space
@@ -144,23 +157,41 @@ namespace SurvivalFPS.AI
             m_Animator = GetComponent<Animator>();
             m_Collider = GetComponent<CapsuleCollider>();
             m_navAgent = GetComponent<NavMeshAgent>();
-
-            //register colliders to the scene manager
-            if(GameSceneManager.Instance)
-            {
-                if (m_Collider) GameSceneManager.Instance.RegisterAIStateMachine(m_Collider.GetInstanceID(), this);
-                if (m_SensorTrigger) GameSceneManager.Instance.RegisterAIStateMachine(m_SensorTrigger.GetInstanceID(), this);
-                //anything else that may be added
-            }
         }
 
         private void Start()
         {
-            //ownership assignments
+            //register colliders to the scene manager
+            if (GameSceneManager.Instance)
+            {
+                if (m_Collider) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_Collider.GetInstanceID(), this);
+                if (m_SensorTrigger) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_SensorTrigger.GetInstanceID(), this);
+                //anything else that may be added
+            }
+
+            //ownership assignments and component initialization
             if (m_SensorTrigger)
             {
                 AISensor sensor = m_SensorTrigger.gameObject.GetComponent<AISensor>();
                 sensor.owner = this;
+            }
+
+            if (m_LeftHandAttackTrigger)
+            {
+                m_LeftHandAttackTrigger.owner = this;
+                m_LeftHandAttackTrigger.animatorDamageParameter = GameSceneManager.Instance.leftHandAttackParameterName;
+            }
+
+            if (m_RightHandAttackTrigger)
+            {
+                m_RightHandAttackTrigger.owner = this;
+                m_RightHandAttackTrigger.animatorDamageParameter = GameSceneManager.Instance.rightHandAttackParameterName;
+            }
+
+            if (m_MouthTrigger)
+            {
+                m_MouthTrigger.owner = this;
+                m_MouthTrigger.animatorDamageParameter = GameSceneManager.Instance.mouthAttackParameterName;
             }
 
             if (m_Animator)
@@ -172,7 +203,7 @@ namespace SurvivalFPS.AI
                 }
             }
 
-            //populate the dictionary according to the states attached
+            //populate the dictionary according to the states attached to this game object
             AIState[] states = GetComponents<AIState>();
             foreach(AIState state in states)
             {
@@ -180,6 +211,7 @@ namespace SurvivalFPS.AI
                 {
                     m_States[state.GetStateType()] = state;
                     state.SetStateMachine(this);
+                    state.Initialize();
                 }
             }
 
@@ -222,14 +254,15 @@ namespace SurvivalFPS.AI
 
         protected virtual void FixedUpdate()
         {
-            //clear all the visual and audio threats in the last frame
-            VisualThreat.Clear();
-            AudioThreat.Clear();
+            visualThreat = null;
+            audioThreat = null;
 
             if (m_Target.type != AITargetType.None)
             {
                 m_Target.distance = Vector3.Distance(m_Transform.position, m_Target.lastKnownPosition);
             }
+
+            m_IsTargetReached = false;
         }
 
         private void ChangeState(AIState newState)
@@ -251,7 +284,33 @@ namespace SurvivalFPS.AI
         /// <summary>
         /// sets the current target for the AI
         /// </summary>
-        public void SetTarget(AITargetType targetType, Collider targetCollider, Vector3 targetPos, float distanceToTarget)
+        public void SetTarget(ZombieAggravator zombieAggravator, bool setNavAgentTarget = true)
+        {
+            float distanceToTarget = Vector3.Distance(zombieAggravator.transform.position, transform.position);
+            m_Target.Set(AITargetType.Aggravator, zombieAggravator.aggravatorCollider, zombieAggravator.transform.position, distanceToTarget);
+
+            //move the trigger to where the target is
+            if (m_TargetTrigger != null)
+            {
+                m_TargetTrigger.radius = m_StoppingDistance;
+                m_TargetTrigger.transform.position = m_Target.lastKnownPosition;
+                m_TargetTrigger.enabled = true;
+            }
+            else
+            {
+                Debug.LogWarning("no sphere collider found!");
+            }
+
+            if(setNavAgentTarget)
+            {
+                m_navAgent.destination = m_Target.lastKnownPosition;
+            }
+        }
+
+        /// <summary>
+        /// sets the current target for the AI
+        /// </summary>
+        public void SetTarget(AITargetType targetType, Collider targetCollider, Vector3 targetPos, float distanceToTarget, bool setNavAgentTarget = true)
         {
             m_Target.Set(targetType, targetCollider, targetPos, distanceToTarget);
 
@@ -266,12 +325,17 @@ namespace SurvivalFPS.AI
             {
                 Debug.LogWarning("no sphere collider found!");
             }
+
+            if (setNavAgentTarget)
+            {
+                m_navAgent.destination = m_Target.lastKnownPosition;
+            }
         }
 
         /// <summary>
         /// sets the current target for the AI
         /// </summary>
-        public void SetTarget(AITargetType targetType, Collider targetCollider, Vector3 targetPos, float distanceToTarget, float stoppingDistance)
+        public void SetTarget(AITargetType targetType, Collider targetCollider, Vector3 targetPos, float distanceToTarget, float stoppingDistance, bool setNavAgentTarget = true)
         {
             m_Target.Set(targetType, targetCollider, targetPos, distanceToTarget);
 
@@ -286,12 +350,17 @@ namespace SurvivalFPS.AI
             {
                 Debug.LogWarning("no sphere collider found!");
             }
+
+            if (setNavAgentTarget)
+            {
+                m_navAgent.destination = m_Target.lastKnownPosition;
+            }
         }
 
         /// <summary>
         /// sets the current target for the AI
         /// </summary>
-        public void SetTarget(AITarget target)
+        public void SetTarget(AITarget target, bool setNavAgentTarget = true)
         {
             m_Target = target;
 
@@ -305,6 +374,11 @@ namespace SurvivalFPS.AI
             else
             {
                 Debug.LogWarning("no sphere collider found!");
+            }
+
+            if (setNavAgentTarget)
+            {
+                m_navAgent.destination = m_Target.lastKnownPosition;
             }
         }
 
@@ -323,10 +397,12 @@ namespace SurvivalFPS.AI
             {
                 Debug.LogWarning("no sphere collider found!");
             }
+
+            m_IsTargetReached = false;
         }
 
         /// <summary>
-        /// called by unity, when the AI's capsule collider just collided with any collider that is on the AI entity trigger layer
+        /// called by unity, when the AI's capsule collider just collided with the target trigger
         /// </summary>
         private void OnTriggerEnter( Collider other )
         {
@@ -335,10 +411,22 @@ namespace SurvivalFPS.AI
 
             //notify the state object
             if (m_CurrentState) m_CurrentState.OnReachDestination();
+
+            m_IsTargetReached = true;
         }
 
         /// <summary>
-        /// called by unity, when the AI's capsule collider just left the collision range with any collider that is on the AI entity trigger layer
+        /// called by unity, when the AI's capsule collider is colliding with the target trigger
+        /// </summary>
+        private void OnTriggerStay(Collider other)
+        {
+            if (!m_TargetTrigger || other != m_TargetTrigger) return;
+
+            m_IsTargetReached = true;
+        }
+
+        /// <summary>
+        /// called by unity, when the AI's capsule collider just collided with the target trigger
         /// </summary>
         private void OnTriggerExit(Collider other)
         {
@@ -347,6 +435,8 @@ namespace SurvivalFPS.AI
 
             //notify the state object
             if (m_CurrentState) m_CurrentState.OnLeaveDestination();
+
+            m_IsTargetReached = false;
         }
 
         /// <summary>

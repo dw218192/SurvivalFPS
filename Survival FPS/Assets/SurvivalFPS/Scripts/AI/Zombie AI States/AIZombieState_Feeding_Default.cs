@@ -10,7 +10,7 @@ namespace SurvivalFPS.AI
         [SerializeField] [Range(0.0f, 1.0f)] private float m_BloodParticleBurstTime = 0.1f;
         [SerializeField] [Range(1, 100)] private int m_BloodParticleBurstAmount = 10;
 
-        private int m_EatingAnimStateHash = Animator.StringToHash("Feeding_state");
+        private int m_EatingAnimStateHash = -1;
         private int m_AnimCinematicLayer = -1;
 
         private Transform m_BloodParticleMount;
@@ -19,6 +19,7 @@ namespace SurvivalFPS.AI
         public override void Initialize()
         {
             base.Initialize();
+            m_EatingAnimStateHash = GameSceneManager.Instance.feedingStateName_Hash;
             m_BloodParticleMount = m_ZombieStateMachine.bloodParticleMount;
         }
 

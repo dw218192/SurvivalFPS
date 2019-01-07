@@ -15,19 +15,42 @@ namespace SurvivalFPS
         [Header("Scene Special Effects")]
         [SerializeField] private ParticleSystem m_BloodParticleSystem;
 
-        [Header("Animation Parameters")]
+        [Header("Zombie Animation Controller Parameters")]
         [SerializeField] private string m_RightHandAttackParameterName;
         [SerializeField] private string m_LeftHandAttackParameterName;
         [SerializeField] private string m_MouthAttackParameterName;
+        [Header("Player Animation Controller State Names")]
+        [SerializeField] private string m_FeedingStateName;
+        [Header("Player Animation Controller Parameters")]
+        [SerializeField] private string m_ReloadParameterName;
+        [SerializeField] private string m_ReloadCurveParameterName;
+        [SerializeField] private string m_FireParameterName;
+        [Header("Player Animation Controller State Names")]
+        [SerializeField] private string m_ReloadStateName;
+        [SerializeField] private string m_FireStateName;
 
-        private int m_RightHandAttackParameterNameHash;
-        private int m_LeftHandAttackParameterNameHash;
-        private int m_MouthAttackParameterNameHash;
+        //hashes
+        private int m_RightHandAttackParameterName_Hash = -1;
+        private int m_LeftHandAttackParameterName_Hash = -1;
+        private int m_MouthAttackParameterName_Hash = -1;
+
+        private int m_FeedingStateName_Hash = -1;
+
+        private int m_ReloadParameterName_Hash = -1;
+        private int m_ReloadCurveParameterName_Hash = -1;
+        private int m_FireParameterName_Hash = -1;
+
+        private int m_ReloadStateName_Hash = -1;
+        private int m_FireStateName_Hash = -1;
+
+        //layers
+        private int m_ZombieBodyPartLayer = -1;
+        private int m_PlayerLayer = -1;
+        private int m_ObstaclesLayerMask = -1;
+        private int m_ShootableLayerMask = -1;
 
         private Dictionary<int, AIStateMachine> m_StateMachines = new Dictionary<int, AIStateMachine>();
-        private int m_ZombieBodyPartLayer;
-        private int m_PlayerLayer;
-        private int m_ObstaclesLayerMask;
+
 
         //public properties
         //special effects
@@ -36,9 +59,23 @@ namespace SurvivalFPS
         public int zombieBodyPartLayer { get { return m_ZombieBodyPartLayer; } }
         public int playerLayer { get { return m_PlayerLayer; } }
         public int obstaclesLayerMask { get { return m_ObstaclesLayerMask; } }
+        public int shootableLayerMask { get { return m_ShootableLayerMask; } }
+        //zombie animator controller info
         public string rightHandAttackParameterName { get { return m_RightHandAttackParameterName; } }
         public string leftHandAttackParameterName { get { return m_LeftHandAttackParameterName; } }
         public string mouthAttackParameterName { get { return m_MouthAttackParameterName; } }
+        //player animator state name info
+        public int feedingStateName_Hash { get { return m_FeedingStateName_Hash; } }
+        //player animator controller info
+        public string reloadParameterName { get { return m_ReloadParameterName; } }
+        public string reloadCurveParameterName { get { return m_ReloadCurveParameterName; } }
+        public int reloadParameterHash { get { return m_ReloadParameterName_Hash; } }
+        public int reloadCurveParameterHash { get { return m_ReloadCurveParameterName_Hash; } }
+        public int fireParameterNameHash { get { return m_FireParameterName_Hash; } }
+        //player animator state name info
+        public int reloadStateNameHash { get { return m_ReloadStateName_Hash; } }
+        public int fireStateNameHash { get { return m_FireStateName_Hash; } }
+
 
         protected override void Awake()
         {
@@ -46,10 +83,18 @@ namespace SurvivalFPS
             m_PlayerLayer = LayerMask.NameToLayer("Player");
             m_ZombieBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
             m_ObstaclesLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
+            m_ShootableLayerMask = LayerMask.GetMask("AI Body Part", "Visual Aggravator", "Obstacle");
 
-            m_RightHandAttackParameterNameHash = Animator.StringToHash(m_RightHandAttackParameterName);
-            m_LeftHandAttackParameterNameHash = Animator.StringToHash(m_LeftHandAttackParameterName);
-            m_MouthAttackParameterNameHash =  Animator.StringToHash(m_MouthAttackParameterName);
+            m_RightHandAttackParameterName_Hash = Animator.StringToHash(m_RightHandAttackParameterName);
+            m_LeftHandAttackParameterName_Hash = Animator.StringToHash(m_LeftHandAttackParameterName);
+            m_MouthAttackParameterName_Hash =  Animator.StringToHash(m_MouthAttackParameterName);
+
+            m_ReloadParameterName_Hash = Animator.StringToHash(m_ReloadParameterName);
+            m_ReloadCurveParameterName_Hash = Animator.StringToHash(m_ReloadCurveParameterName);
+            m_FireParameterName_Hash = Animator.StringToHash(m_FireParameterName);
+
+            m_ReloadStateName_Hash = Animator.StringToHash(m_ReloadStateName);
+            m_FireStateName_Hash = Animator.StringToHash(m_FireStateName);
         }
 
         /// <summary>
@@ -64,7 +109,6 @@ namespace SurvivalFPS
                 m_StateMachines[key] = stateMachine;
             }
         }
-
         /// <summary>
         /// given a collider's instance ID, returns its owner
         /// </summary>
@@ -91,15 +135,15 @@ namespace SurvivalFPS
             {
                 if (name.Equals(m_RightHandAttackParameterName))
                 {
-                    val = stateMachine.animator.GetFloat(m_RightHandAttackParameterNameHash);
+                    val = stateMachine.animator.GetFloat(m_RightHandAttackParameterName_Hash);
                 }
                 else if (name.Equals(m_LeftHandAttackParameterName))
                 {
-                    val = stateMachine.animator.GetFloat(m_LeftHandAttackParameterNameHash);
+                    val = stateMachine.animator.GetFloat(m_LeftHandAttackParameterName_Hash);
                 }
                 else if (name.Equals(m_MouthAttackParameterName))
                 {
-                    val = stateMachine.animator.GetFloat(m_MouthAttackParameterNameHash);
+                    val = stateMachine.animator.GetFloat(m_MouthAttackParameterName_Hash);
                 }
                 else
                 {

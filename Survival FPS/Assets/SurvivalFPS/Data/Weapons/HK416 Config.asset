@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 498831d81c826ac43adc9d1211152c6f, type: 3}
+  m_Name: HK416 Config
+  m_EditorClassIdentifier: 
+  m_GunModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
+    type: 2}
+  m_BulletHolePrefab: {fileID: 0}
+  m_RecoilSetting:
+    m_KickUpBase: 2
+    m_KickLateralBase: 1
+    m_KickUpMax: 25
+    m_KickLateralMax: 5
+    m_KickUpModifier: 2
+    m_KickLateralModifier: 4
+    m_SideDirChange: 7
+    m_RecoilResetModifier: 5
+  m_AccuracySetting:
+    m_BaseAccuracy: 80
+    m_AccuracyRecoveryRate: 50
+    m_AccuracyDropPerShot: 10
+  m_Range: 100
+  m_AnimatorController: {fileID: 22100000, guid: 7ff94e6cf87d7aa42a9960eacd479d5c,
+    type: 2}
+  m_GripTransform: {fileID: 4800675826799754, guid: d0a98948c80447f44bf6ddd994f47a9f,
+    type: 2}
+  m_FireStartSpot: {fileID: 4208150860726928, guid: fe4cafb5919aaa44ca16908b7c668234,
+    type: 2}
+  m_AmmoCapacity: 30
+  m_EquipTime: 1.067
+  m_ReloadTime: 3
+  m_NumBulletsPerSec: 7
+  m_RecoilEnabled: 1
+  m_MuzzleEffect: 0
+  m_SpitShells: 0
+  m_ReloadSounds:
+  - {fileID: 8300000, guid: b286242c0122d234ea3ab17b51752727, type: 3}
+  m_FireSounds:
+  - {fileID: 8300000, guid: e98f55afd7399f84eb9595a9175bb0bd, type: 3}
+  m_DryFireSounds:
+  - {fileID: 8300000, guid: 443f53e2e5a774a42ab5d734d6596d03, type: 3}
+  m_BringUpSound: {fileID: 8300000, guid: e5a7c9c426fdd584c957e02aaa2940e4, type: 3}
+  m_WeaponEquipSound: {fileID: 8300000, guid: aef6ed55ad7ad084b8f3f5a0a0fe3f52, type: 3}

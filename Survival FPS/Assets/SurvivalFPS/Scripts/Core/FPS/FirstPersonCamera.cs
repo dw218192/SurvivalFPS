@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace SurvivalFPS.Core
+namespace SurvivalFPS.Core.FPS
 {
     [Serializable]
-    public class MouseLook
+    public class FirstPersonCamera
     {
         public float XSensitivity = 2f;
         public float YSensitivity = 2f;
@@ -16,19 +16,23 @@ namespace SurvivalFPS.Core
         public bool smooth;
         public float smoothTime = 5f;
         public bool lockCursor = true;
-
+        
+        //recoil params
+        public Transform cameraMount;
+        public float punchAngleDecayVel;
 
         private Quaternion m_CharacterTargetRot;
         private Quaternion m_CameraTargetRot;
+
         private bool m_cursorIsLocked = true;
 
         public void Init(Transform character, Transform camera)
         {
             m_CharacterTargetRot = character.localRotation;
             m_CameraTargetRot = camera.localRotation;
+            if (!cameraMount) cameraMount = camera.parent;
         }
-
-
+        //should be called each frame
         public void LookRotation(Transform character, Transform camera)
         {
             float yRot = Input.GetAxis("Mouse X") * XSensitivity;
@@ -53,6 +57,7 @@ namespace SurvivalFPS.Core
                 camera.localRotation = m_CameraTargetRot;
             }
 
+            DecayPunchAngle();
             UpdateCursorLock();
         }
 
@@ -64,6 +69,18 @@ namespace SurvivalFPS.Core
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
+        }
+
+        public void ApplyPunchAngle(Vector3 angle)
+        {
+            Quaternion rot = cameraMount.localRotation;
+            rot.eulerAngles += angle;
+            cameraMount.localRotation = rot;
+        }
+        private void DecayPunchAngle()
+        {
+            cameraMount.localRotation = Quaternion.Slerp(cameraMount.localRotation, Quaternion.identity,
+                smoothTime * Time.deltaTime);
         }
 
         public void UpdateCursorLock()

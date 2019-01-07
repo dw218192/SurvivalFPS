@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 739788d0d88bc464f8fdeb2b8026201e
+guid: 95eba2e0b45c635448e1e5cb3aae4f9d
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -127,7 +127,7 @@ ModelImporter:
     400118: Dummy02
     400120: //RootNode
     400122: WPBone01
-    7400000: Unreal Matinee Take
+    7400000: DashEnd
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -158,17 +158,17 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Unreal Matinee Take
+      name: DashEnd
       takeName: Unreal Matinee Take
       firstFrame: 0
-      lastFrame: 31
+      lastFrame: 15
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -216,7 +216,7 @@ ModelImporter:
     tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1
-  copyAvatar: 1
+  copyAvatar: 0
   humanDescription:
     serializedVersion: 2
     human: []

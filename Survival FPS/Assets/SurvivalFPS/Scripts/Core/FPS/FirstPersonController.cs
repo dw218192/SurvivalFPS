@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using SurvivalFPS.AI;
 
-namespace SurvivalFPS.Core
+namespace SurvivalFPS.Core.FPS
 {
     public class FirstPersonController : MonoBehaviour
     {
@@ -89,15 +89,17 @@ namespace SurvivalFPS.Core
 
         [SerializeField] private Flashlight m_Flashlight;
         [SerializeField] private Camera m_Camera;
-        [SerializeField] private Animator m_Animator;
+        [SerializeField] private Transform m_ArmAndHand;
+        [SerializeField] private Transform m_WeaponSocket;
+        [SerializeField] private PlayerAnimatorManager m_AnimatorManager;
 
         [SerializeField] private MovementSettings m_MovementSetting = new MovementSettings();
         [SerializeField] private AdvancedSettings m_AdvancedSetting = new AdvancedSettings();
 
         //sub-components
-        [SerializeField] private MouseLook m_MouseLook = new MouseLook();
-        [SerializeField] private HeadBob m_HeadBob = new HeadBob();
-
+        [SerializeField] private FirstPersonCamera m_FPSCamera = new FirstPersonCamera();
+        [SerializeField] private CurveControlledBob m_HeadBob = new CurveControlledBob();
+        [SerializeField] private CurveControlledBob m_WeaponBob = new CurveControlledBob();
 
         //internals
         private Rigidbody m_RigidBody;
@@ -108,39 +110,30 @@ namespace SurvivalFPS.Core
         private Vector2 m_Input;
         private bool m_JumpKeyPressed;
         private bool m_CrouchKeyPressed;
-
-        private Vector3 m_LocalSpaceCamPos;
         private float m_CharacterHeight;
+
+        //used by bobs
+        private Vector3 m_LocalSpaceCamPos;
+        private Vector3 m_LocalSpaceWeaponPos;
+
+        //used by FPS cam
+        private Vector3 m_PunchAngle = Vector3.zero; //set by weapon recoil system
 
         //debug
         [SerializeField] private FPSCharacterState m_State = FPSCharacterState.AirBorne;
         private FPSCharacterState m_PrevState;
 
         //public properties
-        public Vector3 Velocity
-        {
-            get { return m_RigidBody.velocity; }
-        }
-
-        public bool Grounded
-        {
-            get { return m_State == FPSCharacterState.Grounded; }
-        }
-
-        public bool Jumping
-        {
-            get { return m_State == FPSCharacterState.AirBorne; }
-        }
-
-        public bool Running
-        {
-            get
-            {
-                return m_MovementSetting.Running;
-            }
-        }
-
-        public bool Crouching { get { return m_MovementSetting.Crouching; } }
+        public Vector3 velocity { get { return m_RigidBody.velocity; } }
+        //state properties
+        public bool isGrounded { get { return m_State == FPSCharacterState.Grounded; } }
+        public bool jumping { get { return m_State == FPSCharacterState.AirBorne; } }
+        public bool running { get { return m_MovementSetting.Running; } }
+        public bool crouching { get { return m_MovementSetting.Crouching; } }
+        //other properties
+        public Transform weaponSocket { get { return m_WeaponSocket; } }
+        public PlayerAnimatorManager playerAnimatorManager { get { return m_AnimatorManager; } }
+        public Vector3 punchAngle { get { return m_PunchAngle; } set { m_PunchAngle = value; } }
 
         private void ChangeState(FPSCharacterState newState)
         {
@@ -152,7 +145,7 @@ namespace SurvivalFPS.Core
             }
         }
 
-        private void Start()
+        private void Awake()
         {
             m_RigidBody = GetComponent<Rigidbody>();
             m_Capsule = GetComponent<CapsuleCollider>();
@@ -163,10 +156,12 @@ namespace SurvivalFPS.Core
             m_RigidBody.constraints = RigidbodyConstraints.FreezeRotation;
 
             //sub-component initialization
-            m_MouseLook.Init(transform, m_Camera.transform);
+            m_FPSCamera.Init(transform, m_Camera.transform);
             m_HeadBob.Init(this);
+            m_WeaponBob.Init(this);
 
             m_LocalSpaceCamPos = m_Camera.transform.localPosition;
+            m_LocalSpaceWeaponPos = m_ArmAndHand.transform.localPosition;
             m_PrevState = m_State;
         }
 
@@ -179,6 +174,12 @@ namespace SurvivalFPS.Core
             {
                 m_Flashlight.gameObject.SetActive(!m_Flashlight.gameObject.activeSelf);
             }
+        }
+
+        private void LateUpdate()
+        {
+            m_FPSCamera.ApplyPunchAngle(m_PunchAngle);
+            m_PunchAngle = Vector3.zero;
         }
 
         private void FixedUpdate()
@@ -200,6 +201,7 @@ namespace SurvivalFPS.Core
             }
 
             m_JumpKeyPressed = false;
+            AnimatorUpdate();
         }
 
         private void GroundedUpdate()
@@ -229,7 +231,7 @@ namespace SurvivalFPS.Core
 
             Move();
             StickToGroundHelper();
-            DoHeadBob();
+            DoBobs();
         }
 
         private void AirBorneUpdate()
@@ -268,7 +270,12 @@ namespace SurvivalFPS.Core
 
             Move();
             StickToGroundHelper();
-            DoHeadBob();
+            DoBobs();
+        }
+
+        private void AnimatorUpdate()
+        {
+            m_AnimatorManager.SetBool("Running", running);
         }
 
         private void ResizeCollider()
@@ -285,17 +292,19 @@ namespace SurvivalFPS.Core
             m_Capsule.center = Vector3.zero;
         }
 
-        private void DoHeadBob()
+        private void DoBobs()
         {
             Vector3 velocityXZ = m_RigidBody.velocity;
             velocityXZ.y = 0.0f;
             float speed = velocityXZ.magnitude;
             if (speed > 0.01f)
             {
+                m_ArmAndHand.transform.localPosition = m_LocalSpaceWeaponPos + m_WeaponBob.GetLocalSpaceVectorOffset(speed);
                 m_Camera.transform.localPosition = m_LocalSpaceCamPos + m_HeadBob.GetLocalSpaceVectorOffset(speed);
             }
             else
             {
+                m_ArmAndHand.transform.localPosition = m_LocalSpaceWeaponPos;
                 m_Camera.transform.localPosition = m_LocalSpaceCamPos;
             }
         }
@@ -410,7 +419,7 @@ namespace SurvivalFPS.Core
             // get the rotation before it's changed
             float oldYRotation = transform.eulerAngles.y;
 
-            m_MouseLook.LookRotation(transform, m_Camera.transform);
+            m_FPSCamera.LookRotation(transform, m_Camera.transform);
 
             if (m_IsGrounded || m_AdvancedSetting.airControl)
             {

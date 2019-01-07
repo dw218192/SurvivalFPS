@@ -127,7 +127,7 @@ ModelImporter:
     400118: Dummy02
     400120: //RootNode
     400122: WPBone01
-    7400000: Unreal Matinee Take
+    7400000: Idle
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -158,7 +158,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Unreal Matinee Take
+      name: Idle
       takeName: Unreal Matinee Take
       firstFrame: 0
       lastFrame: 45

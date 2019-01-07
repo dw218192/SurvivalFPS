@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace SurvivalFPS.Core
+namespace SurvivalFPS.Core.FPS
 {
     [Serializable]
-    public class HeadBob
+    public class CurveControlledBob
     {
         public enum HeadBobCallBackType { Horizontal, Vertical }
 
         [Serializable]
-        public class HeadBobEvent
+        public class BobEvent
         {
             public float Time = 0.0f;
             public Action HeadBobCallBack = null;
@@ -43,7 +43,7 @@ namespace SurvivalFPS.Core
         private float m_YPlayHead;
         private float m_CurveEndTime;
         private FirstPersonController m_Player;
-        private List<HeadBobEvent> m_Events = new List<HeadBobEvent>();
+        private List<BobEvent> m_Events = new List<BobEvent>();
 
         public void Init(FirstPersonController player)
         {
@@ -59,13 +59,13 @@ namespace SurvivalFPS.Core
 
         public void RegisterEvent(float curveTime, Action function, HeadBobCallBackType type)
         {
-            HeadBobEvent headbobEvent = new HeadBobEvent();
+            BobEvent headbobEvent = new BobEvent();
             headbobEvent.Time = curveTime;
             headbobEvent.HeadBobCallBack = function;
             headbobEvent.Type = type;
 
             m_Events.Add(headbobEvent);
-            m_Events.Sort((HeadBobEvent event1, HeadBobEvent event2) => { return event1.Time.CompareTo(event2.Time); });
+            m_Events.Sort((BobEvent event1, BobEvent event2) => { return event1.Time.CompareTo(event2.Time); });
         }
 
         public Vector3 GetLocalSpaceVectorOffset(float speed)
@@ -79,12 +79,12 @@ namespace SurvivalFPS.Core
 
             if (m_Player)
             {
-                if (m_Player.Running)
+                if (m_Player.running)
                 {
                     m_XPlayHead += (speed * m_RunStepMultiplier * Time.deltaTime) / m_BaseInterval;
                     m_YPlayHead += ((speed * m_RunStepMultiplier * Time.deltaTime) / m_BaseInterval) * m_VerticalHorizontalSpeedRatio;
                 }
-                else if (m_Player.Crouching)
+                else if (m_Player.crouching)
                 {
                     m_XPlayHead += (speed * m_CrouchStepMultiplier * Time.deltaTime) / m_BaseInterval;
                     m_YPlayHead += ((speed * m_CrouchStepMultiplier * Time.deltaTime) / m_BaseInterval) * m_VerticalHorizontalSpeedRatio;
@@ -110,7 +110,7 @@ namespace SurvivalFPS.Core
             //event calls
             for(int i = 0; i < m_Events.Count; i++)
             {
-                HeadBobEvent headBobEvent = m_Events[i];
+                BobEvent headBobEvent = m_Events[i];
                 if(headBobEvent != null)
                 {
                     if(headBobEvent.Type == HeadBobCallBackType.Vertical)

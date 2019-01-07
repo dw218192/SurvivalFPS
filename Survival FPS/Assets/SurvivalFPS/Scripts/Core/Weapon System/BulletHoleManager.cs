@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SurvivalFPS.Utility;
 
-namespace SurvivalFPS.Core.Weapon {
+namespace SurvivalFPS.Core.Weapon 
+{
     
     //TODO: implement exceptions
     public class BulletHoleManager : SingletonBehaviour<BulletHoleManager>

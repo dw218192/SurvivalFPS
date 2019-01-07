@@ -26,7 +26,7 @@ namespace SurvivalFPS.Core.Weapon
             }
             [Range(0.0f, 3.0f)] [SerializeField] private float m_KickUpBase = 2.0f; //start value of the up kick angle
             [Range(0.0f, 3.0f)] [SerializeField] private float m_KickLateralBase = 1.0f; //start value of the lateral kick angle
-            [Range(5.0f, 60.0f)] [SerializeField] private float m_KickUpMax = 25.0f; //maximum value of the up kick angle
+            [Range(5.0f, 90.0f)] [SerializeField] private float m_KickUpMax = 25.0f; //maximum value of the up kick angle
             [Range(5.0f, 35.0f)] [SerializeField] private float m_KickLateralMax = 5.0f; //maximum value of the lateral kick angle
             [Range(0.0f, 30.0f)] [SerializeField] private float m_KickUpModifier = 0.2f; //how significant the up kick is
             [Range(0.0f, 30.0f)] [SerializeField] private float m_KickLateralModifier = 0.4f; //how significant the lateral kick is

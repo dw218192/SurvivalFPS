@@ -4,7 +4,8 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,32 +13,32 @@ MonoBehaviour:
   m_Name: HK416 Config
   m_EditorClassIdentifier: 
   m_GunModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
-    type: 2}
+    type: 3}
   m_BulletHolePrefab: {fileID: 0}
   m_RecoilSetting:
-    m_KickUpBase: 2
+    m_KickUpBase: 3
     m_KickLateralBase: 1
-    m_KickUpMax: 25
-    m_KickLateralMax: 5
-    m_KickUpModifier: 2
-    m_KickLateralModifier: 4
+    m_KickUpMax: 90
+    m_KickLateralMax: 6
+    m_KickUpModifier: 9
+    m_KickLateralModifier: 1
     m_SideDirChange: 7
     m_RecoilResetModifier: 5
   m_AccuracySetting:
-    m_BaseAccuracy: 80
+    m_BaseAccuracy: 90
     m_AccuracyRecoveryRate: 50
-    m_AccuracyDropPerShot: 10
+    m_AccuracyDropPerShot: 1
   m_Range: 100
   m_AnimatorController: {fileID: 22100000, guid: 7ff94e6cf87d7aa42a9960eacd479d5c,
     type: 2}
   m_GripTransform: {fileID: 4800675826799754, guid: d0a98948c80447f44bf6ddd994f47a9f,
-    type: 2}
+    type: 3}
   m_FireStartSpot: {fileID: 4208150860726928, guid: fe4cafb5919aaa44ca16908b7c668234,
-    type: 2}
+    type: 3}
   m_AmmoCapacity: 30
   m_EquipTime: 1.067
   m_ReloadTime: 3
-  m_NumBulletsPerSec: 7
+  m_NumBulletsPerSec: 12
   m_RecoilEnabled: 1
   m_MuzzleEffect: 0
   m_SpitShells: 0

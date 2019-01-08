@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SurvivalFPS.Core.Weapon;
+using System;
 
 namespace SurvivalFPS.Core.FPS
 {
@@ -20,7 +21,13 @@ namespace SurvivalFPS.Core.FPS
         private FirstPersonController m_PlayerController;
         private float m_EquipTimer;
 
-        private void Awake()
+        private event Action<WeaponConfig> OnWeaponChanged;
+        public void RegisterWeaponChangeEvent(Action<WeaponConfig> action)
+        {
+            OnWeaponChanged += action;
+        }
+
+        private void Start()
         {
             m_PlayerController = gameObject.GetComponent<FirstPersonController>();
 
@@ -103,13 +110,10 @@ namespace SurvivalFPS.Core.FPS
             //put the weapon in the correct position
             PutCurrentWeaponInHand();
 
-            //animations
-            //TODO remove string ref
-            m_ArmAnimator.Play("Bring Up Weapon", -1, 0.0f);
-            m_HandAnimator.Play("Bring Up Weapon", -1, 0.0f);
-            m_CurrentWeapon.animator.Play("Bring Up Weapon", -1, 0.0f);
-            m_CurrentWeapon.PlayBringUpSound();
+            //inform listeners
+            OnWeaponChanged(m_CurrentWeapon);
 
+            //animations
             m_EquipTimer = m_CurrentWeapon.equipTime;
         }
 

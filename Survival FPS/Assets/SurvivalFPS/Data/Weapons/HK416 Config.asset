@@ -20,14 +20,14 @@ MonoBehaviour:
     m_KickLateralBase: 1
     m_KickUpMax: 90
     m_KickLateralMax: 6
-    m_KickUpModifier: 9
+    m_KickUpModifier: 10
     m_KickLateralModifier: 1
     m_SideDirChange: 7
-    m_RecoilResetModifier: 5
+    m_RecoilResetModifier: 1.2
   m_AccuracySetting:
     m_BaseAccuracy: 90
-    m_AccuracyRecoveryRate: 50
-    m_AccuracyDropPerShot: 1
+    m_AccuracyRecoveryRate: 21.6
+    m_AccuracyDropPerShot: 86.5
   m_Range: 100
   m_AnimatorController: {fileID: 22100000, guid: 7ff94e6cf87d7aa42a9960eacd479d5c,
     type: 2}
@@ -40,8 +40,8 @@ MonoBehaviour:
   m_ReloadTime: 3
   m_NumBulletsPerSec: 12
   m_RecoilEnabled: 1
-  m_MuzzleEffect: 0
-  m_SpitShells: 0
+  m_MuzzleEffect: 1
+  m_SpitShells: 1
   m_ReloadSounds:
   - {fileID: 8300000, guid: b286242c0122d234ea3ab17b51752727, type: 3}
   m_FireSounds:

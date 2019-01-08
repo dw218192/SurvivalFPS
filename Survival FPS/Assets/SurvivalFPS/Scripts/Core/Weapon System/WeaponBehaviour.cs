@@ -54,6 +54,8 @@ namespace SurvivalFPS.Core.Weapon
         public virtual void Initialize()
         {
             m_CurrentAmmo = m_WeaponConfig.ammoCapacity;
+            PlayerWeaponController weaponController = m_Player.GetComponent<PlayerWeaponController>();
+            if (weaponController) weaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
         }
 
         public override void Reload()
@@ -136,5 +138,8 @@ namespace SurvivalFPS.Core.Weapon
                 m_AnimatorManager.SetBool(GameSceneManager.Instance.reloadParameterHash, false);
             }
         }
+
+        //callbacks
+        protected virtual void OnWeaponChanged(WeaponConfig weaponInfo) { }
     }
 }

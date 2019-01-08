@@ -14,6 +14,7 @@ namespace SurvivalFPS
     {
         [Header("Scene Special Effects")]
         [SerializeField] private ParticleSystem m_BloodParticleSystem;
+        [SerializeField] private ParticleSystem m_MuzzleFlashParticleSystem;
 
         [Header("Zombie Animation Controller Parameters")]
         [SerializeField] private string m_RightHandAttackParameterName;
@@ -55,6 +56,7 @@ namespace SurvivalFPS
         //public properties
         //special effects
         public ParticleSystem bloodParticleSystem { get { return m_BloodParticleSystem; } }
+        public ParticleSystem muzzleFlashParticleSystem { get { return m_MuzzleFlashParticleSystem; } }
         //layer information
         public int zombieBodyPartLayer { get { return m_ZombieBodyPartLayer; } }
         public int playerLayer { get { return m_PlayerLayer; } }

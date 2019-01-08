@@ -12,11 +12,12 @@ namespace SurvivalFPS.Core.Weapon
         {
             m_WeaponBehaviour = player.gameObject.AddComponent<AutomaticRifleBehaviour>();
             m_WeaponBehaviour.weaponConfig = this;
-            m_WeaponBehaviour.Initialize();
 
             SetModel(player);
             SetAudioSource(player);
             SetAnimator(player);
+
+            m_WeaponBehaviour.Initialize();
         }
     }
 }

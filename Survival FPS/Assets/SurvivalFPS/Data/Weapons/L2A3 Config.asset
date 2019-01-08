@@ -4,7 +4,8 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,7 +13,7 @@ MonoBehaviour:
   m_Name: L2A3 Config
   m_EditorClassIdentifier: 
   m_GunModelPrefab: {fileID: 1235691207708146, guid: 97aaf5216df6a9f4faa1bb790a7ecc6d,
-    type: 2}
+    type: 3}
   m_BulletHolePrefab: {fileID: 0}
   m_RecoilSetting:
     m_KickUpBase: 0
@@ -23,10 +24,17 @@ MonoBehaviour:
     m_KickLateralModifier: 0
     m_SideDirChange: 0
     m_RecoilResetModifier: 0
+  m_AccuracySetting:
+    m_BaseAccuracy: 80
+    m_AccuracyRecoveryRate: 50
+    m_AccuracyDropPerShot: 20
+  m_Range: 0
   m_AnimatorController: {fileID: 22100000, guid: 8132e228ec4b99a41b3b4d3e44fd1047,
     type: 2}
   m_GripTransform: {fileID: 4636462129038720, guid: 4f39f348be898c64ea1638da908679fc,
-    type: 2}
+    type: 3}
+  m_FireStartSpot: {fileID: 4208150860726928, guid: fe4cafb5919aaa44ca16908b7c668234,
+    type: 3}
   m_AmmoCapacity: 20
   m_EquipTime: 0
   m_ReloadTime: 2.7
@@ -37,3 +45,5 @@ MonoBehaviour:
   m_ReloadSounds: []
   m_FireSounds: []
   m_DryFireSounds: []
+  m_BringUpSound: {fileID: 0}
+  m_WeaponEquipSound: {fileID: 0}

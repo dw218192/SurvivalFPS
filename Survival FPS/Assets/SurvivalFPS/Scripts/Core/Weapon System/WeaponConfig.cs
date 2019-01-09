@@ -73,11 +73,11 @@ namespace SurvivalFPS.Core.Weapon
         [SerializeField] protected bool m_SpitShells = true;
 
         //sounds
-        [SerializeField] protected AudioClip[] m_ReloadSounds;
-        [SerializeField] protected AudioClip[] m_FireSounds;
-        [SerializeField] protected AudioClip[] m_DryFireSounds;
-        [SerializeField] protected AudioClip m_BringUpSound;
-        [SerializeField] protected AudioClip m_WeaponEquipSound;
+        [SerializeField] private AudioClip[] m_ReloadSounds;
+        [SerializeField] private AudioClip[] m_FireSounds;
+        [SerializeField] private AudioClip[] m_DryFireSounds;
+        [SerializeField] private AudioClip m_BringUpSound;
+        [SerializeField] private AudioClip m_WeaponEquipSound;
 
         //set in initialization
         protected AudioSource m_AudioSource;
@@ -102,7 +102,12 @@ namespace SurvivalFPS.Core.Weapon
         public bool recoilEnabled { get { return m_RecoilEnabled; } }
         public bool muzzleEffect { get { return m_MuzzleEffect; } }
         public bool spitShells { get { return m_SpitShells; } }
-        
+        public AudioClip[] reloadSounds { get { return m_ReloadSounds; } }
+        public AudioClip[] fireSounds { get { return m_FireSounds; } }
+        public AudioClip[] dryFireSounds { get { return m_DryFireSounds; } }
+        public AudioClip bringUpSound { get { return m_BringUpSound; } }
+        public AudioClip weaponEquipSound { get { return m_WeaponEquipSound; } }
+
         //runtime properties
         public abstract int currentAmmo { get; }
         public abstract bool isActive { get; set; }
@@ -110,9 +115,8 @@ namespace SurvivalFPS.Core.Weapon
         public abstract bool isReloading { get; }
 
 
-
         /// <summary>
-        /// this function will put the weapon in player's hand
+        /// this function must be called before using the weapon system
         /// </summary>
         /// <param name="player"></param>
         public abstract void Initialize(FirstPersonController player);
@@ -200,6 +204,7 @@ namespace SurvivalFPS.Core.Weapon
             weaponBehaviour.player = player;
             weaponBehaviour.animator = m_GunAnimator;
             weaponBehaviour.animatorManager = player.playerAnimatorManager;
+            weaponBehaviour.audioManager = player.audioManager;
 
             //add the animator to the player animator manager
             player.playerAnimatorManager.AddAnimator(m_GunAnimator);

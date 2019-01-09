@@ -10,6 +10,8 @@ namespace SurvivalFPS.Core.FPS
     {
         public override void OnInspectorGUI()
         {
+            DrawDefaultInspector();
+
             PlayerAnimatorManager playerAnimatorManager = (PlayerAnimatorManager)target;
 
             if(Application.isPlaying)

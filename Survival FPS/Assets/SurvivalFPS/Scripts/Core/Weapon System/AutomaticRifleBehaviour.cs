@@ -18,19 +18,10 @@ namespace SurvivalFPS.Core.Weapon
         private int m_Direction;
         private int m_ShotsFired = 0;
 
-        //muzzle flash
-        private ParticleSystem m_MuzzleFlash;
-
         public override void Initialize()
         {
             base.Initialize();
             m_CurrentAccuracy = m_WeaponConfig.accuracySettings.baseAccuracy;
-
-            //set up particle effect
-            m_MuzzleFlash = GameSceneManager.Instance.muzzleFlashParticleSystem;
-            var mainModule = m_MuzzleFlash.main;
-            mainModule.playOnAwake = false;
-            mainModule.simulationSpace = ParticleSystemSimulationSpace.Local;
         }
 
         protected void Update()
@@ -60,7 +51,7 @@ namespace SurvivalFPS.Core.Weapon
 
                 if (m_CurrentAmmo <= 0)
                 {
-                    m_WeaponConfig.PlayDryfireSound(); 
+                    m_AudioManager.PlayRandom(m_WeaponConfig.dryFireSounds);
 
                     //reset timers
                     m_TimeSinceLastFire = 0.0f;
@@ -72,7 +63,7 @@ namespace SurvivalFPS.Core.Weapon
                 m_AnimatorManager.SetBool(GameSceneManager.Instance.fireParameterNameHash, true);                
                 m_AnimatorManager.Play(GameSceneManager.Instance.fireStateNameHash, -1);
 
-                m_WeaponConfig.PlayFireSound();
+                m_AudioManager.PlayRandom(m_WeaponConfig.fireSounds);
 
                 m_CurrentAmmo--;
                 m_ShotsFired = m_WeaponConfig.ammoCapacity - m_CurrentAmmo;
@@ -194,12 +185,8 @@ namespace SurvivalFPS.Core.Weapon
         {
             if(m_MuzzleFlash)
             {
-                m_MuzzleFlash.transform.parent = m_WeaponConfig.gunGameObject.transform;
-                m_MuzzleFlash.transform.localPosition = m_WeaponConfig.fireStartSpot.position;
-
                 m_MuzzleFlash.Emit(1);
             }
-            Debug.Log(m_MuzzleFlash.transform.position);
         }
 
         private void PerformRayCast()
@@ -244,12 +231,7 @@ namespace SurvivalFPS.Core.Weapon
 
         protected override void OnWeaponChanged(WeaponConfig weaponInfo)
         {
-            //TODO remove string ref
-            if (weaponInfo == m_WeaponConfig)
-            {
-                m_AnimatorManager.Play("Bring Up Weapon", -1, 0.0f);
-                m_WeaponConfig.PlayBringUpSound();
-            }
+            base.OnWeaponChanged(weaponInfo);
         }
     }
 }

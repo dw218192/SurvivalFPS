@@ -55,9 +55,14 @@ namespace SurvivalFPS.Core.Weapon
             public float accuracyDropPerShot { get { return m_AccuracyDropPerShot; } }
         }
 
-        [SerializeField] protected GameObject m_GunModelPrefab; //an imported asset with model and animator
+        //an imported asset with model and animator
+        [SerializeField] protected GameObject m_GunModelPrefab;
         [SerializeField] protected GameObject m_BulletHolePrefab; //TODO
-        [SerializeField] protected RecoilData m_RecoilSetting;
+
+        [SerializeField] protected RecoilData m_RecoilSettingWhenStill;
+        [SerializeField] protected RecoilData m_RecoilSettingWhenWalking;
+        [SerializeField] protected RecoilData m_RecoilSettingWhenCrouching;
+
         [SerializeField] protected AccuracyData m_AccuracySetting;
         [SerializeField] protected float m_Range;
 
@@ -92,7 +97,9 @@ namespace SurvivalFPS.Core.Weapon
         public GameObject gunGameObject { get { return m_GunGameObject; } }
         public Transform gripTransform { get { return m_GripTransform; } }
         public Transform fireStartSpot { get { return m_FireStartSpot; } }
-        public RecoilData recoilSettings { get { return m_RecoilSetting; } }
+        public RecoilData recoilSettingsWhenStill { get { return m_RecoilSettingWhenStill; } }
+        public RecoilData recoilSettingsWhenWalking { get { return m_RecoilSettingWhenWalking; } }
+        public RecoilData recoilSettingsWhenCrouching { get { return m_RecoilSettingWhenCrouching; } }
         public AccuracyData accuracySettings { get { return m_AccuracySetting; } }
         public float range { get { return m_Range; } }
         public int ammoCapacity { get { return m_AmmoCapacity; } }
@@ -122,36 +129,6 @@ namespace SurvivalFPS.Core.Weapon
         public abstract void Initialize(FirstPersonController player);
         public abstract void Fire();
         public abstract void Reload();
-
-        public void PlayFireSound()
-        {
-            if(m_FireSounds != null)
-                m_AudioSource.PlayRandom(m_FireSounds);
-        }
-        public void PlayDryfireSound()
-        {
-            if(m_DryFireSounds != null)
-                m_AudioSource.PlayRandom(m_DryFireSounds);
-        }
-        public void PlayReloadSound()
-        {
-            if(m_ReloadSounds != null)
-                m_AudioSource.PlayRandom(m_ReloadSounds);
-        }
-        public void PlayBringUpSound()
-        {
-            if(m_BringUpSound != null)
-            {
-                m_AudioSource.PlayOneShot(m_BringUpSound);
-            }
-        }
-        public void PlayWeaponEquipSound()
-        {
-            if (m_WeaponEquipSound != null)
-            {
-                m_AudioSource.PlayOneShot(m_WeaponEquipSound);
-            }
-        }
     }
 
     public abstract class WeaponConfig<T> : WeaponConfig where T : WeaponBehaviour

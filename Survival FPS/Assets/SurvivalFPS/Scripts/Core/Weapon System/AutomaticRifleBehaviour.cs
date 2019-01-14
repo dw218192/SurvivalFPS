@@ -97,7 +97,12 @@ namespace SurvivalFPS.Core.Weapon
             float kickLateral;
             Vector3 angle = Vector3.zero;
 
-            WeaponConfig.RecoilData recoilData = m_WeaponConfig.recoilSettings;
+            WeaponConfig.RecoilData recoilData = GetRecoilData();
+
+            if(recoilData == null)
+            {
+                return;
+            }
 
             // This is the first round fired
             if (m_ShotsFired == 1) 
@@ -173,7 +178,26 @@ namespace SurvivalFPS.Core.Weapon
             }
 
             m_Player.punchAngle = angle;
-//            Debug.Log(angle);
+        }
+
+        private WeaponConfig.RecoilData GetRecoilData()
+        {
+            if (m_Player.crouching)
+            {
+                return m_WeaponConfig.recoilSettingsWhenCrouching;
+            }
+
+            else if(m_Player.velocity.magnitude >= 0.1f)
+            {
+                return m_WeaponConfig.recoilSettingsWhenWalking;
+            }
+
+            else if(Mathf.Approximately(m_Player.velocity.magnitude, 0.0f))
+            {
+                return m_WeaponConfig.recoilSettingsWhenStill;
+            }
+
+            return null;
         }
 
         public override void SpitShells()

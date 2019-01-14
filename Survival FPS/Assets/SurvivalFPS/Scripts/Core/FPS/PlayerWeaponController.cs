@@ -50,14 +50,17 @@ namespace SurvivalFPS.Core.FPS
                 m_EquipTimer -= Time.deltaTime;
             }
 
+            //if we have a weapon
             if (m_CurrentWeapon)
             {
                 m_CurrentWeaponAmmo = m_CurrentWeapon.currentAmmo;
-                
+
                 //wait for the weapon to be fully equipped
                 if(m_EquipTimer <= 0.0f)
                 {
-                    if (Input.GetButton("Fire1"))
+                    bool canFire = !m_PlayerController.running && !m_CurrentWeapon.isReloading;
+
+                    if (canFire && Input.GetButton("Fire1"))
                     {
                         m_CurrentWeapon.Fire();
                         return;
@@ -113,7 +116,7 @@ namespace SurvivalFPS.Core.FPS
             //inform listeners
             OnWeaponChanged(m_CurrentWeapon);
 
-            //animations
+            //set the timer
             m_EquipTimer = m_CurrentWeapon.equipTime;
         }
 

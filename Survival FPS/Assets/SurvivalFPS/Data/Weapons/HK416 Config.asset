@@ -15,15 +15,33 @@ MonoBehaviour:
   m_GunModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
     type: 3}
   m_BulletHolePrefab: {fileID: 0}
-  m_RecoilSetting:
-    m_KickUpBase: 3
+  m_RecoilSettingWhenStill:
+    m_KickUpBase: 2
     m_KickLateralBase: 1
-    m_KickUpMax: 90
-    m_KickLateralMax: 6
-    m_KickUpModifier: 10
-    m_KickLateralModifier: 1
+    m_KickUpMax: 25
+    m_KickLateralMax: 5
+    m_KickUpModifier: 0.2
+    m_KickLateralModifier: 0.4
     m_SideDirChange: 7
-    m_RecoilResetModifier: 1.2
+    m_RecoilResetModifier: 1
+  m_RecoilSettingWhenWalking:
+    m_KickUpBase: 2
+    m_KickLateralBase: 1
+    m_KickUpMax: 25
+    m_KickLateralMax: 5
+    m_KickUpModifier: 0.2
+    m_KickLateralModifier: 0.4
+    m_SideDirChange: 7
+    m_RecoilResetModifier: 1
+  m_RecoilSettingWhenCrouching:
+    m_KickUpBase: 2
+    m_KickLateralBase: 1
+    m_KickUpMax: 25
+    m_KickLateralMax: 5
+    m_KickUpModifier: 0.2
+    m_KickLateralModifier: 0.4
+    m_SideDirChange: 7
+    m_RecoilResetModifier: 1
   m_AccuracySetting:
     m_BaseAccuracy: 90
     m_AccuracyRecoveryRate: 21.6

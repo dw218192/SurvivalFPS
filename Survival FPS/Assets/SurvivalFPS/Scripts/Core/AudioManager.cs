@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SurvivalFPS.Core
 {
-    //TODO remove surplus sound sources?
     public class AudioManager : MonoBehaviour
     {
         private AudioSource m_AudioSource;
@@ -43,13 +43,14 @@ namespace SurvivalFPS.Core
             }
         }
 
-        public void PlayOneShot(AudioClip clip)
+        public void PlayOneShot (AudioClip clip)
         {
             if(clip)
             {
                 m_AudioSource.PlayOneShot(clip);
             }
         }
+
         public void PlayInSequence (float timeBetween, params AudioClip[] clips)
         {
             if (clips.Length == 0 || timeBetween <= 0.0f) return;
@@ -64,15 +65,44 @@ namespace SurvivalFPS.Core
                 Debug.LogWarning("there are already sounds being played in sequence");
             }
         }
+
+        /// <summary>
+        /// play a random clip from an array of clips
+        /// </summary>
+        /// <param name="clips">clips to select from</param>
         public void PlayRandom (params AudioClip[] clips)
         {
             if (clips.Length > 0)
             {
-                int randomIndex = Random.Range(0, clips.Length);
+                int randomIndex = UnityEngine.Random.Range(0, clips.Length);
                 PlayOneShot(clips[randomIndex]);
             }
         }
-        public void PlayDelayed(AudioClip clip, float time)
+
+        /// <summary>
+        /// play a random clip from an array of clips, while the condition is true
+        /// </summary>
+        /// <param name="clips">clips to select from</param>
+        public void PlayRandom(Func<bool> predicate, params AudioClip[] clips)
+        {
+            if (clips.Length > 0)
+            {
+                int randomIndex = UnityEngine.Random.Range(0, clips.Length);
+                PlayWhile(clips[randomIndex], predicate);
+            }
+        }
+
+        /// <summary>
+        /// play while the supplied predicate is true
+        /// </summary>
+        /// <param name="predicate">Predicate.</param>
+        public void PlayWhile (AudioClip clip, Func<bool> predicate)
+        {
+            Play(clip, false);
+            StartCoroutine(_PlayWhileRoutine(predicate));
+        }
+
+        public void PlayDelayed (AudioClip clip, float time)
         {
             if (clip)
             {
@@ -80,6 +110,7 @@ namespace SurvivalFPS.Core
                 m_AudioSource.PlayDelayed(time);
             }
         }
+
         //private coroutines
         private IEnumerator _PlayInSequence(float timeBetween, AudioClip[] clips)
         {
@@ -90,6 +121,22 @@ namespace SurvivalFPS.Core
             }
 
             m_PlayInSequenceRoutine = null;
+        }
+
+        private IEnumerator _PlayWhileRoutine(Func<bool> predicate)
+        {
+            while(true)
+            {
+                if(!predicate() || !m_AudioSource.isPlaying && predicate())
+                {
+                    m_AudioSource.Stop();
+                    m_AudioSource.clip = null;
+
+                    yield break;
+                }
+
+                yield return null;
+            }
         }
     }
 }

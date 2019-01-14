@@ -47,9 +47,9 @@ namespace SurvivalFPS.Core.Weapon
     }
 
     /// <summary>
-    /// base class of all weapons;
-    /// it is attached to the player game object and initialized by its corresponding config class
-    /// it implements basic functionalities which are:
+    /// Base class of all weapons;
+    /// it is attached to the player game object and initialized by its corresponding config class.
+    /// It implements basic functionalities which are:
     /// reloading / weapon bring up
     /// </summary>
     public abstract class WeaponBehaviour<T> : WeaponBehaviour where T : WeaponConfig
@@ -124,9 +124,9 @@ namespace SurvivalFPS.Core.Weapon
 
             //the reloading animation starts playing
             m_IsReloading = true;
-            yield return new WaitForSecondsRealtime(0.7f);
 
-            m_AudioManager.PlayRandom(m_WeaponConfig.reloadSounds);
+            yield return new WaitForSecondsRealtime(0.6f);
+            m_AudioManager.PlayRandom(() => m_WeaponConfig.isActive, m_WeaponConfig.reloadSounds);
 
             //only increment the ammo when the animation reaches a specific point (i.e. magazine changed)
             while (m_Animator.GetFloat(GameSceneManager.Instance.reloadCurveParameterName) < -0.5f)

@@ -12,7 +12,6 @@ namespace SurvivalFPS.Core.Weapon
     public abstract class WeaponBehaviour : MonoBehaviour
     {
         protected int m_CurrentAmmo = 0;
-        protected float m_FireTimer = 0.0f;
 
         //set by config
         protected FirstPersonController m_Player;
@@ -60,6 +59,30 @@ namespace SurvivalFPS.Core.Weapon
         //muzzle flash
         protected ParticleSystem m_MuzzleFlash;
 
+        //accuracy vars
+        [SerializeField] protected AccuracyData m_CurrentAccuracyData;
+        [SerializeField] protected float m_CurrentAccuracy;
+
+        //recoil vars
+        [SerializeField] private RecoilData m_CurrentRecoilData;
+        protected int m_CurrentDirectionCnt;
+        protected int m_Direction;
+        protected int m_ShotsFired = 0;
+
+        //timers
+        protected float m_FireTimer = 0.0f;
+        protected float m_TimeSinceLastFire = 0.0f;
+        protected bool m_StartElapseTimer = false;
+
+        //crosshair
+        private float m_Inaccuracy = 0.0f;
+        private Vector2[] m_CurCrossHairPositions;
+        private float m_ScreenMaxSpreadDist = 0.0f;
+        private float m_CrossHairSpeed = 100.0f;
+        private int m_CrossHairWidth;
+        private int m_CrossHairLength;
+
+
         //don't use these
         protected sealed override void Awake() { }
         protected sealed override void Start() { }
@@ -77,6 +100,112 @@ namespace SurvivalFPS.Core.Weapon
             var mainModule = m_MuzzleFlash.main;
             mainModule.playOnAwake = false;
             mainModule.simulationSpace = ParticleSystemSimulationSpace.Local;
+
+            //accuracy and recoil initialization
+            m_CurrentRecoilData = GetRecoilData();
+            m_CurrentAccuracyData = GetAccuracyData();
+            m_CurrentAccuracy = m_CurrentAccuracyData.baseAccuracy;
+
+            //crosshair initialization
+            m_CrossHairWidth = Screen.width / 200;
+            m_CrossHairLength = Screen.width / 100;
+
+            m_CurCrossHairPositions = new Vector2[]
+            {
+                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2 - m_CrossHairLength),
+                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2),
+                new Vector2Int(Screen.width / 2 - m_CrossHairLength, Screen.height / 2 - m_CrossHairWidth / 2),
+                new Vector2Int(Screen.width / 2, Screen.height / 2 - m_CrossHairWidth / 2),
+            };
+        }
+
+        private void OnEnable()
+        {
+
+        }
+
+        private void OnDisable()
+        {
+            //clear the runtime fields if this weapon got switched out
+            m_FireTimer = 0.0f;
+            m_StartElapseTimer = false;
+            m_TimeSinceLastFire = 0.0f;
+            m_ShotsFired = 0;
+        }
+
+        protected virtual void Update()
+        {
+            //timer increment
+            m_FireTimer += Time.deltaTime;
+
+            if (m_StartElapseTimer)
+            {
+                m_TimeSinceLastFire += Time.deltaTime;
+            }
+
+            //data update
+            m_CurrentRecoilData = GetRecoilData();
+            m_CurrentAccuracyData = GetAccuracyData();
+
+            AccuracyRecovery();
+        }
+
+        protected void LateUpdate()
+        {
+            if (m_IsFiring)
+            {
+                m_AnimatorManager.SetBool(GameSceneManager.Instance.fireParameterNameHash, false);
+                m_IsFiring = false;
+            }
+        }
+
+        public override void Fire()
+        {
+            if (m_FireTimer >= m_WeaponConfig.fireRate || m_ShotsFired == 0)
+            {
+                m_StartElapseTimer = true;
+                m_IsFiring = true;
+
+                if (m_CurrentAmmo <= 0)
+                {
+                    m_AudioManager.PlayRandom(m_WeaponConfig.dryFireSounds);
+
+                    //reset timers
+                    m_TimeSinceLastFire = 0.0f;
+                    m_FireTimer = 0.0f;
+                    return;
+                }
+
+                //play fire animation
+                m_AnimatorManager.SetBool(GameSceneManager.Instance.fireParameterNameHash, true);
+                m_AnimatorManager.Play(GameSceneManager.Instance.fireStateNameHash, -1);
+
+                m_AudioManager.PlayRandom(m_WeaponConfig.fireSounds);
+
+                m_CurrentAmmo--;
+                m_ShotsFired = m_WeaponConfig.ammoCapacity - m_CurrentAmmo;
+
+                PerformRayCast();
+
+                if (m_WeaponConfig.muzzleEffect)
+                {
+                    PlayMuzzleEffect();
+                }
+
+                if (m_WeaponConfig.recoilEnabled)
+                {
+                    Recoil();
+                }
+
+                if (m_WeaponConfig.spitShells)
+                {
+                    SpitShells();
+                }
+
+                //reset timers
+                m_TimeSinceLastFire = 0.0f;
+                m_FireTimer = 0.0f;
+            }
         }
 
         public override void Reload()
@@ -162,6 +291,187 @@ namespace SurvivalFPS.Core.Weapon
             }
         }
 
+        public override void Recoil()
+        {
+            float kickUp;
+            float kickLateral;
+            Vector3 angle = Vector3.zero;
+
+            if (m_CurrentRecoilData == null)
+            {
+                return;
+            }
+
+            // This is the first round fired
+            if (m_ShotsFired == 1)
+            {
+                kickUp = m_CurrentRecoilData.kickUpBase;
+                kickLateral = m_CurrentRecoilData.kickLateralBase;
+
+                m_CurrentDirectionCnt = 0;
+            }
+            else
+            {
+                float extraKickUp = m_ShotsFired * (m_CurrentRecoilData.kickUpModifier - m_TimeSinceLastFire * m_CurrentRecoilData.recoilResetModifier);
+                float extraKickLateral = m_ShotsFired * (m_CurrentRecoilData.kickLateralModifier - m_TimeSinceLastFire * m_CurrentRecoilData.recoilResetModifier);
+
+                extraKickUp = Mathf.Max(0.0f, extraKickUp);
+                extraKickLateral = Mathf.Max(0.0f, extraKickLateral);
+
+                kickUp = m_CurrentRecoilData.kickUpBase + extraKickUp * Time.deltaTime;
+                kickLateral = m_CurrentRecoilData.kickLateralBase + extraKickLateral * Time.deltaTime;
+            }
+
+            //kickUp = Mathf.Min(kickUp, m_Kickback_UpLimit);
+            //kickLateral = Mathf.Min(kickLateral, m_Kickback_LateralLimit);
+            /*
+            const int NumKickbackLimiters = KickbackLimiter.Num();
+            if (NumKickbackLimiters > 0)
+            {
+                const FKickbackRange&Range = KickbackLimiter(Min(NumKickbackLimiters - 1, (INT)iShotsFired));
+
+                const FLOAT Reducer = appFrand() * (Range.Max - Range.Min) + Range.Min;
+
+                kickUp *= Reducer;
+                kickLateral *= Reducer;
+            }
+
+            angle = m_Player.punchAngle;
+            */
+
+            angle.x += kickUp;
+
+            if (angle.x > m_CurrentRecoilData.kickUpMax)
+            {
+                angle.x = m_CurrentRecoilData.kickUpMax;
+            }
+            angle.x = -angle.x;
+
+            if (m_Direction == 1)
+            {
+                angle.y += kickLateral;
+                if (angle.y > m_CurrentRecoilData.kickLateralMax)
+                {
+                    angle.y = m_CurrentRecoilData.kickLateralMax;
+                }
+            }
+            else
+            {
+                angle.y -= kickLateral;
+
+                if (angle.y < -m_CurrentRecoilData.kickLateralMax)
+                {
+                    angle.y = -m_CurrentRecoilData.kickLateralMax;
+                }
+            }
+
+            if (--m_CurrentDirectionCnt <= 0)
+            {
+                if (m_CurrentRecoilData.sideDirChange != 0 && (UnityEngine.Random.Range(0, m_CurrentRecoilData.sideDirChange) == 0))
+                {
+                    m_Direction = 1 - m_Direction;
+
+                    m_CurrentDirectionCnt = 5;
+                }
+            }
+
+            m_Player.punchAngle = angle;
+        }
+
+        private RecoilData GetRecoilData()
+        {
+            if (m_Player.crouching)
+            {
+                return m_WeaponConfig.recoilSettingsWhenCrouching;
+            }
+
+            if (Mathf.Approximately(m_Player.XZVelocity.magnitude, 0.0f))
+            {
+                return m_WeaponConfig.recoilSettingsWhenStill;
+            }
+            else
+            {
+                return m_WeaponConfig.recoilSettingsWhenWalking;
+            }
+        }
+
+        private AccuracyData GetAccuracyData()
+        {
+            if (m_Player.crouching)
+            {
+                return m_WeaponConfig.accuracySettingsWhenCrouching;
+            }
+
+            if (Mathf.Approximately(m_Player.XZVelocity.magnitude, 0.0f))
+            {
+                return m_WeaponConfig.accuracySettingsWhenStill;
+            }
+            else
+            {
+                return m_WeaponConfig.accuracySettingsWhenWalking;
+            }
+        }
+
+        protected void PerformRayCast()
+        {
+            Camera cam = Camera.main;
+            // Calculate accuracy for this shot
+            m_Inaccuracy = (100.0f - m_CurrentAccuracy) / 1000.0f;
+
+            //local space
+            Vector3 screenStartPoint = new Vector3(Screen.width / 2, Screen.height / 2, 0.5f);
+            float localOffsetX, localOffsetY;
+            localOffsetX = UnityEngine.Random.Range(-m_Inaccuracy, m_Inaccuracy);
+            localOffsetY = UnityEngine.Random.Range(-m_Inaccuracy, m_Inaccuracy);
+            Vector3 localDir = new Vector3(localOffsetX, localOffsetY, 1.0f);
+
+            //calculate ray start and direction
+            Vector3 startPoint = cam.ScreenToWorldPoint(screenStartPoint);
+            Vector3 direction = cam.transform.TransformDirection(localDir);
+
+            m_CurrentAccuracy -= m_CurrentAccuracyData.accuracyDropPerShot;
+
+            if (m_CurrentAccuracy <= 0.0f)
+            {
+                m_CurrentAccuracy = 0.0f;
+            }
+
+            // The ray that will be used for this shot
+            Ray ray = new Ray(startPoint, direction);
+            RaycastHit hit;
+
+            //Debug.DrawLine(startPoint, startPoint + direction, Color.red);
+
+            if (Physics.Raycast(ray, out hit, m_WeaponConfig.range, GameSceneManager.Instance.shootableLayerMask))
+            {
+                // Damage
+                if (BulletHoleManager.Instance)
+                {
+                    GameObject target = hit.collider.gameObject;
+                    BulletHoleManager.Instance.PlaceBulletHole(hit.point, Quaternion.identity, target);
+                }
+            }
+        }
+
+        public override void SpitShells()
+        {
+
+        }
+
+        public override void PlayMuzzleEffect()
+        {
+            if (m_MuzzleFlash)
+            {
+                m_MuzzleFlash.Emit(1);
+            }
+        }
+
+        protected void AccuracyRecovery()
+        {
+            m_CurrentAccuracy = Mathf.MoveTowards(m_CurrentAccuracy, m_CurrentAccuracyData.baseAccuracy, m_CurrentAccuracyData.accuracyRecoveryRate * Time.deltaTime);
+            m_Inaccuracy = Mathf.MoveTowards(m_Inaccuracy, 0.0f, 0.001f * m_CurrentAccuracyData.accuracyRecoveryRate * Time.deltaTime);
+        }
+
         //callbacks
         protected virtual void OnWeaponChanged(WeaponConfig weaponInfo) 
         {
@@ -182,6 +492,68 @@ namespace SurvivalFPS.Core.Weapon
 
                 m_AudioManager.PlayInSequence(0.1f, m_WeaponConfig.bringUpSound, m_WeaponConfig.weaponEquipSound);
             }
+        }
+
+        //crosshair
+        private void OnGUI()
+        {
+            CalculateSpread();
+
+            Vector2Int size1 = new Vector2Int(m_CrossHairWidth, m_CrossHairLength);
+            Vector2Int size2 = new Vector2Int(m_CrossHairLength, m_CrossHairWidth);
+
+            Vector2Int[] crossHairBasePositions =
+            {
+                //up
+                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2 - m_CrossHairLength),
+                //down
+                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2),
+                //left
+                new Vector2Int(Screen.width / 2 - m_CrossHairLength, Screen.height / 2 - m_CrossHairWidth / 2),
+                //right
+                new Vector2Int(Screen.width / 2, Screen.height / 2 - m_CrossHairWidth / 2),
+            };
+
+            Vector2[] crossHairTargetPositions =
+            {
+                crossHairBasePositions[0] + m_ScreenMaxSpreadDist * new Vector2 (0, -1),
+                crossHairBasePositions[1] + m_ScreenMaxSpreadDist * new Vector2 (0,1),
+                crossHairBasePositions[2] + m_ScreenMaxSpreadDist * new Vector2 (-1,0),
+                crossHairBasePositions[3] + m_ScreenMaxSpreadDist * new Vector2 (1,0),
+            };
+
+            m_CurCrossHairPositions[0] = Vector2.MoveTowards(m_CurCrossHairPositions[0], crossHairTargetPositions[0], m_CrossHairSpeed * Time.deltaTime);
+            m_CurCrossHairPositions[1] = Vector2.MoveTowards(m_CurCrossHairPositions[1], crossHairTargetPositions[1], m_CrossHairSpeed * Time.deltaTime);
+            m_CurCrossHairPositions[2] = Vector2.MoveTowards(m_CurCrossHairPositions[2], crossHairTargetPositions[2], m_CrossHairSpeed * Time.deltaTime);
+            m_CurCrossHairPositions[3] = Vector2.MoveTowards(m_CurCrossHairPositions[3], crossHairTargetPositions[3], m_CrossHairSpeed * Time.deltaTime);
+
+            Rect rect1 = new Rect(m_CurCrossHairPositions[0], size1);
+            Rect rect2 = new Rect(m_CurCrossHairPositions[1], size1);
+            Rect rect3 = new Rect(m_CurCrossHairPositions[2], size2);
+            Rect rect4 = new Rect(m_CurCrossHairPositions[3], size2);
+
+            Texture2D texture = m_WeaponConfig.crossHairTexture;
+
+            GUI.DrawTexture(rect1, texture);
+            GUI.DrawTexture(rect2, texture);
+            GUI.DrawTexture(rect3, texture);
+            GUI.DrawTexture(rect4, texture);
+        }
+
+        private void CalculateSpread()
+        {
+            Camera cam = Camera.main;
+            Vector3 screenStartPoint = new Vector3(Screen.width / 2, Screen.height / 2, 0.5f);
+            Vector3 startPoint = cam.ScreenToWorldPoint(screenStartPoint);
+
+            //cross-hair spread range calculation
+            //if the local x offset is greater, 
+            //imagine deflect the ray only by this offset, and use this to calculate the boundary of the crosshair
+            Vector3 localMaxSpreadDir = new Vector3(-m_Inaccuracy, 0.0f, 0.5f);
+            Vector3 maxSpreadDir = cam.transform.TransformDirection(localMaxSpreadDir);
+
+            Vector2 screenMaxSpread = cam.WorldToScreenPoint(startPoint + maxSpreadDir.normalized * m_WeaponConfig.range);
+            m_ScreenMaxSpreadDist = (screenMaxSpread - (Vector2)screenStartPoint).magnitude;
         }
     }
 }

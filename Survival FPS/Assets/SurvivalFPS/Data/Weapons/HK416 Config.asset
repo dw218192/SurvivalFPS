@@ -15,38 +15,20 @@ MonoBehaviour:
   m_GunModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
     type: 3}
   m_BulletHolePrefab: {fileID: 0}
-  m_RecoilSettingWhenStill:
-    m_KickUpBase: 2
-    m_KickLateralBase: 1
-    m_KickUpMax: 25
-    m_KickLateralMax: 5
-    m_KickUpModifier: 0.2
-    m_KickLateralModifier: 0.4
-    m_SideDirChange: 7
-    m_RecoilResetModifier: 1
-  m_RecoilSettingWhenWalking:
-    m_KickUpBase: 2
-    m_KickLateralBase: 1
-    m_KickUpMax: 25
-    m_KickLateralMax: 5
-    m_KickUpModifier: 0.2
-    m_KickLateralModifier: 0.4
-    m_SideDirChange: 7
-    m_RecoilResetModifier: 1
-  m_RecoilSettingWhenCrouching:
-    m_KickUpBase: 2
-    m_KickLateralBase: 1
-    m_KickUpMax: 25
-    m_KickLateralMax: 5
-    m_KickUpModifier: 0.2
-    m_KickLateralModifier: 0.4
-    m_SideDirChange: 7
-    m_RecoilResetModifier: 1
-  m_AccuracySetting:
-    m_BaseAccuracy: 90
-    m_AccuracyRecoveryRate: 21.6
-    m_AccuracyDropPerShot: 86.5
+  m_RecoilSettingWhenStill: {fileID: 11400000, guid: c044b3eb963202a4a8e745fb638c4a33,
+    type: 2}
+  m_RecoilSettingWhenWalking: {fileID: 11400000, guid: 91127df0865a6c24f9ea569f6fbe03cd,
+    type: 2}
+  m_RecoilSettingWhenCrouching: {fileID: 11400000, guid: c1f5dc1189228c44cb6126fc9527c979,
+    type: 2}
+  m_AccuracySettingWhenStill: {fileID: 11400000, guid: 1add141895dcbda41bd5dbea57b99382,
+    type: 2}
+  m_AccuracySettingWhenWalking: {fileID: 11400000, guid: 1eafa6f65c4ef4a40b26a017553cb56f,
+    type: 2}
+  m_AccuracySettingWhenCrouching: {fileID: 11400000, guid: e60eea0fdab401848a59ceab7cc777c3,
+    type: 2}
   m_Range: 100
+  m_CrossHairTexture: {fileID: 2800000, guid: 94407241686a3ce42ada44e12b2daf47, type: 3}
   m_AnimatorController: {fileID: 22100000, guid: 7ff94e6cf87d7aa42a9960eacd479d5c,
     type: 2}
   m_GripTransform: {fileID: 4800675826799754, guid: d0a98948c80447f44bf6ddd994f47a9f,

@@ -31,7 +31,6 @@ namespace SurvivalFPS.Core.FPS
 
             public void UpdateDesiredTargetSpeed(Vector2 input)
             {
-                if (input == Vector2.zero) return;
                 if (input.x > 0 || input.x < 0)
                 {
                     //strafe
@@ -48,6 +47,7 @@ namespace SurvivalFPS.Core.FPS
                     //handled last as if strafing and moving forward at the same time forwards speed should take precedence
                     CurrentTargetSpeed = ForwardSpeed;
                 }
+
                 if (Input.GetButton("Run"))
                 {
                     CurrentTargetSpeed *= RunMultiplier;
@@ -126,6 +126,7 @@ namespace SurvivalFPS.Core.FPS
 
         //public properties
         public Vector3 velocity { get { return m_RigidBody.velocity; } }
+        public Vector2 XZVelocity { get { return new Vector2(m_RigidBody.velocity.x, m_RigidBody.velocity.z); } }
         //state properties
         public bool isGrounded { get { return m_State == FPSCharacterState.Grounded; } }
         public bool jumping { get { return m_State == FPSCharacterState.AirBorne; } }

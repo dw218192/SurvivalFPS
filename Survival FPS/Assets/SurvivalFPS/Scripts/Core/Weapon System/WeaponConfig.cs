@@ -9,62 +9,22 @@ namespace SurvivalFPS.Core.Weapon
 {
     public abstract class WeaponConfig : ScriptableObject
     {
-        [Serializable]
-        public class RecoilData
-        {
-            public RecoilData() { }
-            public RecoilData(RecoilData toCopy)
-            {
-                m_KickUpBase = toCopy.kickUpBase;
-                m_KickLateralBase = toCopy.kickLateralBase;
-                m_KickUpMax = toCopy.kickUpMax;
-                m_KickLateralMax = toCopy.kickLateralMax;
-                m_KickUpModifier = toCopy.kickUpModifier;
-                m_KickLateralModifier = toCopy.kickLateralModifier;
-                m_SideDirChange = toCopy.sideDirChange;
-                m_RecoilResetModifier = toCopy.recoilResetModifier;
-            }
-            [Range(0.0f, 3.0f)] [SerializeField] private float m_KickUpBase = 2.0f; //start value of the up kick angle
-            [Range(0.0f, 3.0f)] [SerializeField] private float m_KickLateralBase = 1.0f; //start value of the lateral kick angle
-            [Range(5.0f, 90.0f)] [SerializeField] private float m_KickUpMax = 25.0f; //maximum value of the up kick angle
-            [Range(5.0f, 35.0f)] [SerializeField] private float m_KickLateralMax = 5.0f; //maximum value of the lateral kick angle
-            [Range(0.0f, 30.0f)] [SerializeField] private float m_KickUpModifier = 0.2f; //how significant the up kick is
-            [Range(0.0f, 30.0f)] [SerializeField] private float m_KickLateralModifier = 0.4f; //how significant the lateral kick is
-            [Range(1, 10)] [SerializeField] private int m_SideDirChange = 7; //how infrequent the gun will change lateral kick direction
-            [Range(0.0f, 30.0f)] [SerializeField] private float m_RecoilResetModifier = 1.0f; //how quickly the gun will be stable again
-            public float kickUpBase { get { return m_KickUpBase; } }
-            public float kickLateralBase { get { return m_KickLateralBase; } }
-            public float kickUpMax { get { return m_KickUpMax; } }
-            public float kickLateralMax { get { return m_KickLateralMax; } }
-            public float kickUpModifier { get { return m_KickUpModifier; } }
-            public float kickLateralModifier { get { return m_KickLateralModifier; } }
-            public int sideDirChange { get { return m_SideDirChange; } }
-            public float recoilResetModifier { get { return m_RecoilResetModifier; } }
-        }
-
-        [Serializable]
-        public class AccuracyData
-        {
-            public AccuracyData() { }
-            public AccuracyData(AccuracyData toCopy) { }
-            [Range(0.0f, 100.0f)] [SerializeField] private float m_BaseAccuracy = 80.0f;
-            [Range(0.0f, 100.0f)] [SerializeField] private float m_AccuracyRecoveryRate = 50.0f;
-            [Range(0.0f, 100.0f)] [SerializeField] private float m_AccuracyDropPerShot = 20.0f;
-            public float baseAccuracy { get { return m_BaseAccuracy; } }
-            public float accuracyRecoveryRate { get { return m_AccuracyRecoveryRate; } }
-            public float accuracyDropPerShot { get { return m_AccuracyDropPerShot; } }
-        }
-
         //an imported asset with model and animator
         [SerializeField] protected GameObject m_GunModelPrefab;
         [SerializeField] protected GameObject m_BulletHolePrefab; //TODO
 
+        //recoil settings
         [SerializeField] protected RecoilData m_RecoilSettingWhenStill;
         [SerializeField] protected RecoilData m_RecoilSettingWhenWalking;
         [SerializeField] protected RecoilData m_RecoilSettingWhenCrouching;
-
-        [SerializeField] protected AccuracyData m_AccuracySetting;
+        //accuracy settings
+        [SerializeField] protected AccuracyData m_AccuracySettingWhenStill;
+        [SerializeField] protected AccuracyData m_AccuracySettingWhenWalking;
+        [SerializeField] protected AccuracyData m_AccuracySettingWhenCrouching;
+        //range of the weapon, not the effective range
         [SerializeField] protected float m_Range;
+        //crosshair settings
+        [SerializeField] private Texture2D m_CrossHairTexture;
 
         [SerializeField] protected RuntimeAnimatorController m_AnimatorController;
         [SerializeField] protected Transform m_GripTransform;
@@ -100,8 +60,12 @@ namespace SurvivalFPS.Core.Weapon
         public RecoilData recoilSettingsWhenStill { get { return m_RecoilSettingWhenStill; } }
         public RecoilData recoilSettingsWhenWalking { get { return m_RecoilSettingWhenWalking; } }
         public RecoilData recoilSettingsWhenCrouching { get { return m_RecoilSettingWhenCrouching; } }
-        public AccuracyData accuracySettings { get { return m_AccuracySetting; } }
+        public AccuracyData accuracySettingsWhenStill { get { return m_AccuracySettingWhenStill; } }
+        public AccuracyData accuracySettingsWhenWalking { get { return m_AccuracySettingWhenWalking; } }
+        public AccuracyData accuracySettingsWhenCrouching { get { return m_AccuracySettingWhenCrouching; } }
+
         public float range { get { return m_Range; } }
+        public Texture2D crossHairTexture { get { return m_CrossHairTexture; } }
         public int ammoCapacity { get { return m_AmmoCapacity; } }
         public float equipTime { get { return m_EquipTime; } }
         public float reloadTime { get { return m_ReloadTime; } }
@@ -120,6 +84,7 @@ namespace SurvivalFPS.Core.Weapon
         public abstract bool isActive { get; set; }
         public abstract bool isFiring { get; }
         public abstract bool isReloading { get; }
+
 
 
         /// <summary>
@@ -147,14 +112,18 @@ namespace SurvivalFPS.Core.Weapon
             }
             set
             {
-                //enable/disable the animator
+                //enable/disable the animator so that it factors into SetX functions
                 if (value)
                 {
+                    //enable the weapon behaviour that's attached to whoever is using it
+                    m_WeaponBehaviour.enabled = true;
                     //enable the animator if it is previously disabled
                     m_WeaponBehaviour.animatorManager.EnableAnimator(m_GunAnimator);
                 }
                 else
                 {
+                    //enable the weapon behaviour that's attached to whoever is using it
+                    m_WeaponBehaviour.enabled = false;
                     //disable the animator
                     m_WeaponBehaviour.animatorManager.DisableAnimator(m_GunAnimator);
                 }

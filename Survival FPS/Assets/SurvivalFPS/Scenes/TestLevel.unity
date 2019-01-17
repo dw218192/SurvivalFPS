@@ -4978,7 +4978,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d630dec60d571439de0072d60d605f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shader: {fileID: 4800000, guid: d4110885bfd2ffa429378b412bd584ab, type: 3}
+  m_BloodAmount: 0
+  m_MinBloodAmount: 0
+  m_Distortion: 0.21
+  m_AutoFade: 1
+  m_FadeSpeed: 0.05
+  m_Shader: {fileID: 4800000, guid: d4110885bfd2ffa429378b412bd584ab, type: 3}
+  m_BloodTexture: {fileID: 2800000, guid: 2a349abc39cf0444da50d894713ec52d, type: 3}
+  m_BloodNormalMap: {fileID: 2800000, guid: 39eabd6090556fc4b9bd39390d10a2c3, type: 3}
 --- !u!1001 &1925572944
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5044,8 +5051,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1368244323850896, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+      propertyPath: m_Name
+      value: Omni Zombie Mortimer
       objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5079,29 +5086,22 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114113080696203460, guid: 24242cc0b4a27654883d0b6592d01bd9,
         type: 3}
       propertyPath: m_Waypoints
       value: 
       objectReference: {fileID: 1311419353}
-    - target: {fileID: 1176847882546118, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_Satisfaction
-      value: 0.505
-      objectReference: {fileID: 0}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_Sight
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_Fov
-      value: 225
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}

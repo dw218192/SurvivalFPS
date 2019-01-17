@@ -92,7 +92,7 @@ namespace SurvivalFPS.Core.Weapon
         /// </summary>
         /// <param name="player"></param>
         public abstract void Initialize(FirstPersonController player);
-        public abstract void Fire();
+        public abstract void TryFire();
         public abstract void Reload();
     }
 
@@ -163,9 +163,9 @@ namespace SurvivalFPS.Core.Weapon
             m_AudioSource = player.GetComponent<AudioSource>();
         }
         //-----------------------------
-        public override void Fire()
+        public override void TryFire()
         {
-            weaponBehaviour.Fire();
+            weaponBehaviour.TryFire();
         }
         public override void Reload()
         {

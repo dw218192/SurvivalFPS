@@ -62,7 +62,7 @@ namespace SurvivalFPS.Core.FPS
 
                     if (canFire && Input.GetButton("Fire1"))
                     {
-                        m_CurrentWeapon.Fire();
+                        m_CurrentWeapon.TryFire();
                         return;
                     }
 

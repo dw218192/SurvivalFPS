@@ -9,6 +9,7 @@ namespace SurvivalFPS.Core
     {
         private AudioSource m_AudioSource;
         private IEnumerator m_PlayInSequenceRoutine;
+        private IEnumerator m_PlayWhileRoutine;
 
         void Awake()
         {
@@ -83,7 +84,7 @@ namespace SurvivalFPS.Core
         /// play a random clip from an array of clips, while the condition is true
         /// </summary>
         /// <param name="clips">clips to select from</param>
-        public void PlayRandom(Func<bool> predicate, params AudioClip[] clips)
+        public void PlayRandom (Func<bool> predicate, params AudioClip[] clips)
         {
             if (clips.Length > 0)
             {
@@ -99,7 +100,9 @@ namespace SurvivalFPS.Core
         public void PlayWhile (AudioClip clip, Func<bool> predicate)
         {
             Play(clip, false);
-            StartCoroutine(_PlayWhileRoutine(predicate));
+
+            m_PlayWhileRoutine = _PlayWhileRoutine(predicate);
+            StartCoroutine(m_PlayWhileRoutine);
         }
 
         public void PlayDelayed (AudioClip clip, float time)
@@ -137,6 +140,8 @@ namespace SurvivalFPS.Core
 
                 yield return null;
             }
+
+            m_PlayWhileRoutine = null;
         }
     }
 }

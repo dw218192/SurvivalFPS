@@ -46,6 +46,8 @@ namespace SurvivalFPS.AI
     /// <summary>
     /// the brain of the AI in this game. It should be in the AI entity layer that can only collide with what is in either the AI entity trigger or AI trigger layer
     /// </summary>
+    
+    [SelectionBase]
     public abstract class AIStateMachine : MonoBehaviour
     {
         //----public fields set by child states each frame----

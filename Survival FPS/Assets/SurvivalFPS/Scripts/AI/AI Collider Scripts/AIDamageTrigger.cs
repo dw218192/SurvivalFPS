@@ -25,19 +25,24 @@ namespace SurvivalFPS.AI
                     float damageAmount = GameSceneManager.Instance.GetAnimatorFloatValue(m_Owner, animatorDamageParameter);
                     if(damageAmount > 0.0f)
                     {
-                        ParticleSystem bloodEffect = GameSceneManager.Instance.bloodParticleSystem;
-                        if (bloodEffect)
-                        {
-                            bloodEffect.transform.position = transform.position;
-                            bloodEffect.transform.rotation = transform.rotation;
-
-                            var mainModule = bloodEffect.main;
-                            mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
-
-                            bloodEffect.Emit(m_BloodParticleBurstAmount);
-                        }
+                        PlayBloodParticalEffect();
                     }
                 }
+            }
+        }
+
+        private void PlayBloodParticalEffect()
+        {
+            ParticleSystem bloodEffect = GameSceneManager.Instance.bloodParticleSystem;
+            if (bloodEffect)
+            {
+                bloodEffect.transform.position = transform.position;
+                bloodEffect.transform.rotation = transform.rotation;
+
+                var mainModule = bloodEffect.main;
+                mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
+
+                bloodEffect.Emit(m_BloodParticleBurstAmount);
             }
         }
     }

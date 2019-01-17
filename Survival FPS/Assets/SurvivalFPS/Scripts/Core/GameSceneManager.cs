@@ -1,11 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SurvivalFPS.Core;
+using SurvivalFPS.Core.FPS;
 using SurvivalFPS.AI;
 using SurvivalFPS.Utility;
 
 namespace SurvivalFPS
 {
+    //TODO
+    public class PlayerInfo
+    {
+        public Collider collider = null;
+        public PlayerManager playerManager = null;
+        public FirstPersonController playerMotionController = null;
+        public PlayerAnimatorManager playerAnimatorManager = null;
+        public AudioManager playerAudioManager = null;
+    }
+
     /// <summary>
     /// a singleton manager that allows for fast lookup of AIs' colliders in the scene
     /// and other general information

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BaseAccuracy: 95
   m_AccuracyRecoveryRate: 50
-  m_AccuracyDropPerShot: 1
+  m_AccuracyDropPerShot: 7

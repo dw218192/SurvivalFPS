@@ -35,7 +35,7 @@ namespace SurvivalFPS.Core.Weapon
 
         protected IEnumerator m_ReloadingRoutine = null;
 
-        public abstract void Fire();
+        public abstract void TryFire();
         public abstract void Reload();
         public virtual void Recoil() { }
         public virtual void SpitShells() { }
@@ -70,12 +70,12 @@ namespace SurvivalFPS.Core.Weapon
         protected int m_ShotsFired = 0;
 
         //timers
-        protected float m_FireTimer = 0.0f;
-        protected float m_TimeSinceLastFire = 0.0f;
-        protected bool m_StartElapseTimer = false;
+        protected float m_FireTimer = 0.0f; //a timer that's usually used to determine whether the weapon can fire
+        protected float m_DryFireTimer = 0.0f; //a timer for playing the dry fire sounds
+        protected float m_TimeSinceLastFire = 0.0f; //how much time has elasped since the last time this weapon fired?
+        private bool m_StartElapseTimer = false;
 
         //crosshair
-        private float m_Inaccuracy = 0.0f;
         private Vector2[] m_CurCrossHairPositions;
         private float m_ScreenMaxSpreadDist = 0.0f;
         private float m_CrossHairSpeed = 100.0f;
@@ -107,8 +107,8 @@ namespace SurvivalFPS.Core.Weapon
             m_CurrentAccuracy = m_CurrentAccuracyData.baseAccuracy;
 
             //crosshair initialization
-            m_CrossHairWidth = Screen.width / 200;
-            m_CrossHairLength = Screen.width / 100;
+            m_CrossHairWidth = Screen.width / 400;
+            m_CrossHairLength = Screen.height / 80;
 
             m_CurCrossHairPositions = new Vector2[]
             {
@@ -137,6 +137,7 @@ namespace SurvivalFPS.Core.Weapon
         {
             //timer increment
             m_FireTimer += Time.deltaTime;
+            m_DryFireTimer += Time.deltaTime;
 
             if (m_StartElapseTimer)
             {
@@ -147,7 +148,17 @@ namespace SurvivalFPS.Core.Weapon
             m_CurrentRecoilData = GetRecoilData();
             m_CurrentAccuracyData = GetAccuracyData();
 
+
             AccuracyRecovery();
+        }
+
+        public override void TryFire()
+        {
+            if (m_CurrentAmmo <= 0)
+            {
+                DryFire();
+                return;
+            }
         }
 
         protected void LateUpdate()
@@ -159,55 +170,48 @@ namespace SurvivalFPS.Core.Weapon
             }
         }
 
-        public override void Fire()
+        /// <summary>
+        /// performs raycast, fires a single shot, plays corresponding effects
+        /// and resets FireTimer and TimeSinceLastFire timer
+        /// </summary>
+        protected virtual void Fire()
         {
-            if (m_FireTimer >= m_WeaponConfig.fireRate || m_ShotsFired == 0)
+            m_StartElapseTimer = true;
+            m_IsFiring = true;
+
+
+            //play fire animation
+            m_AnimatorManager.SetBool(GameSceneManager.Instance.fireParameterNameHash, true);
+            m_AnimatorManager.Play(GameSceneManager.Instance.fireStateNameHash, -1);
+
+            m_AudioManager.PlayRandom(m_WeaponConfig.fireSounds);
+
+            m_CurrentAmmo--;
+            m_ShotsFired = m_WeaponConfig.ammoCapacity - m_CurrentAmmo;
+
+            PerformRayCast();
+
+            if (m_WeaponConfig.muzzleEffect)
             {
-                m_StartElapseTimer = true;
-                m_IsFiring = true;
-
-                if (m_CurrentAmmo <= 0)
-                {
-                    m_AudioManager.PlayRandom(m_WeaponConfig.dryFireSounds);
-
-                    //reset timers
-                    m_TimeSinceLastFire = 0.0f;
-                    m_FireTimer = 0.0f;
-                    return;
-                }
-
-                //play fire animation
-                m_AnimatorManager.SetBool(GameSceneManager.Instance.fireParameterNameHash, true);
-                m_AnimatorManager.Play(GameSceneManager.Instance.fireStateNameHash, -1);
-
-                m_AudioManager.PlayRandom(m_WeaponConfig.fireSounds);
-
-                m_CurrentAmmo--;
-                m_ShotsFired = m_WeaponConfig.ammoCapacity - m_CurrentAmmo;
-
-                PerformRayCast();
-
-                if (m_WeaponConfig.muzzleEffect)
-                {
-                    PlayMuzzleEffect();
-                }
-
-                if (m_WeaponConfig.recoilEnabled)
-                {
-                    Recoil();
-                }
-
-                if (m_WeaponConfig.spitShells)
-                {
-                    SpitShells();
-                }
-
-                //reset timers
-                m_TimeSinceLastFire = 0.0f;
-                m_FireTimer = 0.0f;
+                PlayMuzzleEffect();
             }
+
+            if (m_WeaponConfig.recoilEnabled)
+            {
+                Recoil();
+            }
+
+            if (m_WeaponConfig.spitShells)
+            {
+                SpitShells();
+            }
+
+            //reset timers
+            m_TimeSinceLastFire = 0.0f;
+            m_FireTimer = 0.0f;
         }
 
+        #region Reload
         public override void Reload()
         {
             //if we can reload
@@ -290,6 +294,10 @@ namespace SurvivalFPS.Core.Weapon
                 m_AnimatorManager.SetBool(GameSceneManager.Instance.reloadParameterHash, false);
             }
         }
+        #endregion
+
+        #region Fire Helper Functions
+        public abstract void DryFire();
 
         public override void Recoil()
         {
@@ -415,14 +423,15 @@ namespace SurvivalFPS.Core.Weapon
         protected void PerformRayCast()
         {
             Camera cam = Camera.main;
-            // Calculate accuracy for this shot
-            m_Inaccuracy = (100.0f - m_CurrentAccuracy) / 1000.0f;
+
+            // Calculate inaccuracy
+            float inaccuracy = (100.0f - m_CurrentAccuracy) / 1000.0f;
 
             //local space
             Vector3 screenStartPoint = new Vector3(Screen.width / 2, Screen.height / 2, 0.5f);
             float localOffsetX, localOffsetY;
-            localOffsetX = UnityEngine.Random.Range(-m_Inaccuracy, m_Inaccuracy);
-            localOffsetY = UnityEngine.Random.Range(-m_Inaccuracy, m_Inaccuracy);
+            localOffsetX = UnityEngine.Random.Range(-inaccuracy, inaccuracy);
+            localOffsetY = UnityEngine.Random.Range(-inaccuracy, inaccuracy);
             Vector3 localDir = new Vector3(localOffsetX, localOffsetY, 1.0f);
 
             //calculate ray start and direction
@@ -465,11 +474,11 @@ namespace SurvivalFPS.Core.Weapon
                 m_MuzzleFlash.Emit(1);
             }
         }
+        #endregion
 
         protected void AccuracyRecovery()
         {
             m_CurrentAccuracy = Mathf.MoveTowards(m_CurrentAccuracy, m_CurrentAccuracyData.baseAccuracy, m_CurrentAccuracyData.accuracyRecoveryRate * Time.deltaTime);
-            m_Inaccuracy = Mathf.MoveTowards(m_Inaccuracy, 0.0f, 0.001f * m_CurrentAccuracyData.accuracyRecoveryRate * Time.deltaTime);
         }
 
         //callbacks
@@ -549,7 +558,7 @@ namespace SurvivalFPS.Core.Weapon
             //cross-hair spread range calculation
             //if the local x offset is greater, 
             //imagine deflect the ray only by this offset, and use this to calculate the boundary of the crosshair
-            Vector3 localMaxSpreadDir = new Vector3(-m_Inaccuracy, 0.0f, 0.5f);
+            Vector3 localMaxSpreadDir = new Vector3(- (100.0f - m_CurrentAccuracy) / 1000.0f, 0.0f, 0.5f);
             Vector3 maxSpreadDir = cam.transform.TransformDirection(localMaxSpreadDir);
 
             Vector2 screenMaxSpread = cam.WorldToScreenPoint(startPoint + maxSpreadDir.normalized * m_WeaponConfig.range);

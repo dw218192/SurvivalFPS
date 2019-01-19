@@ -6,6 +6,10 @@ using System;
 
 namespace SurvivalFPS.Core.FPS
 {
+    /// <summary>
+    /// a controller that should be attached to whoever can use a weapon
+    /// </summary>
+    [DisallowMultipleComponent]
     public class PlayerWeaponController : MonoBehaviour
     {
         [SerializeField] private List<WeaponConfig> m_Weapons;
@@ -18,7 +22,11 @@ namespace SurvivalFPS.Core.FPS
 
         //internal variables
         private WeaponConfig m_CurrentWeapon;
-        private FirstPersonController m_PlayerController;
+
+        private PlayerManager m_PlayerManager;
+        private FirstPersonController m_FPSController;
+        private PlayerAnimatorManager m_PlayerAnimManager;
+
         private float m_EquipTimer;
 
         private event Action<WeaponConfig> OnWeaponChanged;
@@ -27,16 +35,22 @@ namespace SurvivalFPS.Core.FPS
             OnWeaponChanged += action;
         }
 
+        //warning: this script needs to be executed after PlayerManager!
         private void Start()
         {
-            m_PlayerController = gameObject.GetComponent<FirstPersonController>();
+            m_PlayerManager = gameObject.GetComponent<PlayerManager>();
+            int key = m_PlayerManager.informationKey;
+            PlayerInfo info = GameSceneManager.Instance.GetPlayerInfo(key);
 
-            m_PlayerController.playerAnimatorManager.AddAnimator(m_HandAnimator);
-            m_PlayerController.playerAnimatorManager.AddAnimator(m_ArmAnimator);
+            m_PlayerAnimManager = info.playerAnimatorManager;
+            m_FPSController = info.playerMotionController;
+
+            m_PlayerAnimManager.AddAnimator(m_HandAnimator);
+            m_PlayerAnimManager.AddAnimator(m_ArmAnimator);
 
             foreach (WeaponConfig weapon in m_Weapons)
             {
-                weapon.Initialize(m_PlayerController);
+                weapon.Initialize(m_PlayerManager);
                 weapon.isActive = false;
             }
 
@@ -58,7 +72,7 @@ namespace SurvivalFPS.Core.FPS
                 //wait for the weapon to be fully equipped
                 if(m_EquipTimer <= 0.0f)
                 {
-                    bool canFire = !m_PlayerController.running && !m_CurrentWeapon.isReloading;
+                    bool canFire = !m_FPSController.running && !m_CurrentWeapon.isReloading;
 
                     if (canFire && Input.GetButton("Fire1"))
                     {

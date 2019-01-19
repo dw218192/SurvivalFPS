@@ -70,7 +70,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010031932522604}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.1
   m_Height: 1
@@ -88,7 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16930186aae33354e831e69b4210d2f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DamagePerSecond: 0
   m_BloodParticleBurstAmount: 10
 --- !u!1 &1011483395205212
 GameObject:
@@ -855,6 +854,7 @@ MonoBehaviour:
   m_LeftHandAttackTrigger: {fileID: 114910447949188226}
   m_MouthTrigger: {fileID: 114262457634779516}
   m_StoppingDistance: 1
+  m_DamagePerSec: 50
   m_Fov: 225
   m_Sight: 1
   m_Hearing: 0.663
@@ -966,7 +966,7 @@ MonoBehaviour:
   m_LookAtWeight: 10
   m_LookAtWeightChangeRate: 50
   m_LookAtThreshold: 15
-  m_StoppingDistance: 2
+  m_StoppingDistance: 1.5
 --- !u!1 &1180175083140146
 GameObject:
   m_ObjectHideFlags: 0
@@ -3180,7 +3180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16930186aae33354e831e69b4210d2f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DamagePerSecond: 0
   m_BloodParticleBurstAmount: 10
 --- !u!1 &1770273656560954
 GameObject:
@@ -3396,7 +3395,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16930186aae33354e831e69b4210d2f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DamagePerSecond: 0
   m_BloodParticleBurstAmount: 10
 --- !u!1 &1787822120760572
 GameObject:

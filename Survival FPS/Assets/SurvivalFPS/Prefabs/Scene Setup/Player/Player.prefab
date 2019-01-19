@@ -1789,6 +1789,7 @@ GameObject:
   - component: {fileID: 4020392625365346}
   - component: {fileID: 20528234201305626}
   - component: {fileID: 81328339871315324}
+  - component: {fileID: 1339698019661551458}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -1862,6 +1863,26 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1400197927372032}
   m_Enabled: 1
+--- !u!114 &1339698019661551458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400197927372032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29d630dec60d571439de0072d60d605f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BloodAmount: 0
+  m_MinBloodAmount: 0
+  m_Distortion: 0.2
+  m_AutoFade: 1
+  m_FadeSpeed: 0.05
+  m_Shader: {fileID: 4800000, guid: d4110885bfd2ffa429378b412bd584ab, type: 3}
+  m_BloodTexture: {fileID: 2800000, guid: 2a349abc39cf0444da50d894713ec52d, type: 3}
+  m_BloodNormalMap: {fileID: 2800000, guid: 39eabd6090556fc4b9bd39390d10a2c3, type: 3}
 --- !u!1 &1402898040549430
 GameObject:
   m_ObjectHideFlags: 0
@@ -2957,6 +2978,7 @@ GameObject:
   - component: {fileID: 4500733459822448}
   - component: {fileID: 54387611188371462}
   - component: {fileID: 136521220748516844}
+  - component: {fileID: 8649547063035078596}
   - component: {fileID: 114597288940846152}
   - component: {fileID: 114422897003315320}
   - component: {fileID: 114903962944986744}
@@ -3015,6 +3037,25 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8649547063035078596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676563148279492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f95a44e7be799458a8fcd30d8fca34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_WeaponSocket: {fileID: 4617668785894194}
+  m_MeleeTrigger: {fileID: 136209381165922076}
+  m_CameraBloodEffect: {fileID: 1339698019661551458}
+  m_Camera: {fileID: 20528234201305626}
+  m_PlayerAttributeSettings:
+    maxHealth: 100
+  m_Health: 0
 --- !u!114 &114597288940846152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3030,7 +3071,6 @@ MonoBehaviour:
   m_Flashlight: {fileID: 114476769068625424}
   m_Camera: {fileID: 20528234201305626}
   m_ArmAndHand: {fileID: 4947743558071286}
-  m_WeaponSocket: {fileID: 4617668785894194}
   m_AnimatorManager: {fileID: 114893468735563778}
   m_AudioManager: {fileID: 6304956677558082997}
   m_MovementSetting:
@@ -3223,7 +3263,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weapons:
   - {fileID: 11400000, guid: f40443b2cdbe7204eb9259bfdf25d2f4, type: 2}
-  - {fileID: 11400000, guid: e64f59b6dda469741853019c9ff084e6, type: 2}
   m_AutoReload: 1
   m_HandAnimator: {fileID: 95010429257859168}
   m_ArmAnimator: {fileID: 95659326263080106}

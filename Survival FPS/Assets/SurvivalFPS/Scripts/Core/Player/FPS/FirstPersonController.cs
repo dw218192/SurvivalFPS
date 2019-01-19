@@ -48,7 +48,8 @@ namespace SurvivalFPS.Core.FPS
                     CurrentTargetSpeed = ForwardSpeed;
                 }
 
-                if (Input.GetButton("Run"))
+                //only allow forward run
+                if (Input.GetButton("Run") && input.y > 0)
                 {
                     CurrentTargetSpeed *= RunMultiplier;
                     m_Running = true;
@@ -90,7 +91,7 @@ namespace SurvivalFPS.Core.FPS
         [SerializeField] private Flashlight m_Flashlight;
         [SerializeField] private Camera m_Camera;
         [SerializeField] private Transform m_ArmAndHand;
-        [SerializeField] private Transform m_WeaponSocket;
+
         [SerializeField] private PlayerAnimatorManager m_AnimatorManager;
         [SerializeField] private AudioManager m_AudioManager;
 
@@ -133,7 +134,6 @@ namespace SurvivalFPS.Core.FPS
         public bool running { get { return m_MovementSetting.Running; } }
         public bool crouching { get { return m_MovementSetting.Crouching; } }
         //other properties
-        public Transform weaponSocket { get { return m_WeaponSocket; } }
         public PlayerAnimatorManager playerAnimatorManager { get { return m_AnimatorManager; } }
         public AudioManager audioManager { get { return m_AudioManager; } }
         public Vector3 punchAngle { get { return m_PunchAngle; } set { m_PunchAngle = value; } }
@@ -167,6 +167,8 @@ namespace SurvivalFPS.Core.FPS
             m_LocalSpaceWeaponPos = m_ArmAndHand.transform.localPosition;
             m_PrevState = m_State;
         }
+
+        //warning: this script needs to be executed after PlayerManager!
 
 
         private void Update()

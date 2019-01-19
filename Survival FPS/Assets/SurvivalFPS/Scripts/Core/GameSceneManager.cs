@@ -12,6 +12,8 @@ namespace SurvivalFPS
     public class PlayerInfo
     {
         public Collider collider = null;
+        public CapsuleCollider meleeTrigger = null;
+        public Camera playerCamera = null;
         public PlayerManager playerManager = null;
         public FirstPersonController playerMotionController = null;
         public PlayerAnimatorManager playerAnimatorManager = null;
@@ -27,6 +29,8 @@ namespace SurvivalFPS
         [Header("Scene Special Effects")]
         [SerializeField] private ParticleSystem m_BloodParticleSystem;
         [SerializeField] private ParticleSystem m_MuzzleFlashParticleSystem;
+        private ParticleSystem m_BloodParticleSystem_Instance;
+        private ParticleSystem m_MuzzleFlashParticleSystem_Instance;
 
         [Header("Zombie Animation Controller Parameters")]
         [SerializeField] private string m_RightHandAttackParameterName;
@@ -43,16 +47,20 @@ namespace SurvivalFPS
         [SerializeField] private string m_FireStateName;
 
         //hashes
+        //Zombie Animation Controller Parameters
         private int m_RightHandAttackParameterName_Hash = -1;
         private int m_LeftHandAttackParameterName_Hash = -1;
         private int m_MouthAttackParameterName_Hash = -1;
 
+        //Player Animation Controller State Names
         private int m_FeedingStateName_Hash = -1;
 
+        //Player Animation Controller Parameters
         private int m_ReloadParameterName_Hash = -1;
         private int m_ReloadCurveParameterName_Hash = -1;
         private int m_FireParameterName_Hash = -1;
 
+        //Player Animation Controller State Names
         private int m_ReloadStateName_Hash = -1;
         private int m_FireStateName_Hash = -1;
 
@@ -63,12 +71,12 @@ namespace SurvivalFPS
         private int m_ShootableLayerMask = -1;
 
         private Dictionary<int, AIStateMachine> m_StateMachines = new Dictionary<int, AIStateMachine>();
-
+        private Dictionary<int, PlayerInfo> m_PlayerInfos = new Dictionary<int, PlayerInfo>();
 
         //public properties
         //special effects
-        public ParticleSystem bloodParticleSystem { get { return m_BloodParticleSystem; } }
-        public ParticleSystem muzzleFlashParticleSystem { get { return m_MuzzleFlashParticleSystem; } }
+        public ParticleSystem bloodParticleSystem { get { return m_BloodParticleSystem_Instance; } }
+        public ParticleSystem muzzleFlashParticleSystem { get { return m_MuzzleFlashParticleSystem_Instance; } }
         //layer information
         public int zombieBodyPartLayer { get { return m_ZombieBodyPartLayer; } }
         public int playerLayer { get { return m_PlayerLayer; } }
@@ -94,6 +102,19 @@ namespace SurvivalFPS
         protected override void Awake()
         {
             base.Awake();
+
+            InstantiateEffects();
+            ConvertStringsToHashes();
+        }
+
+        private void InstantiateEffects()
+        {
+            m_BloodParticleSystem_Instance = Instantiate(m_BloodParticleSystem);
+            m_MuzzleFlashParticleSystem_Instance = Instantiate(m_MuzzleFlashParticleSystem);
+        }
+
+        private void ConvertStringsToHashes()
+        {
             m_PlayerLayer = LayerMask.NameToLayer("Player");
             m_ZombieBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
             m_ObstaclesLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
@@ -101,7 +122,7 @@ namespace SurvivalFPS
 
             m_RightHandAttackParameterName_Hash = Animator.StringToHash(m_RightHandAttackParameterName);
             m_LeftHandAttackParameterName_Hash = Animator.StringToHash(m_LeftHandAttackParameterName);
-            m_MouthAttackParameterName_Hash =  Animator.StringToHash(m_MouthAttackParameterName);
+            m_MouthAttackParameterName_Hash = Animator.StringToHash(m_MouthAttackParameterName);
 
             m_ReloadParameterName_Hash = Animator.StringToHash(m_ReloadParameterName);
             m_ReloadCurveParameterName_Hash = Animator.StringToHash(m_ReloadCurveParameterName);
@@ -111,14 +132,19 @@ namespace SurvivalFPS
             m_FireStateName_Hash = Animator.StringToHash(m_FireStateName);
         }
 
+#region Game Scene Information Registration Functions
+        // these functions should be called from other scripts that wish to register
+        // themselves in the game scene manager
+
+
         /// <summary>
-        /// registers an AI's collider in the scene; the key is the InstanceID of that collider, and the statemachine is its owner (the AI)
+        /// Registers an AI's collider in the scene; the key is the InstanceID of that collider, and the statemachine is its owner (the AI)
         /// </summary>
         /// <param name="key"> the InstanceID of the collider </param>
         /// <param name="stateMachine"> the AI that owns the collider </param>
         public void RegisterAIStateMachineByColliderID(int key, AIStateMachine stateMachine)
         {
-            if(!m_StateMachines.ContainsKey(key))
+            if (!m_StateMachines.ContainsKey(key))
             {
                 m_StateMachines[key] = stateMachine;
             }
@@ -141,11 +167,40 @@ namespace SurvivalFPS
             }
         }
 
+        /// <summary>
+        /// Registers the player.
+        /// </summary>
+        /// <param name="key"> the InstanceID of the player collider </param>
+        /// <param name="playerInfo">Player.</param>
+        public void RegisterPlayer(int key, PlayerInfo playerInfo)
+        {
+            if(!m_PlayerInfos.ContainsKey(key))
+            {
+                m_PlayerInfos[key] = playerInfo;
+            }
+        }
+
+        /// <summary>
+        /// Gets the player info.
+        /// </summary>
+        /// <returns>The player info.</returns>
+        /// <param name="key">Key.</param>
+        public PlayerInfo GetPlayerInfo(int key)
+        {
+            PlayerInfo info = null;
+            if (m_PlayerInfos.TryGetValue(key, out info))
+            {
+                return info;
+            }
+
+            return null;
+        }
+
         public float GetAnimatorFloatValue(AIStateMachine stateMachine, string name)
         {
             float val = 0.0f;
 
-            if(stateMachine.animator)
+            if (stateMachine.animator)
             {
                 if (name.Equals(m_RightHandAttackParameterName))
                 {
@@ -167,6 +222,7 @@ namespace SurvivalFPS
 
             return val;
         }
+#endregion
     }
 }
 

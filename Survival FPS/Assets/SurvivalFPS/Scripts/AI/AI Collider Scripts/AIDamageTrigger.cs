@@ -7,7 +7,6 @@ namespace SurvivalFPS.AI
     [RequireComponent(typeof(Collider))]
     public class AIDamageTrigger : MonoBehaviour
     {
-        [SerializeField] private float m_DamagePerSecond = 50.0f;
         [SerializeField] private int m_BloodParticleBurstAmount = 10;
 
         private AIStateMachine m_Owner;
@@ -18,7 +17,10 @@ namespace SurvivalFPS.AI
 
         private void OnTriggerStay(Collider other)
         {
-            if (other.gameObject.layer == GameSceneManager.Instance.playerLayer)
+            //if (other.gameObject.layer == GameSceneManager.Instance.playerLayer)
+
+            IAIDamageable aIDamageable = other.gameObject.GetComponent(typeof(IAIDamageable)) as IAIDamageable;
+            if(aIDamageable != null)
             {
                 if(m_Owner)
                 {
@@ -26,6 +28,7 @@ namespace SurvivalFPS.AI
                     if(damageAmount > 0.0f)
                     {
                         PlayBloodParticalEffect();
+                        aIDamageable.TakeDamage(m_Owner.damagePerSec);
                     }
                 }
             }

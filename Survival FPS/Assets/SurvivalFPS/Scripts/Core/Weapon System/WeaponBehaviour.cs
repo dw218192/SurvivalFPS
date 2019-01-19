@@ -14,20 +14,23 @@ namespace SurvivalFPS.Core.Weapon
         protected int m_CurrentAmmo = 0;
 
         //set by config
-        protected FirstPersonController m_Player;
+        protected FirstPersonController m_FPSController;
         protected Animator m_Animator; //animator of this weapon only
         protected PlayerAnimatorManager m_AnimatorManager; //animator collection of the player
         protected AudioManager m_AudioManager; //audio manager of the player
+        protected Camera m_PlayerCamera; //central manager of the player
 
         //states
         protected bool m_IsFiring;
         protected bool m_IsReloading;
 
         //public properties
-        public FirstPersonController player { set { m_Player = value; } }
+        //set by config
+        public FirstPersonController FPSController { set { m_FPSController = value; } }
         public Animator animator { set { m_Animator = value; } }
         public AudioManager audioManager { set { m_AudioManager = value; }}
         public PlayerAnimatorManager animatorManager { get { return m_AnimatorManager; } set { m_AnimatorManager = value; } }
+        public Camera playerCamera { set { m_PlayerCamera = value; }}
 
         public int currentAmmo { get { return m_CurrentAmmo; } }
         public bool isFiring { get { return m_IsFiring; } }
@@ -77,7 +80,7 @@ namespace SurvivalFPS.Core.Weapon
 
         //crosshair
         private Vector2[] m_CurCrossHairPositions;
-        private float m_ScreenMaxSpreadDist = 0.0f;
+        private float m_ScreenMaxSpreadDist = -1.0f;
         private float m_CrossHairSpeed = 100.0f;
         private int m_CrossHairWidth;
         private int m_CrossHairLength;
@@ -92,7 +95,7 @@ namespace SurvivalFPS.Core.Weapon
             m_CurrentAmmo = m_WeaponConfig.ammoCapacity;
 
             //register events
-            PlayerWeaponController weaponController = m_Player.GetComponent<PlayerWeaponController>();
+            PlayerWeaponController weaponController = m_FPSController.GetComponent<PlayerWeaponController>();
             if (weaponController) weaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
         
             //general settings of the muzzle flash particle effect
@@ -109,14 +112,7 @@ namespace SurvivalFPS.Core.Weapon
             //crosshair initialization
             m_CrossHairWidth = Screen.width / 400;
             m_CrossHairLength = Screen.height / 80;
-
-            m_CurCrossHairPositions = new Vector2[]
-            {
-                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2 - m_CrossHairLength),
-                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2),
-                new Vector2Int(Screen.width / 2 - m_CrossHairLength, Screen.height / 2 - m_CrossHairWidth / 2),
-                new Vector2Int(Screen.width / 2, Screen.height / 2 - m_CrossHairWidth / 2),
-            };
+            m_CurCrossHairPositions = CalculateBaseCrossHairPos();
         }
 
         private void OnEnable()
@@ -383,17 +379,17 @@ namespace SurvivalFPS.Core.Weapon
                 }
             }
 
-            m_Player.punchAngle = angle;
+            m_FPSController.punchAngle = angle;
         }
 
         private RecoilData GetRecoilData()
         {
-            if (m_Player.crouching)
+            if (m_FPSController.crouching)
             {
                 return m_WeaponConfig.recoilSettingsWhenCrouching;
             }
 
-            if (Mathf.Approximately(m_Player.XZVelocity.magnitude, 0.0f))
+            if (Mathf.Approximately(m_FPSController.XZVelocity.magnitude, 0.0f))
             {
                 return m_WeaponConfig.recoilSettingsWhenStill;
             }
@@ -405,12 +401,12 @@ namespace SurvivalFPS.Core.Weapon
 
         private AccuracyData GetAccuracyData()
         {
-            if (m_Player.crouching)
+            if (m_FPSController.crouching)
             {
                 return m_WeaponConfig.accuracySettingsWhenCrouching;
             }
 
-            if (Mathf.Approximately(m_Player.XZVelocity.magnitude, 0.0f))
+            if (Mathf.Approximately(m_FPSController.XZVelocity.magnitude, 0.0f))
             {
                 return m_WeaponConfig.accuracySettingsWhenStill;
             }
@@ -422,8 +418,6 @@ namespace SurvivalFPS.Core.Weapon
 
         protected void PerformRayCast()
         {
-            Camera cam = Camera.main;
-
             // Calculate inaccuracy
             float inaccuracy = (100.0f - m_CurrentAccuracy) / 1000.0f;
 
@@ -435,8 +429,8 @@ namespace SurvivalFPS.Core.Weapon
             Vector3 localDir = new Vector3(localOffsetX, localOffsetY, 1.0f);
 
             //calculate ray start and direction
-            Vector3 startPoint = cam.ScreenToWorldPoint(screenStartPoint);
-            Vector3 direction = cam.transform.TransformDirection(localDir);
+            Vector3 startPoint = m_PlayerCamera.ScreenToWorldPoint(screenStartPoint);
+            Vector3 direction = m_PlayerCamera.transform.TransformDirection(localDir);
 
             m_CurrentAccuracy -= m_CurrentAccuracyData.accuracyDropPerShot;
 
@@ -508,33 +502,26 @@ namespace SurvivalFPS.Core.Weapon
         {
             CalculateSpread();
 
-            Vector2Int size1 = new Vector2Int(m_CrossHairWidth, m_CrossHairLength);
-            Vector2Int size2 = new Vector2Int(m_CrossHairLength, m_CrossHairWidth);
+            Vector2[] crossHairBasePositions = CalculateBaseCrossHairPos();
 
-            Vector2Int[] crossHairBasePositions =
+            if(m_ScreenMaxSpreadDist > 0)
             {
-                //up
-                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2 - m_CrossHairLength),
-                //down
-                new Vector2Int(Screen.width / 2 - m_CrossHairWidth / 2, Screen.height / 2),
-                //left
-                new Vector2Int(Screen.width / 2 - m_CrossHairLength, Screen.height / 2 - m_CrossHairWidth / 2),
-                //right
-                new Vector2Int(Screen.width / 2, Screen.height / 2 - m_CrossHairWidth / 2),
-            };
+                Vector2[] crossHairTargetPositions =
+                {
+                    crossHairBasePositions[0] + m_ScreenMaxSpreadDist * new Vector2 (0,-1),
+                    crossHairBasePositions[1] + m_ScreenMaxSpreadDist * new Vector2 (0,1),
+                    crossHairBasePositions[2] + m_ScreenMaxSpreadDist * new Vector2 (-1,0),
+                    crossHairBasePositions[3] + m_ScreenMaxSpreadDist * new Vector2 (1,0)
+                };
 
-            Vector2[] crossHairTargetPositions =
-            {
-                crossHairBasePositions[0] + m_ScreenMaxSpreadDist * new Vector2 (0, -1),
-                crossHairBasePositions[1] + m_ScreenMaxSpreadDist * new Vector2 (0,1),
-                crossHairBasePositions[2] + m_ScreenMaxSpreadDist * new Vector2 (-1,0),
-                crossHairBasePositions[3] + m_ScreenMaxSpreadDist * new Vector2 (1,0),
-            };
+                m_CurCrossHairPositions[0] = Vector2.MoveTowards(m_CurCrossHairPositions[0], crossHairTargetPositions[0], m_CrossHairSpeed * Time.deltaTime);
+                m_CurCrossHairPositions[1] = Vector2.MoveTowards(m_CurCrossHairPositions[1], crossHairTargetPositions[1], m_CrossHairSpeed * Time.deltaTime);
+                m_CurCrossHairPositions[2] = Vector2.MoveTowards(m_CurCrossHairPositions[2], crossHairTargetPositions[2], m_CrossHairSpeed * Time.deltaTime);
+                m_CurCrossHairPositions[3] = Vector2.MoveTowards(m_CurCrossHairPositions[3], crossHairTargetPositions[3], m_CrossHairSpeed * Time.deltaTime);
+            }
 
-            m_CurCrossHairPositions[0] = Vector2.MoveTowards(m_CurCrossHairPositions[0], crossHairTargetPositions[0], m_CrossHairSpeed * Time.deltaTime);
-            m_CurCrossHairPositions[1] = Vector2.MoveTowards(m_CurCrossHairPositions[1], crossHairTargetPositions[1], m_CrossHairSpeed * Time.deltaTime);
-            m_CurCrossHairPositions[2] = Vector2.MoveTowards(m_CurCrossHairPositions[2], crossHairTargetPositions[2], m_CrossHairSpeed * Time.deltaTime);
-            m_CurCrossHairPositions[3] = Vector2.MoveTowards(m_CurCrossHairPositions[3], crossHairTargetPositions[3], m_CrossHairSpeed * Time.deltaTime);
+            Vector2 size1 = new Vector2(m_CrossHairWidth, m_CrossHairLength);
+            Vector2 size2 = new Vector2(m_CrossHairLength, m_CrossHairWidth);
 
             Rect rect1 = new Rect(m_CurCrossHairPositions[0], size1);
             Rect rect2 = new Rect(m_CurCrossHairPositions[1], size1);
@@ -549,20 +536,46 @@ namespace SurvivalFPS.Core.Weapon
             GUI.DrawTexture(rect4, texture);
         }
 
+        //crosshair helpers
         private void CalculateSpread()
         {
-            Camera cam = Camera.main;
+            if (!m_PlayerCamera)
+            {
+                Debug.LogWarning("WeaponBehavior - player does not have a camera!");
+                return;
+            }
+
             Vector3 screenStartPoint = new Vector3(Screen.width / 2, Screen.height / 2, 0.5f);
-            Vector3 startPoint = cam.ScreenToWorldPoint(screenStartPoint);
+            Vector3 startPoint = m_PlayerCamera.ScreenToWorldPoint(screenStartPoint);
 
             //cross-hair spread range calculation
             //if the local x offset is greater, 
             //imagine deflect the ray only by this offset, and use this to calculate the boundary of the crosshair
             Vector3 localMaxSpreadDir = new Vector3(- (100.0f - m_CurrentAccuracy) / 1000.0f, 0.0f, 0.5f);
-            Vector3 maxSpreadDir = cam.transform.TransformDirection(localMaxSpreadDir);
+            Vector3 maxSpreadDir = m_PlayerCamera.transform.TransformDirection(localMaxSpreadDir);
 
-            Vector2 screenMaxSpread = cam.WorldToScreenPoint(startPoint + maxSpreadDir.normalized * m_WeaponConfig.range);
+            Vector2 screenMaxSpread = m_PlayerCamera.WorldToScreenPoint(startPoint + maxSpreadDir.normalized * m_WeaponConfig.range);
             m_ScreenMaxSpreadDist = (screenMaxSpread - (Vector2)screenStartPoint).magnitude;
+        }
+
+        private Vector2[] CalculateBaseCrossHairPos()
+        {
+            int halfScreenWidth = Screen.width / 2, halfScreenHeight = Screen.height / 2;
+            float halfCrosshairWidth = m_CrossHairWidth / 2.0f, halfCrosshairLength = m_CrossHairLength / 2.0f;
+
+            Vector2[] crossHairBasePositions =
+            {
+                //up
+                new Vector2(halfScreenWidth - halfCrosshairWidth, halfScreenHeight - m_CrossHairLength),
+                //down
+                new Vector2(halfScreenWidth - halfCrosshairWidth, halfScreenHeight                     ),
+                //left
+                new Vector2(halfScreenWidth - m_CrossHairLength , halfScreenHeight - halfCrosshairWidth),
+                //right
+                new Vector2(halfScreenWidth                     , halfScreenHeight - halfCrosshairWidth)
+            };
+
+            return crossHairBasePositions;
         }
     }
 }

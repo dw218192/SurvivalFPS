@@ -6,10 +6,18 @@ using SurvivalFPS.Utility;
 
 namespace SurvivalFPS.AI
 {
+    //interfaces
+    public interface IAIDamageable
+    {
+        void TakeDamage(float amountPerSec);
+    }
+
+    //enums
     public enum AIStateType { None, Idle, Alerted, Patrol, Attack, Feeding, Pursuit, Dead }
     public enum AITargetType { None, Waypoint, Aggravator }
     public enum AITriggerEventType { Enter, Stay, Exit }
 
+    //Info class for AI targets
     public class AITarget
     {
         private AITargetType m_Type;
@@ -79,6 +87,8 @@ namespace SurvivalFPS.AI
         [SerializeField] protected AIDamageTrigger m_LeftHandAttackTrigger = null;
         [SerializeField] protected AIDamageTrigger m_MouthTrigger = null;
         [SerializeField] [Range(0.0f, 15.0f)] protected float m_StoppingDistance = 1.0f;
+        //attack
+        [SerializeField] private float m_DamagePerSec;
 
         //----public properties----
         public Animator animator { get { return m_Animator; } }
@@ -88,6 +98,12 @@ namespace SurvivalFPS.AI
 
         public bool isInMeeleRange { get { return m_IsInMeleeRange; } set { m_IsInMeleeRange = value; } }
         public bool isTargetReached { get { return m_IsTargetReached; } set { m_IsTargetReached = value; } }  
+
+        /// <summary>
+        /// how much damage this zombie can inflict per second 
+        /// </summary>
+        /// <value>The damage per sec.</value>
+        public float damagePerSec { get { return m_DamagePerSec; } }
 
         //debugging
         public SphereCollider targetTrigger { get { return m_TargetTrigger; } }

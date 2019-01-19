@@ -91,7 +91,7 @@ namespace SurvivalFPS.Core.Weapon
         /// this function must be called before using the weapon system
         /// </summary>
         /// <param name="player"></param>
-        public abstract void Initialize(FirstPersonController player);
+        public abstract void Initialize(PlayerManager player);
         public abstract void TryFire();
         public abstract void Reload();
     }
@@ -135,30 +135,34 @@ namespace SurvivalFPS.Core.Weapon
         public override bool isFiring { get { return m_WeaponBehaviour.isFiring; } }
         public override bool isReloading { get { return m_WeaponBehaviour.isReloading; } }
 
-        protected void SetModel(FirstPersonController player)
+        protected void SetModel(PlayerManager player)
         {
-            m_GunGameObject = GameObject.Instantiate(m_GunModelPrefab, player.weaponSocket);
+            m_GunGameObject = Instantiate(m_GunModelPrefab, player.weaponSocket);
             m_GunMesh = m_GunGameObject.GetComponentInChildren<SkinnedMeshRenderer>();
         }
         //---initialization functions---
-        protected void SetAnimator(FirstPersonController player)
+        protected void SetAnimator(PlayerManager player)
         {
             //the gun's animator
             m_GunAnimator = m_GunGameObject.GetComponent<Animator>();
 
+            int key = player.informationKey;
+            PlayerInfo info = GameSceneManager.Instance.GetPlayerInfo(key);
+
             //set the links to the behaviour component
-            weaponBehaviour.player = player;
+            weaponBehaviour.FPSController = info.playerMotionController;
             weaponBehaviour.animator = m_GunAnimator;
-            weaponBehaviour.animatorManager = player.playerAnimatorManager;
-            weaponBehaviour.audioManager = player.audioManager;
+            weaponBehaviour.animatorManager = info.playerAnimatorManager;
+            weaponBehaviour.audioManager = info.playerAudioManager;
+            weaponBehaviour.playerCamera = info.playerCamera;
 
             //add the animator to the player animator manager
-            player.playerAnimatorManager.AddAnimator(m_GunAnimator);
+            info.playerAnimatorManager.AddAnimator(m_GunAnimator);
 
             //set the runtime controller of this gun animator
             m_GunAnimator.runtimeAnimatorController = m_AnimatorController;
         }
-        protected void SetAudioSource(FirstPersonController player)
+        protected void SetAudioSource(PlayerManager player)
         {
             m_AudioSource = player.GetComponent<AudioSource>();
         }

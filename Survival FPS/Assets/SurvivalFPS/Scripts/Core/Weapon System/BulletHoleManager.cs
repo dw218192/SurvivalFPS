@@ -13,7 +13,7 @@ namespace SurvivalFPS.Core.Weapon
         [SerializeField] private int m_MaxCapacity = 100;
 
         private List<BulletHole> m_BulletHoleInstances;
-        private int m_CurrentIndex = 0;
+        private int m_CurrentIndex = 0; 
 
         public BulletHole prefab { get { return m_Prefab; } set { m_Prefab = value; } }
 
@@ -39,23 +39,14 @@ namespace SurvivalFPS.Core.Weapon
         }
 
         // Place the next bullet hole at the specified position and rotation
-        public void PlaceBulletHole(Vector3 pos, Quaternion rot, GameObject target)
+        public void PlaceBulletHole(Vector3 pos, Vector3 normal, GameObject target)
         {
             // Make sure the current bullet hole still exists
             VerifyBulletHole();
 
-            // Now the bullet hole is ready to be re-positioned
-
             // Start by clearing the parent.  This prevents problems with the transform inherited from previous parents when the bullet hole GameObject is re-parented
             m_BulletHoleInstances[m_CurrentIndex].transform.parent = null;
-
-            // Now set the position and rotation of the bullet hole
-            m_BulletHoleInstances[m_CurrentIndex].transform.position = pos;
-            m_BulletHoleInstances[m_CurrentIndex].transform.rotation = rot;
-            m_BulletHoleInstances[m_CurrentIndex].transform.localScale = m_BulletHoleInstances[m_CurrentIndex].transform.localScale;
-
-            // Now refresh the bullet hole so it can be re-parented, etc.
-            m_BulletHoleInstances[m_CurrentIndex].AttachToParent(target.transform);
+            m_BulletHoleInstances[m_CurrentIndex].AttachToParent(pos, normal, target.transform);
             m_BulletHoleInstances[m_CurrentIndex].isActive = true;
 
             // Now increment our index so the oldest bullet holes will always be the first to be re-used

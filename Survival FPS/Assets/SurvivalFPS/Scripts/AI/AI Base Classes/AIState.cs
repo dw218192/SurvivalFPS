@@ -9,7 +9,10 @@ namespace SurvivalFPS.AI
         public virtual void SetStateMachine(AIStateMachine machine) { m_StateMachine = machine; }
 
         public virtual void Initialize() { }
-        public virtual void OnEnterState() { Debug.Log(GetType().ToString() + "- enter"); }
+        public virtual void OnEnterState()
+        {
+            Debug.Log(GetType().ToString() + "- enter");
+        }
         public virtual void OnExitState() { Debug.Log(GetType().ToString() + "- exit"); }
 
         public virtual void OnAnimatorUpdated()

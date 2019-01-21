@@ -14,7 +14,6 @@ namespace SurvivalFPS.AI
         [SerializeField] [Range(0.0f, 1.0f)] private float m_Sight = 0.5f;
         [SerializeField] [Range(0.0f, 1.0f)] private float m_Hearing = 1.0f;
         [SerializeField] [Range(0.0f, 1.0f)] private float m_Aggression = 0.5f;
-        [SerializeField] [Range(0, 100)] private int m_Health = 100;
         [SerializeField] [Range(0.0f, 1.0f)] private float m_Intelligence = 0.5f;
         [SerializeField] [Range(0.0f, 1.0f)] private float m_Satisfaction = 1.0f;
         [SerializeField] private float m_SpeedDampTime = 1.0f;
@@ -84,10 +83,6 @@ namespace SurvivalFPS.AI
         /// [between 0 and 1] how agile the zombie is
         /// </summary>
         public float aggression { get { return m_Aggression; } set { m_Aggression = value; } }
-        /// <summary>
-        /// the current health level of the zombie
-        /// </summary>
-        public int health { get { return m_Health; } set { m_Health = value; } }
         /// <summary>
         /// the attackType parameter in the animator
         /// </summary>

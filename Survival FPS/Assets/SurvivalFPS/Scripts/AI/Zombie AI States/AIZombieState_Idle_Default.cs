@@ -19,7 +19,8 @@ namespace SurvivalFPS.AI
         public override void OnEnterState()
         {
             base.OnEnterState();
-            if (m_ZombieStateMachine)
+
+            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 m_IdleTime = Random.Range(m_IdleTimeRange.x, m_IdleTimeRange.y);
                 m_ZombieStateMachine.NavAgentControl(true, false);
@@ -45,7 +46,7 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if (m_ZombieStateMachine)
+            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 if (m_ZombieStateMachine.visualThreat)
                 {

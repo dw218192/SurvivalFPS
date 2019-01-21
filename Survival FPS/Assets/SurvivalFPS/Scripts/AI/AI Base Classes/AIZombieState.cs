@@ -26,7 +26,7 @@ namespace SurvivalFPS.AI
         /// </summary>
         public override void OnTriggerEvent(AITriggerEventType eventType, Collider other)
         {
-            if(m_ZombieStateMachine)
+            if(m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 if(eventType != AITriggerEventType.Exit)
                 {

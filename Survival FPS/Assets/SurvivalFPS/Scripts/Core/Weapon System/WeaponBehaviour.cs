@@ -5,6 +5,12 @@ using SurvivalFPS.Core.FPS;
 
 namespace SurvivalFPS.Core.Weapon
 {
+    //interfaces
+    public interface IWeaponDamageable
+    {
+        void TakeDamage(WeaponConfig weaponUsed, Vector3 hitDirection);
+    }
+
     /// <summary>
     /// a runtime component attached to the player game object,
     /// which should be managed by the config classes
@@ -428,7 +434,7 @@ namespace SurvivalFPS.Core.Weapon
             localOffsetY = UnityEngine.Random.Range(-inaccuracy, inaccuracy);
             Vector3 localDir = new Vector3(localOffsetX, localOffsetY, 1.0f);
 
-            //calculate ray start and direction
+            //calculate ray start and direction in world space
             Vector3 startPoint = m_PlayerCamera.ScreenToWorldPoint(screenStartPoint);
             Vector3 direction = m_PlayerCamera.transform.TransformDirection(localDir);
 
@@ -447,11 +453,20 @@ namespace SurvivalFPS.Core.Weapon
 
             if (Physics.Raycast(ray, out hit, m_WeaponConfig.range, GameSceneManager.Instance.shootableLayerMask))
             {
-                // Damage
+                // bullet hole
                 if (BulletHoleManager.Instance)
                 {
                     GameObject target = hit.collider.gameObject;
-                    BulletHoleManager.Instance.PlaceBulletHole(hit.point, Quaternion.identity, target);
+                    if(!target.transform.root.GetComponent<BulletHoleException>())
+                    {
+                        BulletHoleManager.Instance.PlaceBulletHole(hit.point, hit.normal, target);
+                    }
+                }
+
+                IWeaponDamageable weaponDamageable = hit.collider.GetComponent(typeof(IWeaponDamageable)) as IWeaponDamageable;
+                if (weaponDamageable != null)
+                {
+                    weaponDamageable.TakeDamage(m_WeaponConfig, direction);
                 }
             }
         }

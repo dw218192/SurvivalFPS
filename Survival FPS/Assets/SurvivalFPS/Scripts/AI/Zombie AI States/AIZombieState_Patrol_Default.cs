@@ -24,7 +24,8 @@ namespace SurvivalFPS.AI
         public override void OnEnterState()
         {
             base.OnEnterState();
-            if (m_ZombieStateMachine)
+
+            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 //update the animator
                 m_ZombieStateMachine.NavAgentControl(true, false);
@@ -55,10 +56,12 @@ namespace SurvivalFPS.AI
                         }
                     }
                 }
+
+
+                //if we are previously stopped for some reason, resume
+                if (m_ZombieStateMachine.navAgent.isStopped) m_ZombieStateMachine.navAgent.isStopped = false;
             }
 
-            //if we are previously stopped for some reason, resume
-            if (m_ZombieStateMachine.navAgent.isStopped) m_ZombieStateMachine.navAgent.isStopped = false;
         }
 
         public override void OnExitState()
@@ -69,7 +72,7 @@ namespace SurvivalFPS.AI
         public override void OnReachDestination()
         {
             base.OnReachDestination();
-            if (m_ZombieStateMachine)
+            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 if (m_ZombieStateMachine.currentTargetType == AITargetType.Waypoint)
                 {
@@ -93,39 +96,42 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if (m_ZombieStateMachine)
+            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
             {
-                if (m_ZombieStateMachine.visualThreat)
+                return AIStateType.Dead;
+            }
+
+            if (m_ZombieStateMachine.visualThreat)
+            {
+                m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.visualThreat);
+                //TODO: flashlight behaviour
+                /*
+                if (m_ZombieStateMachine.visualThreat.GetType() == typeof(FlashLightAggravator))
                 {
-                    m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.visualThreat);
-                    //TODO: flashlight behaviour
-                    /*
-                    if (m_ZombieStateMachine.visualThreat.GetType() == typeof(FlashLightAggravator))
-                    {
-                        return AIStateType.Alerted;
-                    }
-                    */
-
-                    //TODO: Food
-                    /*
-                    if (m_ZombieStateMachine.visualThreat.GetType() == typeof(ZombieFood))
-                    {
-                    }
-                    */
-
-                    return AIStateType.Pursuit;
+                    return AIStateType.Alerted;
                 }
+                */
 
-                if (m_ZombieStateMachine.audioThreat)
+                //TODO: Food
+                /*
+                if (m_ZombieStateMachine.visualThreat.GetType() == typeof(ZombieFood))
                 {
-                    //if it is not already investigated
-                    if (!m_ZombieStateMachine.IsTargetRecentlyInvestigated(m_ZombieStateMachine.audioThreat))
-                    {
-                        m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.audioThreat, false);
-                        return AIStateType.Alerted;
-                    }
+                }
+                */
+
+                return AIStateType.Pursuit;
+            }
+
+            if (m_ZombieStateMachine.audioThreat)
+            {
+                //if it is not already investigated
+                if (!m_ZombieStateMachine.IsTargetRecentlyInvestigated(m_ZombieStateMachine.audioThreat))
+                {
+                    m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.audioThreat, false);
+                    return AIStateType.Alerted;
                 }
             }
+
 
             //-----handle the rotation of the game object-----
 

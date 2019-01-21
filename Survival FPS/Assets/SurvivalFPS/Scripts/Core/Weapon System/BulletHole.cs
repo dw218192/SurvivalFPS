@@ -7,14 +7,12 @@ namespace SurvivalFPS.Core.Weapon
     [RequireComponent(typeof(Renderer))]
     public class BulletHole : MonoBehaviour
     {
+        //clipping prevention
+        private Vector3 m_LastBulletHolePos;
+        private float m_MinDistance = 10.0f; //if two bullet holes are within this distance
+        private float m_HeightOffset = 0.0001f; //higher a bullet hole a little bit to prevent clipping
+
         private Renderer m_Renderer;
-        /*
-        public float lifetime = 28.0f;              // The amount of time before the bullet hole disappears entirely
-        public float startFadeTime = 10.0f;         // The amount of time before the bullet hole starts to fade
-        private float timer;                        // A timer to keep track of how long this bullet has been in existence
-        public float fadeRate = 0.001f;             // The rate at which the bullet will fade out         
-        private Color targetColor;                  // The color to which the bullet hole wants to change
-        */
 
         public bool isActive { get { return m_Renderer.enabled; } set { m_Renderer.enabled = value; } }
 
@@ -22,11 +20,17 @@ namespace SurvivalFPS.Core.Weapon
         void Awake()
         {
             m_Renderer = GetComponent<Renderer>();
+            m_Renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
 
         // Make the bullet hole "stick" to the object it hit by parenting it
-        public void AttachToParent(Transform parent)
+        public void AttachToParent(Vector3 pos, Vector3 normal, Transform parent)
         {
+            //set the position and rotation of the bullet hole
+            pos = pos + normal * m_HeightOffset;
+            transform.position = pos;
+            transform.rotation = Quaternion.FromToRotation(transform.up, normal);
+
             transform.parent = parent;
         }
     }

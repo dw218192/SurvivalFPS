@@ -16,6 +16,7 @@ namespace SurvivalFPS.AI
     public enum AIStateType { None, Idle, Alerted, Patrol, Attack, Feeding, Pursuit, Dead }
     public enum AITargetType { None, Waypoint, Aggravator }
     public enum AITriggerEventType { Enter, Stay, Exit }
+    public enum AIBodyPartType { None, Head, UpperBody, UpperBodyLimb, LowerBody, LowerBodyLimb }
 
     //Info class for AI targets
     public class AITarget
@@ -77,6 +78,9 @@ namespace SurvivalFPS.AI
         protected NavMeshAgent m_navAgent = null;
         protected Collider m_Collider = null;   //the collider representing the AI character; it should be in a layer where it can only collides with designated objects
         protected Transform m_Transform = null;
+        //runtime attribute variables
+        protected int m_Health = 100;
+        protected bool m_IsDead;
 
         //----inspector configurable variables----
         [SerializeField] protected AIStateType m_CurrentStateType = AIStateType.Idle;
@@ -86,9 +90,13 @@ namespace SurvivalFPS.AI
         [SerializeField] protected AIDamageTrigger m_RightHandAttackTrigger = null;
         [SerializeField] protected AIDamageTrigger m_LeftHandAttackTrigger = null;
         [SerializeField] protected AIDamageTrigger m_MouthTrigger = null;
+        //body parts that are used for ragroll
+        [SerializeField] protected List<AIBodyPart> m_BodyParts;
         [SerializeField] [Range(0.0f, 15.0f)] protected float m_StoppingDistance = 1.0f;
-        //attack
-        [SerializeField] private float m_DamagePerSec;
+        //AI default attributes
+        [SerializeField] [Range(0, 100)] private float m_DamagePerSec;
+        [SerializeField] [Range(0, 100)] private int m_TotalHealth = 100;
+
 
         //----public properties----
         public Animator animator { get { return m_Animator; } }
@@ -97,13 +105,22 @@ namespace SurvivalFPS.AI
         public bool hasTarget { get { return (m_Target.type != AITargetType.None); } }
 
         public bool isInMeeleRange { get { return m_IsInMeleeRange; } set { m_IsInMeleeRange = value; } }
-        public bool isTargetReached { get { return m_IsTargetReached; } set { m_IsTargetReached = value; } }  
+        public bool isTargetReached { get { return m_IsTargetReached; } set { m_IsTargetReached = value; } }
 
         /// <summary>
-        /// how much damage this zombie can inflict per second 
+        /// how much damage this AI can inflict per second 
         /// </summary>
         /// <value>The damage per sec.</value>
         public float damagePerSec { get { return m_DamagePerSec; } }
+        /// <summary>
+        /// the maximum health level of the AI
+        /// </summary>
+        public int totalHealth { get { return m_TotalHealth; } set { m_TotalHealth = value; } }
+
+        /// <summary>
+        /// the current health level of the AI
+        /// </summary>
+        public int currentHealth { get { return m_Health; } set { m_Health = value; } }
 
         //debugging
         public SphereCollider targetTrigger { get { return m_TargetTrigger; } }
@@ -158,6 +175,12 @@ namespace SurvivalFPS.AI
         /// </summary>
         public bool useRootRotation { get { return m_RootRotationRefCount > 0; } }
 
+        /// <summary>
+        /// is this AI dead?
+        /// </summary>
+        public bool IsDead { get { return m_IsDead; } }
+
+
         //overwrittable methods
         /// <summary>
         /// this method is coupled to the start method, for additional initialization work
@@ -185,6 +208,22 @@ namespace SurvivalFPS.AI
                 if (m_Collider) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_Collider.GetInstanceID(), this);
                 if (m_SensorTrigger) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_SensorTrigger.GetInstanceID(), this);
                 //anything else that may be added
+            }
+            else
+            {
+                Debug.LogWarning("AI state machine -- game scene manager is null");
+            }
+
+            foreach (AIBodyPart bodyPart in m_BodyParts)
+            {
+                //register colliders to the scene manager
+                if (GameSceneManager.Instance)
+                {
+                    GameSceneManager.Instance.RegisterAIStateMachineByColliderID(bodyPart.bodyPartCollider.GetInstanceID(), this);
+                }
+
+                bodyPart.owner = this;
+                bodyPart.rigidBody.isKinematic = true;
             }
 
             //ownership assignments and component initialization
@@ -304,6 +343,8 @@ namespace SurvivalFPS.AI
         /// </summary>
         public void SetTarget(ZombieAggravator zombieAggravator, bool setNavAgentTarget = true)
         {
+            if (m_IsDead) return;
+
             float distanceToTarget = Vector3.Distance(zombieAggravator.transform.position, transform.position);
             m_Target.Set(AITargetType.Aggravator, zombieAggravator.aggravatorCollider, zombieAggravator.transform.position, distanceToTarget);
 
@@ -505,6 +546,26 @@ namespace SurvivalFPS.AI
         {
             m_RootPositionRefCount += rootPosition;
             m_RootRotationRefCount += rootRotation;
+        }
+
+        public virtual void OnDeath()
+        {
+            if(!m_IsDead)
+            {
+                m_IsDead = true;
+                if (m_navAgent) m_navAgent.enabled = false;
+                //turn off the main collider that is attached to the state machine
+                //body part colliders will still have collision
+                if (m_Collider) m_Collider.enabled = false;
+                if (m_Animator) m_Animator.enabled = false;
+
+                m_IsInMeleeRange = false;
+
+                foreach(AIBodyPart bodyPart in m_BodyParts)
+                {
+                    bodyPart.rigidBody.isKinematic = false;
+                }
+            }
         }
     }
 }

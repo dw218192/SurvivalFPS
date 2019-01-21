@@ -34,7 +34,7 @@ namespace SurvivalFPS.AI
         public override void OnEnterState()
         {
             base.OnEnterState();
-            if (m_ZombieStateMachine)
+            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 //update the animator
                 m_ZombieStateMachine.NavAgentControl(true, false);
@@ -54,6 +54,11 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
+            if(!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            {
+                return AIStateType.Dead;
+            }
+
             m_Timer += Time.deltaTime;
             m_RepathTimer += Time.deltaTime;
 

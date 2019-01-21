@@ -83,7 +83,7 @@ namespace SurvivalFPS.AI
                         if (hit.transform.gameObject.layer == GameSceneManager.Instance.zombieBodyPartLayer)
                         {
                             //if it's not our body part
-                            if (zombie != GameSceneManager.Instance.GetAIStateMachineByColliderID(hit.rigidbody.GetInstanceID()))
+                            if (zombie != GameSceneManager.Instance.GetAIStateMachineByColliderID(hit.collider.GetInstanceID()))
                             {
                                 closestColliderDistance = hit.distance;
                                 closestCollider = hit.collider;
@@ -98,6 +98,11 @@ namespace SurvivalFPS.AI
                         }
                     }
                 }
+
+
+                if (closestCollider)
+                    Debug.Log(closestCollider.name);
+
                 //if the closest collider hit is the target, then the target is visible
                 return (closestCollider && closestCollider.gameObject == gameObject);
             }

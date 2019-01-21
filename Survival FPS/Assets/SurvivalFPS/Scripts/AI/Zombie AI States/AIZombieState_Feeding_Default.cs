@@ -27,7 +27,7 @@ namespace SurvivalFPS.AI
         {
             base.OnEnterState();
 
-            if(m_ZombieStateMachine)
+            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 if (m_AnimCinematicLayer == -1)
                 {
@@ -58,6 +58,11 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
+            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            {
+                return AIStateType.Dead;
+            }
+
             m_BloodParticleBurstTimer += Time.deltaTime;
 
             if (m_ZombieStateMachine.isTargetReached)

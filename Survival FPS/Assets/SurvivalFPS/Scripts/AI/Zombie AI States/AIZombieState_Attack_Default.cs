@@ -20,10 +20,10 @@ namespace SurvivalFPS.AI
         {
             base.OnEnterState();
 
-            if(m_ZombieStateMachine)
+            if(m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 //animator
-                m_ZombieStateMachine.NavAgentControl(true, false);
+                //m_ZombieStateMachine.NavAgentControl(true, false);
                 m_ZombieStateMachine.seeking = 0;
                 m_ZombieStateMachine.feeding = false;
                 m_ZombieStateMachine.attackType = Random.Range(1, 101);
@@ -42,6 +42,11 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
+            if(!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            {
+                return AIStateType.Dead;
+            }
+
             if (Vector3.Distance(m_ZombieStateMachine.transform.position, m_ZombieStateMachine.GetCurrentTarget().lastKnownPosition) > m_StoppingDistance)
             {
                 m_ZombieStateMachine.speed = m_AttackMotionSpeed;

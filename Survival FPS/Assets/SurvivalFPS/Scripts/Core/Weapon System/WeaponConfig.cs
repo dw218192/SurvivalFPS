@@ -13,6 +13,8 @@ namespace SurvivalFPS.Core.Weapon
         [SerializeField] protected GameObject m_GunModelPrefab;
         [SerializeField] protected GameObject m_BulletHolePrefab; //TODO
 
+        //damage settings
+        [SerializeField] protected DamageData m_DamageSetting;
         //recoil settings
         [SerializeField] protected RecoilData m_RecoilSettingWhenStill;
         [SerializeField] protected RecoilData m_RecoilSettingWhenWalking;
@@ -63,6 +65,7 @@ namespace SurvivalFPS.Core.Weapon
         public AccuracyData accuracySettingsWhenStill { get { return m_AccuracySettingWhenStill; } }
         public AccuracyData accuracySettingsWhenWalking { get { return m_AccuracySettingWhenWalking; } }
         public AccuracyData accuracySettingsWhenCrouching { get { return m_AccuracySettingWhenCrouching; } }
+        public DamageData damageSetting { get { return m_DamageSetting; }}
 
         public float range { get { return m_Range; } }
         public Texture2D crossHairTexture { get { return m_CrossHairTexture; } }

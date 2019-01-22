@@ -1013,6 +1013,7 @@ GameObject:
   - component: {fileID: 114003531324096598}
   - component: {fileID: 114102366681568940}
   - component: {fileID: 114002255601095952}
+  - component: {fileID: 351654404127054284}
   m_Layer: 9
   m_Name: AI Zombie Entity
   m_TagString: Untagged
@@ -1255,6 +1256,18 @@ MonoBehaviour:
   m_LookAtWeightChangeRate: 50
   m_LookAtThreshold: 15
   m_StoppingDistance: 1.5
+--- !u!114 &351654404127054284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176847882546118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55e397468ff0f4d348bf727b4eb3d6aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1180175083140146
 GameObject:
   m_ObjectHideFlags: 0

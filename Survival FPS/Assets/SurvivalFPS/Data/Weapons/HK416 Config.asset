@@ -15,6 +15,7 @@ MonoBehaviour:
   m_GunModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
     type: 3}
   m_BulletHolePrefab: {fileID: 0}
+  m_DamageSetting: {fileID: 11400000, guid: a4d39bb84d61648e6807e944eab4ffcf, type: 2}
   m_RecoilSettingWhenStill: {fileID: 11400000, guid: c044b3eb963202a4a8e745fb638c4a33,
     type: 2}
   m_RecoilSettingWhenWalking: {fileID: 11400000, guid: 91127df0865a6c24f9ea569f6fbe03cd,

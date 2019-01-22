@@ -23,9 +23,9 @@ namespace SurvivalFPS.AI
         public override void OnEnterState()
         {
             base.OnEnterState();
-            if (m_ZombieStateMachine)
+            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
-                m_ZombieStateMachine.NavAgentControl(true, false);
+                //m_ZombieStateMachine.NavAgentControl(true, false);
 
                 m_ZombieStateMachine.speed = 0;
                 m_ZombieStateMachine.seeking = 0;
@@ -39,6 +39,11 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
+            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            {
+                return AIStateType.Dead;
+            }
+
             m_Timer -= Time.deltaTime;
             m_DirectionChangeTimer += Time.deltaTime;
 
@@ -99,11 +104,12 @@ namespace SurvivalFPS.AI
                 }
                 //if the threat is reached and we're in alerted state, meaning the threat has disappeared
                 else
-                { 
+                {
                     //look around
                     SeekAround((int)Mathf.Sign(Random.Range(-1.0f, 1.0f)));
                 }
             }
+
 
             return AIStateType.Alerted;
         }

@@ -8,7 +8,7 @@ namespace SurvivalFPS.Core.Weapon
     //interfaces
     public interface IWeaponDamageable
     {
-        void TakeDamage(WeaponConfig weaponUsed, Vector3 hitDirection);
+        void TakeDamage(WeaponConfig weaponUsed, Vector3 hitPosition, Vector3 hitDirection, GameObject instigator);
     }
 
     /// <summary>
@@ -466,7 +466,7 @@ namespace SurvivalFPS.Core.Weapon
                 IWeaponDamageable weaponDamageable = hit.collider.GetComponent(typeof(IWeaponDamageable)) as IWeaponDamageable;
                 if (weaponDamageable != null)
                 {
-                    weaponDamageable.TakeDamage(m_WeaponConfig, direction);
+                    weaponDamageable.TakeDamage(m_WeaponConfig, hit.point, direction, m_FPSController.gameObject);
                 }
             }
         }

@@ -100,8 +100,8 @@ namespace SurvivalFPS.AI
                 }
 
 
-                if (closestCollider)
-                    Debug.Log(closestCollider.name);
+                //if (closestCollider)
+                //   Debug.Log(closestCollider.name);
 
                 //if the closest collider hit is the target, then the target is visible
                 return (closestCollider && closestCollider.gameObject == gameObject);

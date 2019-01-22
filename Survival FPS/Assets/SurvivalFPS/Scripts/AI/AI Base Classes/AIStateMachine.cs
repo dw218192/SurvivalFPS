@@ -13,6 +13,8 @@ namespace SurvivalFPS.AI
     }
 
     //enums
+    //who is controlling the bones now?
+    public enum AIBoneControlType { Animated, Ragdoll, RagdollToAnim }
     public enum AIStateType { None, Idle, Alerted, Patrol, Attack, Feeding, Pursuit, Dead }
     public enum AITargetType { None, Waypoint, Aggravator }
     public enum AITriggerEventType { Enter, Stay, Exit }
@@ -67,12 +69,15 @@ namespace SurvivalFPS.AI
         protected Dictionary<AIStateType, AIState> m_States = new Dictionary<AIStateType, AIState>();
         protected AITarget m_Target = new AITarget(); //actual target of the AI
         protected AIState m_CurrentState = null;
+        protected AIBoneControlType m_AIBoneControlType = AIBoneControlType.Animated;
         //flags
         protected bool m_IsTargetReached; //has the AI reached its destination?
         protected bool m_IsInMeleeRange; //is the AI able to melee attack?
         //animator related
         protected int m_RootRotationRefCount = 0;
         protected int m_RootPositionRefCount = 0;
+        protected bool m_CinematicEnabled = false;
+        public bool cinematicEnabled { get { return m_CinematicEnabled; } set { m_CinematicEnabled = value; } }
         //component cache
         protected Animator m_Animator = null;
         protected NavMeshAgent m_navAgent = null;
@@ -101,6 +106,8 @@ namespace SurvivalFPS.AI
         //----public properties----
         public Animator animator { get { return m_Animator; } }
         public NavMeshAgent navAgent { get { return m_navAgent; } }
+        public AIBoneControlType curBoneControlType { get { return m_AIBoneControlType; }}
+
         public AITargetType currentTargetType { get { return m_Target.type; } }
         public bool hasTarget { get { return (m_Target.type != AITargetType.None); } }
 
@@ -546,6 +553,13 @@ namespace SurvivalFPS.AI
         {
             m_RootPositionRefCount += rootPosition;
             m_RootRotationRefCount += rootRotation;
+
+            UpdateNavAgentControl();
+        }
+
+        private void UpdateNavAgentControl()
+        {
+            NavAgentControl(useRootPosition, !useRootRotation);
         }
 
         public virtual void OnDeath()

@@ -33,10 +33,17 @@ namespace SurvivalFPS
         private ParticleSystem m_MuzzleFlashParticleSystem_Instance;
 
         [Header("Zombie Animation Controller Parameters")]
+        [SerializeField] private string m_SpeedParameterName;
+        [SerializeField] private string m_SeekingParameterName;
+        [SerializeField] private string m_FeedingParameterName;
+        [SerializeField] private string m_AttackParameterName;
+        [SerializeField] private string m_HitParameterName;
+        [SerializeField] private string m_HitTypeParameterName;
+        [SerializeField] private string m_CrawlingParameterName;
         [SerializeField] private string m_RightHandAttackParameterName;
         [SerializeField] private string m_LeftHandAttackParameterName;
         [SerializeField] private string m_MouthAttackParameterName;
-        [Header("Player Animation Controller State Names")]
+        [Header("Zombie Animation Controller State Names")]
         [SerializeField] private string m_FeedingStateName;
         [Header("Player Animation Controller Parameters")]
         [SerializeField] private string m_ReloadParameterName;
@@ -48,6 +55,13 @@ namespace SurvivalFPS
 
         //hashes
         //Zombie Animation Controller Parameters
+        private int m_SpeedParameterName_Hash = -1;
+        private int m_SeekingParameterName_Hash = -1;
+        private int m_FeedingParameterName_Hash = -1;
+        private int m_AttackParameterName_Hash = -1;
+        private int m_HitParameterName_Hash = -1;
+        private int m_HitTypeParameterName_Hash = -1;
+        private int m_CrawlingParameterName_Hash = -1;
         private int m_RightHandAttackParameterName_Hash = -1;
         private int m_LeftHandAttackParameterName_Hash = -1;
         private int m_MouthAttackParameterName_Hash = -1;
@@ -83,6 +97,13 @@ namespace SurvivalFPS
         public int obstaclesLayerMask { get { return m_ObstaclesLayerMask; } }
         public int shootableLayerMask { get { return m_ShootableLayerMask; } }
         //zombie animator controller info
+        public int speedParameterName_Hash { get { return m_SpeedParameterName_Hash; } }
+        public int seekingParameterName_Hash { get { return m_SeekingParameterName_Hash; } }
+        public int feedingParameterName_Hash { get { return m_FeedingParameterName_Hash; } }
+        public int attackParameterName_Hash { get { return m_AttackParameterName_Hash; } }
+        public int hitParameterName_Hash { get { return m_HitParameterName_Hash; } }
+        public int hitTypeParameterName_Hash { get { return m_HitTypeParameterName_Hash; } }
+        public int crawlingParameterName_Hash { get { return m_CrawlingParameterName_Hash; } }
         public string rightHandAttackParameterName { get { return m_RightHandAttackParameterName; } }
         public string leftHandAttackParameterName { get { return m_LeftHandAttackParameterName; } }
         public string mouthAttackParameterName { get { return m_MouthAttackParameterName; } }
@@ -97,7 +118,6 @@ namespace SurvivalFPS
         //player animator state name info
         public int reloadStateNameHash { get { return m_ReloadStateName_Hash; } }
         public int fireStateNameHash { get { return m_FireStateName_Hash; } }
-
 
         protected override void Awake()
         {
@@ -115,14 +135,21 @@ namespace SurvivalFPS
 
         private void ConvertStringsToHashes()
         {
+            m_SpeedParameterName_Hash = Animator.StringToHash(m_SpeedParameterName);
+            m_SeekingParameterName_Hash = Animator.StringToHash(m_SeekingParameterName);
+            m_FeedingParameterName_Hash = Animator.StringToHash(m_FeedingParameterName);
+            m_AttackParameterName_Hash = Animator.StringToHash(m_AttackParameterName);
+            m_HitParameterName_Hash = Animator.StringToHash(m_HitParameterName);
+            m_HitTypeParameterName_Hash = Animator.StringToHash(m_HitTypeParameterName);
+            m_CrawlingParameterName_Hash = Animator.StringToHash(m_CrawlingParameterName);
+            m_RightHandAttackParameterName_Hash = Animator.StringToHash(m_RightHandAttackParameterName);
+            m_LeftHandAttackParameterName_Hash = Animator.StringToHash(m_LeftHandAttackParameterName);
+            m_MouthAttackParameterName_Hash = Animator.StringToHash(m_MouthAttackParameterName);
+
             m_PlayerLayer = LayerMask.NameToLayer("Player");
             m_ZombieBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
             m_ObstaclesLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
             m_ShootableLayerMask = LayerMask.GetMask("AI Body Part", "Visual Aggravator", "Obstacle");
-
-            m_RightHandAttackParameterName_Hash = Animator.StringToHash(m_RightHandAttackParameterName);
-            m_LeftHandAttackParameterName_Hash = Animator.StringToHash(m_LeftHandAttackParameterName);
-            m_MouthAttackParameterName_Hash = Animator.StringToHash(m_MouthAttackParameterName);
 
             m_ReloadParameterName_Hash = Animator.StringToHash(m_ReloadParameterName);
             m_ReloadCurveParameterName_Hash = Animator.StringToHash(m_ReloadCurveParameterName);

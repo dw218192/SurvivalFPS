@@ -28,7 +28,7 @@ namespace SurvivalFPS.AI
             if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 //update the animator
-                m_ZombieStateMachine.NavAgentControl(true, false);
+                //m_ZombieStateMachine.NavAgentControl(true, false);
                 m_ZombieStateMachine.speed = m_PatrolSpeed;
                 m_ZombieStateMachine.seeking = 0;
                 m_ZombieStateMachine.feeding = false;

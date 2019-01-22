@@ -23,7 +23,7 @@ namespace SurvivalFPS.AI
             if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 m_IdleTime = Random.Range(m_IdleTimeRange.x, m_IdleTimeRange.y);
-                m_ZombieStateMachine.NavAgentControl(true, false);
+                //m_ZombieStateMachine.NavAgentControl(true, false);
 
                 m_ZombieStateMachine.speed = 0;
                 m_ZombieStateMachine.seeking = 0;
@@ -46,32 +46,27 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
+            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
             {
-                if (m_ZombieStateMachine.visualThreat)
-                {
-                    m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.visualThreat);
-                    //TODO: Food
-                    /*
-                    if (m_ZombieStateMachine.visualThreat.GetType() == typeof(ZombieFood))
-                    {
-                        return AIStateType.Pursuit;
-                    }
-                    */
-                    return AIStateType.Alerted;
-                }
+                return AIStateType.Dead;
+            }
 
-                if (m_ZombieStateMachine.audioThreat)
-                {
-                    m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.audioThreat);
-                    return AIStateType.Alerted;
-                }
-                
-                m_Timer += Time.deltaTime;
-                if (m_Timer > m_IdleTime)
-                {
-                    return AIStateType.Patrol;
-                }
+            if (m_ZombieStateMachine.visualThreat)
+            {
+                m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.visualThreat);
+                return AIStateType.Alerted;
+            }
+
+            if (m_ZombieStateMachine.audioThreat)
+            {
+                m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.audioThreat);
+                return AIStateType.Alerted;
+            }
+            
+            m_Timer += Time.deltaTime;
+            if (m_Timer > m_IdleTime)
+            {
+                return AIStateType.Patrol;
             }
 
             return AIStateType.Idle;

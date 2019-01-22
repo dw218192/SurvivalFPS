@@ -31,7 +31,6 @@ namespace SurvivalFPS
         [SerializeField] private ParticleSystem m_MuzzleFlashParticleSystem;
         private ParticleSystem m_BloodParticleSystem_Instance;
         private ParticleSystem m_MuzzleFlashParticleSystem_Instance;
-
         [Header("Zombie Animation Controller Parameters")]
         [SerializeField] private string m_SpeedParameterName;
         [SerializeField] private string m_SeekingParameterName;
@@ -43,6 +42,8 @@ namespace SurvivalFPS
         [SerializeField] private string m_RightHandAttackParameterName;
         [SerializeField] private string m_LeftHandAttackParameterName;
         [SerializeField] private string m_MouthAttackParameterName;
+        [Header("Zombie Animation Controller Layer Indices")]
+        [SerializeField] private int m_HitLayer;
         [Header("Zombie Animation Controller State Names")]
         [SerializeField] private string m_FeedingStateName;
         [Header("Player Animation Controller Parameters")]
@@ -65,7 +66,6 @@ namespace SurvivalFPS
         private int m_RightHandAttackParameterName_Hash = -1;
         private int m_LeftHandAttackParameterName_Hash = -1;
         private int m_MouthAttackParameterName_Hash = -1;
-
         //Player Animation Controller State Names
         private int m_FeedingStateName_Hash = -1;
 
@@ -107,6 +107,8 @@ namespace SurvivalFPS
         public string rightHandAttackParameterName { get { return m_RightHandAttackParameterName; } }
         public string leftHandAttackParameterName { get { return m_LeftHandAttackParameterName; } }
         public string mouthAttackParameterName { get { return m_MouthAttackParameterName; } }
+        //Zombie Animation Controller Layers
+        public int hitLayerIndex { get { return m_HitLayer; }}
         //player animator state name info
         public int feedingStateName_Hash { get { return m_FeedingStateName_Hash; } }
         //player animator controller info

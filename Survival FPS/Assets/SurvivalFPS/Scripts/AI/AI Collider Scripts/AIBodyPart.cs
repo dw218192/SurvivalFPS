@@ -73,9 +73,11 @@ namespace SurvivalFPS.AI
 
         /// <summary>
         /// if it's a zombie
-        /// gets the owner's hit type according to the direction from which it received damage
+        /// sets the owner's hit type according to the direction from which it received damage
+        /// sets the weight of the hit animation layer according to the weapon's power
+        /// updates the zombie's animator with these values
         /// </summary>
-        private void SetHitType(float angle)
+        private void SetHitAnim(float angle, float weight)
         {
             AIZombieStateMachine zombieStateMachine = m_Owner as AIZombieStateMachine;
 
@@ -110,6 +112,7 @@ namespace SurvivalFPS.AI
 
                 if(hitType != 0)
                 {
+                    zombieStateMachine.hitLayerWeight = weight;
                     zombieStateMachine.hitType = hitType;
                     zombieStateMachine.UpdateAnimatorHit();
                 }
@@ -161,7 +164,7 @@ namespace SurvivalFPS.AI
                 {
                     Vector3 attackerToHit = (hitPosition - instigator.transform.position).normalized;
                     float angle = Vector3.SignedAngle(attackerToHit, m_Owner.transform.forward, Vector3.up);
-                    SetHitType(angle);
+                    SetHitAnim(angle, damageData.impactForce/100.0f);
                 }
             }
 

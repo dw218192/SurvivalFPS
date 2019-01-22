@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114069126835918922
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -144,8 +144,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f7238be71519548acdb1730010b838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootPosition: 1
-  m_RootRotation: 1
+  m_RootPosition: 3
+  m_RootRotation: -3
 --- !u!114 &114080220595077340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114090879302991790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114159008757332072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -200,8 +200,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f7238be71519548acdb1730010b838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootPosition: 1
-  m_RootRotation: 1
+  m_RootPosition: 3
+  m_RootRotation: -3
 --- !u!114 &114238746324356766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -214,8 +214,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f7238be71519548acdb1730010b838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootPosition: 1
-  m_RootRotation: 1
+  m_RootPosition: 3
+  m_RootRotation: -3
 --- !u!114 &114271605433021550
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114315774419321744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114381132543037676
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -270,8 +270,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f7238be71519548acdb1730010b838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootPosition: 1
-  m_RootRotation: 1
+  m_RootPosition: 3
+  m_RootRotation: -3
 --- !u!114 &114424556331741786
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114465530913115162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -298,8 +298,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f7238be71519548acdb1730010b838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootPosition: 1
-  m_RootRotation: 1
+  m_RootPosition: 3
+  m_RootRotation: -3
 --- !u!114 &114551294838940960
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114555151666351376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -327,7 +327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114610749277544446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -354,8 +354,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f7238be71519548acdb1730010b838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootPosition: 1
-  m_RootRotation: 1
+  m_RootPosition: 3
+  m_RootRotation: -3
 --- !u!114 &114745493063323620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -369,7 +369,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootPosition: 0
-  m_RootRotation: -10
+  m_RootRotation: -2
 --- !u!114 &114811774688873938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -382,8 +382,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f7238be71519548acdb1730010b838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootPosition: 1
-  m_RootRotation: 1
+  m_RootPosition: 3
+  m_RootRotation: -3
 --- !u!114 &114836717836682956
 MonoBehaviour:
   m_ObjectHideFlags: 1

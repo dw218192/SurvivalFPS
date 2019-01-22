@@ -45,13 +45,17 @@ namespace SurvivalFPS.AI
         private int m_HitType = 0;
 
         // animator param Hashes
-        private int m_SpeedHash;
-        private int m_SeekingHash;
-        private int m_FeedingHash;
-        private int m_AttackHash;
-        private int m_CrawlingHash;
-        private int m_HitTriggerHash;
-        private int m_HitTypeHash;
+        private int m_SpeedHash = -1;
+        private int m_SeekingHash = -1;
+        private int m_FeedingHash = -1;
+        private int m_AttackHash = -1;
+        private int m_CrawlingHash = -1;
+        private int m_HitTriggerHash = -1;
+        private int m_HitTypeHash = -1;
+
+        // animator layer
+        private int m_HitLayerIndex = -1;
+        private float m_HitLayerWeight;
 
         //memory system
         private Queue<ZombieAggravator> m_InvestigatedTargets = new Queue<ZombieAggravator>();
@@ -147,6 +151,11 @@ namespace SurvivalFPS.AI
         /// </summary>
         /// <value>The type of the hit.</value>
         public int hitType { get { return m_HitType; }  set { m_HitType = value; } }
+        /// <summary>
+        /// the weight of the hit animation layer
+        /// </summary>
+        /// <value>The hit layer weight.</value>
+        public float hitLayerWeight { get { return m_HitLayerWeight; }  set { m_HitLayerWeight = value; } }
 
         protected override void Initialize()
         {
@@ -172,6 +181,7 @@ namespace SurvivalFPS.AI
                 m_CrawlingHash = gameSceneManager.crawlingParameterName_Hash;
                 m_HitTypeHash = gameSceneManager.hitTypeParameterName_Hash;
                 m_HitTriggerHash = gameSceneManager.hitParameterName_Hash;
+                m_HitLayerIndex = gameSceneManager.hitLayerIndex;
             }
         }
 
@@ -225,6 +235,7 @@ namespace SurvivalFPS.AI
         {
             if (m_Animator != null)
             {
+                m_Animator.SetLayerWeight(m_HitLayerIndex, m_HitLayerWeight);
                 //damage
                 m_Animator.SetTrigger(m_HitTriggerHash);
                 m_Animator.SetInteger(m_HitTypeHash, m_HitType);

@@ -342,6 +342,16 @@ PrefabInstance:
       propertyPath: m_UpperBodyDamageThreshold
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
+        type: 3}
+      propertyPath: m_StartingLowerBodyDamage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
+        type: 3}
+      propertyPath: m_StartingUpperBodyDamage
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
 --- !u!1 &732213299

@@ -57,6 +57,7 @@ MonoBehaviour:
   m_RightHandAttackParameterName: Right Hand Hit
   m_LeftHandAttackParameterName: Left Hand Hit
   m_MouthAttackParameterName: Mouth Hit
+  m_HitLayer: 2
   m_FeedingStateName: Feeding_state
   m_ReloadParameterName: Reload
   m_ReloadCurveParameterName: ReloadCurveParam

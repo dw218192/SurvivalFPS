@@ -84,7 +84,7 @@ namespace SurvivalFPS.AI
         protected Collider m_Collider = null;   //the collider representing the AI character; it should be in a layer where it can only collides with designated objects
         protected Transform m_Transform = null;
         //runtime attribute variables
-        protected int m_Health = 100;
+        [SerializeField] protected int m_Health;
         protected bool m_IsDead;
 
         //----inspector configurable variables----
@@ -99,8 +99,8 @@ namespace SurvivalFPS.AI
         [SerializeField] protected List<AIBodyPart> m_BodyParts;
         [SerializeField] [Range(0.0f, 15.0f)] protected float m_StoppingDistance = 1.0f;
         //AI default attributes
-        [SerializeField] [Range(0, 100)] private float m_DamagePerSec;
-        [SerializeField] [Range(0, 100)] private int m_TotalHealth = 100;
+        [SerializeField] [Range(0, 100)] protected float m_DamagePerSec;
+        [SerializeField] [Range(0, 100)] protected int m_TotalHealth = 100;
 
 
         //----public properties----
@@ -198,6 +198,11 @@ namespace SurvivalFPS.AI
         /// this method is called every frame, after the child states are updated
         /// </summary>
         protected virtual void UpdateStateMachine() { }
+
+        /// <summary>
+        /// this method is called every frame, in the late update
+        /// </summary>
+        protected virtual void LateUpdateStateMachine() { }
 
         private void Awake()
         {
@@ -329,7 +334,12 @@ namespace SurvivalFPS.AI
             m_IsTargetReached = false;
         }
 
-        private void ChangeState(AIState newState)
+        private void LateUpdate()
+        {
+            LateUpdateStateMachine();
+        }
+
+        protected void ChangeState(AIState newState)
         {
             m_CurrentState.OnExitState();
             newState.OnEnterState();
@@ -567,6 +577,8 @@ namespace SurvivalFPS.AI
             if(!m_IsDead)
             {
                 m_IsDead = true;
+                m_AIBoneControlType = AIBoneControlType.Ragdoll;
+
                 if (m_navAgent) m_navAgent.enabled = false;
                 //turn off the main collider that is attached to the state machine
                 //body part colliders will still have collision

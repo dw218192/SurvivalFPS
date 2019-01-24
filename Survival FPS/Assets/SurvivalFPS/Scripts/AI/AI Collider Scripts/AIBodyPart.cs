@@ -25,6 +25,16 @@ namespace SurvivalFPS.AI
         public Rigidbody rigidBody { get { return m_RigidBody; } }
         public AIStateMachine owner { get { return m_Owner; } set { m_Owner = value; } }
 
+        public Vector3 positionEndOfRagdoll { get { return m_PositionEndOfRagdoll; } set { m_PositionEndOfRagdoll = value; } }
+        public Quaternion rotationEndOfRagdoll { get { return m_RotationEndOfRagdoll; } set { m_RotationEndOfRagdoll = value; } }
+        public Quaternion localRotationEndOfRagdoll { get { return m_LocalRotationEndOfRagdoll; } set { m_LocalRotationEndOfRagdoll = value; } }
+
+        //ragdoll reanimation info
+        private Vector3 m_PositionEndOfRagdoll;
+        private Quaternion m_RotationEndOfRagdoll;
+        private Quaternion m_LocalRotationEndOfRagdoll;
+
+
         /// <summary>
         /// Gets the damage multiplier. (multiplier >= 0.0)
         /// </summary>
@@ -148,6 +158,7 @@ namespace SurvivalFPS.AI
                     if (m_Owner.currentHealth > 0)
                     {
                         //reanimate zombie
+                        ((AIZombieStateMachine)m_Owner).Reanimate();
                     }
                 }
             }

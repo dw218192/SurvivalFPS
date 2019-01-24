@@ -42,6 +42,10 @@ namespace SurvivalFPS
         [SerializeField] private string m_RightHandAttackParameterName;
         [SerializeField] private string m_LeftHandAttackParameterName;
         [SerializeField] private string m_MouthAttackParameterName;
+        [SerializeField] private string m_ReanimateFrontParameterName;
+        [SerializeField] private string m_ReanimateBackParameterName;
+        [SerializeField] private string m_IncapacitatedParameterName;
+        [SerializeField] private string m_NoLegParameterName;
         [Header("Zombie Animation Controller Layer Indices")]
         [SerializeField] private int m_HitLayer;
         [Header("Zombie Animation Controller State Names")]
@@ -66,6 +70,10 @@ namespace SurvivalFPS
         private int m_RightHandAttackParameterName_Hash = -1;
         private int m_LeftHandAttackParameterName_Hash = -1;
         private int m_MouthAttackParameterName_Hash = -1;
+        private int m_ReanimateFrontParameterName_Hash = -1;
+        private int m_ReanimateBackParameterName_Hash = -1;
+        private int m_IncapacitatedParameterName_Hash = -1;
+        private int m_NoLegParameterName_Hash = -1;
         //Player Animation Controller State Names
         private int m_FeedingStateName_Hash = -1;
 
@@ -83,6 +91,7 @@ namespace SurvivalFPS
         private int m_PlayerLayer = -1;
         private int m_ObstaclesLayerMask = -1;
         private int m_ShootableLayerMask = -1;
+        private int m_GeometryLayerMask = -1;
 
         private Dictionary<int, AIStateMachine> m_StateMachines = new Dictionary<int, AIStateMachine>();
         private Dictionary<int, PlayerInfo> m_PlayerInfos = new Dictionary<int, PlayerInfo>();
@@ -96,7 +105,8 @@ namespace SurvivalFPS
         public int playerLayer { get { return m_PlayerLayer; } }
         public int obstaclesLayerMask { get { return m_ObstaclesLayerMask; } }
         public int shootableLayerMask { get { return m_ShootableLayerMask; } }
-        //zombie animator controller info
+        public int geometryLayerMask { get { return m_GeometryLayerMask; } }
+        //zombie animator controller Parameter info
         public int speedParameterName_Hash { get { return m_SpeedParameterName_Hash; } }
         public int seekingParameterName_Hash { get { return m_SeekingParameterName_Hash; } }
         public int feedingParameterName_Hash { get { return m_FeedingParameterName_Hash; } }
@@ -107,6 +117,10 @@ namespace SurvivalFPS
         public string rightHandAttackParameterName { get { return m_RightHandAttackParameterName; } }
         public string leftHandAttackParameterName { get { return m_LeftHandAttackParameterName; } }
         public string mouthAttackParameterName { get { return m_MouthAttackParameterName; } }
+        public int ReanimateFrontParameterName_Hash { get { return m_ReanimateFrontParameterName_Hash; } }
+        public int ReanimateBackParameterName_Hash { get { return m_ReanimateBackParameterName_Hash; } }
+        public int IncapacitatedParameterName_Hash { get { return m_IncapacitatedParameterName_Hash; } }
+        public int NoLegParameterName_Hash { get { return m_NoLegParameterName_Hash; } }
         //Zombie Animation Controller Layers
         public int hitLayerIndex { get { return m_HitLayer; }}
         //player animator state name info
@@ -120,6 +134,7 @@ namespace SurvivalFPS
         //player animator state name info
         public int reloadStateNameHash { get { return m_ReloadStateName_Hash; } }
         public int fireStateNameHash { get { return m_FireStateName_Hash; } }
+
 
         protected override void Awake()
         {
@@ -147,9 +162,15 @@ namespace SurvivalFPS
             m_RightHandAttackParameterName_Hash = Animator.StringToHash(m_RightHandAttackParameterName);
             m_LeftHandAttackParameterName_Hash = Animator.StringToHash(m_LeftHandAttackParameterName);
             m_MouthAttackParameterName_Hash = Animator.StringToHash(m_MouthAttackParameterName);
+            m_ReanimateFrontParameterName_Hash = Animator.StringToHash(m_ReanimateFrontParameterName);
+            m_ReanimateBackParameterName_Hash = Animator.StringToHash(m_ReanimateBackParameterName);
+            m_IncapacitatedParameterName_Hash = Animator.StringToHash(m_IncapacitatedParameterName);
+            m_NoLegParameterName_Hash = Animator.StringToHash(m_NoLegParameterName);
 
             m_PlayerLayer = LayerMask.NameToLayer("Player");
             m_ZombieBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
+
+            m_GeometryLayerMask = LayerMask.GetMask("Obstacle");
             m_ObstaclesLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
             m_ShootableLayerMask = LayerMask.GetMask("AI Body Part", "Visual Aggravator", "Obstacle");
 

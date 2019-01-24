@@ -1087,7 +1087,7 @@ CapsuleCollider:
   m_Radius: 0.4
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!195 &195371955998905140
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1124,6 +1124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visualThreat: {fileID: 0}
   audioThreat: {fileID: 0}
+  m_Health: 100
   m_CurrentStateType: 3
   m_TargetTrigger: {fileID: 135030665209416274}
   m_SensorTrigger: {fileID: 135823873537052892}
@@ -1153,9 +1154,21 @@ MonoBehaviour:
   m_Satisfaction: 0.505
   m_SpeedDampTime: 0.5
   m_MemoryRetainingTime: 200
+  m_StartingUpperBodyDamage: 0
+  m_StartingLowerBodyDamage: 89
+  m_UpperBodyDamageThreshold: 100
+  m_LowerBodyLimpThreshold: 30
+  m_LowerBodyCrawlThreshold: 90
+  m_LowerBodyNoLegThreshold: 0
+  m_IncapacitatedThreshold: 0
   m_ReplenishRate: 0.02
   m_DepletionRate: 0.00041
   m_BloodParticleMount: {fileID: 4743040701872634}
+  m_HipBoneAlignmentTransform: {fileID: 4156987457920189026}
+  m_HipTransform: {fileID: 4505247346009158}
+  m_ReanimBlendTime: 1.5
+  m_ReanimWaitTime: 3
+  m_ragDollEndTime: -1
 --- !u!114 &114113080696203460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4763,6 +4776,7 @@ Transform:
   - {fileID: 4802161669607420}
   - {fileID: 4406546235132564}
   - {fileID: 4151937771205394}
+  - {fileID: 4156987457920189026}
   m_Father: {fileID: 4749898817291846}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5340,4 +5354,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4107957094607958}
   m_RootOrder: 27
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8607916026806991220
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4156987457920189026}
+  m_Layer: 15
+  m_Name: AIHipBoneAlignmentTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4156987457920189026
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8607916026806991220}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4505247346009158}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

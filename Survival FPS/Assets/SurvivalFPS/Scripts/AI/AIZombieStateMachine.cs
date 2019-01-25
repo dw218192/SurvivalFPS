@@ -422,6 +422,7 @@ namespace SurvivalFPS.AI
                 if (m_IsDead)
                 {
                     ResumeMachine();
+                    return;
                 }
 
                 // Calculate blended bone positions by interplating between ragdoll bone snapshots and animated bone positions

@@ -13,7 +13,10 @@ namespace SurvivalFPS.AI
         {
             Debug.Log(GetType().ToString() + "- enter");
         }
-        public virtual void OnExitState() { Debug.Log(GetType().ToString() + "- exit"); }
+        public virtual void OnExitState() 
+        {
+            Debug.Log(GetType().ToString() + "- exit"); 
+        }
 
         public virtual void OnAnimatorUpdated()
         {

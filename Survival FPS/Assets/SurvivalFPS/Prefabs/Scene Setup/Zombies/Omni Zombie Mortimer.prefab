@@ -1014,6 +1014,7 @@ GameObject:
   - component: {fileID: 114102366681568940}
   - component: {fileID: 114002255601095952}
   - component: {fileID: 351654404127054284}
+  - component: {fileID: 4007302607333425814}
   m_Layer: 9
   m_Name: AI Zombie Entity
   m_TagString: Untagged
@@ -1155,12 +1156,12 @@ MonoBehaviour:
   m_SpeedDampTime: 0.5
   m_MemoryRetainingTime: 200
   m_StartingUpperBodyDamage: 0
-  m_StartingLowerBodyDamage: 89
+  m_StartingLowerBodyDamage: 0
   m_UpperBodyDamageThreshold: 100
   m_LowerBodyLimpThreshold: 30
-  m_LowerBodyCrawlThreshold: 90
-  m_LowerBodyNoLegThreshold: 0
-  m_IncapacitatedThreshold: 0
+  m_LowerBodyCrawlThreshold: 60
+  m_LowerBodyNoLegThreshold: 80
+  m_IncapacitatedThreshold: 99
   m_ReplenishRate: 0.02
   m_DepletionRate: 0.00041
   m_BloodParticleMount: {fileID: 4743040701872634}
@@ -1281,6 +1282,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e397468ff0f4d348bf727b4eb3d6aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4007302607333425814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176847882546118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca1438fb93b534bdd9ca9d0bb1334421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TimeToReaim: 2
 --- !u!1 &1180175083140146
 GameObject:
   m_ObjectHideFlags: 0

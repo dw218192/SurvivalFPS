@@ -36,7 +36,6 @@ namespace SurvivalFPS.AI
         public override void OnExitState()
         {
             base.OnExitState();
-
         }
 
         public override void OnTriggerEvent(AITriggerEventType eventType, Collider other)
@@ -46,9 +45,9 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            if (!m_ZombieStateMachine)
             {
-                return AIStateType.Dead;
+                return AIStateType.Idle;
             }
 
             if (m_ZombieStateMachine.visualThreat)

@@ -59,7 +59,8 @@ namespace SurvivalFPS.AI
 
 
                 //if we are previously stopped for some reason, resume
-                if (m_ZombieStateMachine.navAgent.isStopped) m_ZombieStateMachine.navAgent.isStopped = false;
+                if (m_ZombieStateMachine.navAgent) 
+                    m_ZombieStateMachine.navAgent.isStopped = false;
             }
 
         }
@@ -96,9 +97,9 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            if (!m_ZombieStateMachine)
             {
-                return AIStateType.Dead;
+                return AIStateType.Patrol;
             }
 
             if (m_ZombieStateMachine.visualThreat)

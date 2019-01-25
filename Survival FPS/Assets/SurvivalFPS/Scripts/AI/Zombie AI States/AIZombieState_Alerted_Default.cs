@@ -23,6 +23,7 @@ namespace SurvivalFPS.AI
         public override void OnEnterState()
         {
             base.OnEnterState();
+
             if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 //m_ZombieStateMachine.NavAgentControl(true, false);
@@ -39,9 +40,9 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            if (!m_ZombieStateMachine)
             {
-                return AIStateType.Dead;
+                return AIStateType.Alerted;
             }
 
             m_Timer -= Time.deltaTime;

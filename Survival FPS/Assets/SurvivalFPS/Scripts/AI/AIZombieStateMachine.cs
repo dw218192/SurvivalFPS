@@ -61,8 +61,6 @@ namespace SurvivalFPS.AI
         private int m_AttackType = 0;
         private float m_Speed = 0.0f;
         private int m_HitType = 0;
-        private bool m_Incapacitated = false;
-        private bool m_NoLeg = false;
 
         // animator param Hashes
         private int m_SpeedHash = -1;
@@ -204,7 +202,7 @@ namespace SurvivalFPS.AI
 
             if(m_Health <= 0)
             {
-                OnDeath();
+                Die();
             }
 
             //get the hashes for the params in the animator
@@ -225,6 +223,27 @@ namespace SurvivalFPS.AI
                 m_ReanimBackTriggerHash = gameSceneManager.ReanimateBackParameterName_Hash;
                 m_IncapacitatedHash = gameSceneManager.IncapacitatedParameterName_Hash;
                 m_NoLegHash = gameSceneManager.NoLegParameterName_Hash;
+            }
+        }
+
+        protected override void EarlyUpdateStateMachine()
+        {
+            //if we are hadicapped after reanimation
+            //or we are in the middle of reanimation
+            //pause the AI behaviours
+            if (shouldIncapacitate || shouldNoLeg )
+            {
+                PauseMachine();
+            }
+
+            if (m_IsDead && m_CurrentStateType != AIStateType.Dead)
+            {
+                TryChangeState(AIStateType.Dead);
+            }
+
+            else if (m_AIBoneControlType == AIBoneControlType.Ragdoll && m_CurrentStateType != AIStateType.Collapsed)
+            {
+                TryChangeState(AIStateType.Collapsed);
             }
         }
 
@@ -268,6 +287,8 @@ namespace SurvivalFPS.AI
             {
                 //damage
                 m_Animator.SetBool(m_CrawlingHash, shouldCrawl);
+
+                //what the zombie will be after reanimation
                 m_Animator.SetBool(m_NoLegHash, shouldNoLeg);
                 m_Animator.SetBool(m_IncapacitatedHash, shouldIncapacitate);
             }
@@ -397,6 +418,12 @@ namespace SurvivalFPS.AI
                 // How much time has passed since the reanimation begins relative to the total blend time?
                 float blendAmount = Mathf.Clamp01((Time.time - m_ragDollEndTime - m_MecanimTransitionTime) / m_ReanimBlendTime);
 
+                // if we are killed in this process
+                if (m_IsDead)
+                {
+                    ResumeMachine();
+                }
+
                 // Calculate blended bone positions by interplating between ragdoll bone snapshots and animated bone positions
                 foreach (AIBodyPart bodyPart in m_BodyParts)
                 {
@@ -408,9 +435,8 @@ namespace SurvivalFPS.AI
                     bodyPart.transform.rotation = Quaternion.Slerp(bodyPart.rotationEndOfRagdoll, bodyPart.transform.rotation, blendAmount);
                 }
 
-
                 // Conditional to exit reanimation mode
-                if (blendAmount == 1.0f)
+                if (Mathf.Approximately(blendAmount, 1.0f))
                 {
                     OnReanimated();
                 }
@@ -419,16 +445,31 @@ namespace SurvivalFPS.AI
 
         private void OnReanimated()
         {
-            if (m_IsDead)
-            {
-                m_IsDead = false;
-                m_AIBoneControlType = AIBoneControlType.Animated;
-                if (m_navAgent) m_navAgent.enabled = true;
-                if (m_Collider) m_Collider.enabled = true;
+            m_AIBoneControlType = AIBoneControlType.Animated;
+            if (m_navAgent) m_navAgent.enabled = true;
+            if (m_Collider) m_Collider.enabled = true;
 
-                AIState newState;
-                m_States.TryGetValue(AIStateType.Alerted, out newState);
+            ResumeMachine();
+
+            TryChangeState(AIStateType.Alerted);
+        }
+
+        public override void RagDoll()
+        {
+            base.RagDoll();
+        }
+
+        private bool TryChangeState(AIStateType newStateType)
+        {
+            AIState newState;
+            if(m_States.TryGetValue(newStateType, out newState))
+            {
                 ChangeState(newState);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

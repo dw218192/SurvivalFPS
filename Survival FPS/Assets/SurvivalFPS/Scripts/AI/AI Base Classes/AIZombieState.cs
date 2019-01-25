@@ -7,6 +7,8 @@ namespace SurvivalFPS.AI
 {
     public abstract class AIZombieState : AIState
     {
+        protected AIZombieStateMachine m_ZombieStateMachine = null;
+
         /// <summary>
         /// should be called by the AIStateMachine in the start method
         /// </summary>
@@ -18,8 +20,6 @@ namespace SurvivalFPS.AI
                 m_ZombieStateMachine = (AIZombieStateMachine) machine;
             }
         }
-
-        protected AIZombieStateMachine m_ZombieStateMachine = null;
 
         /// <summary>
         /// called by the sensor script, when the sensor detects any zombie aggravators

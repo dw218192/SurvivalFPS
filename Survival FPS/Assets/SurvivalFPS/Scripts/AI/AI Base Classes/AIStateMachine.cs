@@ -15,7 +15,7 @@ namespace SurvivalFPS.AI
     //enums
     //who is controlling the bones now?
     public enum AIBoneControlType { Animated, Ragdoll, RagdollToAnim }
-    public enum AIStateType { None, Idle, Alerted, Patrol, Attack, Feeding, Pursuit, Dead }
+    public enum AIStateType { None, Idle, Alerted, Patrol, Attack, Feeding, Pursuit, Dead, Collapsed }
     public enum AITargetType { None, Waypoint, Aggravator }
     public enum AITriggerEventType { Enter, Stay, Exit }
     public enum AIBodyPartType { None, Head, UpperBody, UpperBodyLimb, LowerBody, LowerBodyLimb }
@@ -85,7 +85,8 @@ namespace SurvivalFPS.AI
         protected Transform m_Transform = null;
         //runtime attribute variables
         [SerializeField] protected int m_Health;
-        protected bool m_IsDead;
+        protected bool m_IsDead = false;
+        private bool m_UpdateState = true;
 
         //----inspector configurable variables----
         [SerializeField] protected AIStateType m_CurrentStateType = AIStateType.Idle;
@@ -195,6 +196,11 @@ namespace SurvivalFPS.AI
         protected virtual void Initialize() { }
 
         /// <summary>
+        /// this method is called every frame, before the child states are updated
+        /// </summary>
+        protected virtual void EarlyUpdateStateMachine() { }
+
+        /// <summary>
         /// this method is called every frame, after the child states are updated
         /// </summary>
         protected virtual void UpdateStateMachine() { }
@@ -298,30 +304,33 @@ namespace SurvivalFPS.AI
             //statemachine-specific initialization tasks
             Initialize();
         }
-        
+
         private void Update()
         {
-            if (!m_CurrentState) return;
+            EarlyUpdateStateMachine();
 
-            AIStateType newType = m_CurrentState.UpdateState();
-            if(newType != m_CurrentStateType)
+            if (m_CurrentState && m_UpdateState)
             {
-                AIState newState = null;
-                if(m_States.TryGetValue(newType, out newState))
+                AIStateType newType = m_CurrentState.UpdateState();
+                if (newType != m_CurrentStateType)
                 {
-                    ChangeState(newState);
-                }
-                else if(m_States.TryGetValue(AIStateType.Idle, out newState))
-                {
-                    ChangeState(newState);
-                    Debug.LogWarning("the next state cannot be found; going to the idle state...");
+                    AIState newState = null;
+                    if (m_States.TryGetValue(newType, out newState))
+                    {
+                        ChangeState(newState);
+                    }
+                    else if (m_States.TryGetValue(AIStateType.Idle, out newState))
+                    {
+                        ChangeState(newState);
+                        Debug.LogWarning("the next state cannot be found; going to the idle state...");
+                    }
                 }
             }
 
             UpdateStateMachine();
         }
 
-        protected virtual void FixedUpdate()
+        private void FixedUpdate()
         {
             visualThreat = null;
             audioThreat = null;
@@ -572,26 +581,48 @@ namespace SurvivalFPS.AI
             NavAgentControl(useRootPosition, !useRootRotation);
         }
 
-        public virtual void OnDeath()
+        public virtual void Die()
         {
             if(!m_IsDead)
             {
                 m_IsDead = true;
-                m_AIBoneControlType = AIBoneControlType.Ragdoll;
-
-                if (m_navAgent) m_navAgent.enabled = false;
-                //turn off the main collider that is attached to the state machine
-                //body part colliders will still have collision
-                if (m_Collider) m_Collider.enabled = false;
-                if (m_Animator) m_Animator.enabled = false;
-
-                m_IsInMeleeRange = false;
-
-                foreach(AIBodyPart bodyPart in m_BodyParts)
-                {
-                    bodyPart.rigidBody.isKinematic = false;
-                }
+                RagDoll();
             }
+        }
+
+        /// <summary>
+        /// performs the ragdoll, disables nav agent/ main body collider/ animator
+        /// </summary>
+        public virtual void RagDoll()
+        {
+            m_AIBoneControlType = AIBoneControlType.Ragdoll;
+
+            if (m_navAgent) m_navAgent.enabled = false;
+            //turn off the main collider that is attached to the state machine
+            //body part colliders will still have collision
+            if (m_Collider) m_Collider.enabled = false;
+            if (m_Animator) m_Animator.enabled = false;
+
+            m_IsInMeleeRange = false;
+
+            foreach (AIBodyPart bodyPart in m_BodyParts)
+            {
+                bodyPart.rigidBody.isKinematic = false;
+            }
+        }
+
+        public void PauseMachine()
+        {
+            m_UpdateState = false;
+            visualThreat = null;
+            audioThreat = null;
+            m_IsTargetReached = false;
+            m_IsInMeleeRange = false;
+        }
+
+        public void ResumeMachine()
+        {
+            m_UpdateState = true;
         }
     }
 }

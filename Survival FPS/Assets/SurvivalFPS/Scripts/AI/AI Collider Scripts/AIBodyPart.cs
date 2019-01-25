@@ -43,8 +43,8 @@ namespace SurvivalFPS.AI
         {
             switch(m_Type)
             {
-                case AIBodyPartType.Head: return 16.0f;
-                case AIBodyPartType.UpperBody: return 0.1f;
+                case AIBodyPartType.Head: return 1.0f;
+                case AIBodyPartType.UpperBody: return 0.09f;
                 case AIBodyPartType.UpperBodyLimb:
                 case AIBodyPartType.LowerBodyLimb: return 0.05f;
                 case AIBodyPartType.LowerBody: return 0.08f;
@@ -140,30 +140,32 @@ namespace SurvivalFPS.AI
         {
             DamageData damageData = weaponUsed.damageSetting;
 
+            //reduce health
             int actualDamage = (int) (damageData.damagePerShot * GetDamageMultiplier());
             m_Owner.currentHealth -= actualDamage;
             SetBodyPartDamage(actualDamage);
 
+            //hit effects (force, blood)
             PlayBloodSpecialEffect(damageData.impactBloodAmount);
             if (damageData.impactForce > 0.0f)
             {
                 m_RigidBody.AddForce(hitDirection.normalized * damageData.impactForce, ForceMode.Impulse);
             }
 
-            //if the zombie is already dead
-            if(m_Owner.curBoneControlType == AIBoneControlType.Ragdoll)
+            //die if the health falls below zero
+            if (m_Owner.currentHealth <= 0)
             {
-                if(m_Owner is AIZombieStateMachine)
-                {
-                    if (m_Owner.currentHealth > 0)
-                    {
-                        //reanimate zombie
-                        ((AIZombieStateMachine)m_Owner).Reanimate();
-                    }
-                }
+                m_Owner.Die();
             }
 
-            //play hit animations
+            //if it's a head shot
+            if(m_Type == AIBodyPartType.Head)
+            {
+                m_Owner.RagDoll();
+                return;
+            }
+
+            //play hit animations if it's other body parts
             if (m_Owner is AIZombieStateMachine)
             {
                 //the attacker's relative position
@@ -177,13 +179,6 @@ namespace SurvivalFPS.AI
                     float angle = Vector3.SignedAngle(attackerToHit, m_Owner.transform.forward, Vector3.up);
                     SetHitAnim(angle, damageData.impactForce/100.0f);
                 }
-            }
-
-            bool shouldRagRoll = (m_Owner.currentHealth <= 0);
-
-            if(shouldRagRoll)
-            {
-                m_Owner.OnDeath();
             }
         }
 

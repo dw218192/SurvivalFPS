@@ -34,6 +34,7 @@ namespace SurvivalFPS.AI
         public override void OnEnterState()
         {
             base.OnEnterState();
+
             if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
             {
                 //update the animator
@@ -45,7 +46,7 @@ namespace SurvivalFPS.AI
 
                 m_Timer = 0.0f;
 
-                if(m_ZombieStateMachine.navAgent.isStopped)
+                if(m_ZombieStateMachine.navAgent)
                 {
                     m_ZombieStateMachine.navAgent.isStopped = false;
                 }
@@ -54,9 +55,9 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if(!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            if(!m_ZombieStateMachine)
             {
-                return AIStateType.Dead;
+                return AIStateType.Pursuit;
             }
 
             m_Timer += Time.deltaTime;

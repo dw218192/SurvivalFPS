@@ -58,9 +58,9 @@ namespace SurvivalFPS.AI
 
         public override AIStateType UpdateState()
         {
-            if (!m_ZombieStateMachine || m_ZombieStateMachine.IsDead)
+            if (!m_ZombieStateMachine)
             {
-                return AIStateType.Dead;
+                return AIStateType.Alerted;
             }
 
             m_BloodParticleBurstTimer += Time.deltaTime;

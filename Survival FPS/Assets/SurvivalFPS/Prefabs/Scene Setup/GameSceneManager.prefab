@@ -57,6 +57,10 @@ MonoBehaviour:
   m_RightHandAttackParameterName: Right Hand Hit
   m_LeftHandAttackParameterName: Left Hand Hit
   m_MouthAttackParameterName: Mouth Hit
+  m_ReanimateFrontParameterName: Reanimate From Front
+  m_ReanimateBackParameterName: Reanimate From Back
+  m_IncapacitatedParameterName: Incapacitated
+  m_NoLegParameterName: No leg
   m_HitLayer: 2
   m_FeedingStateName: Feeding_state
   m_ReloadParameterName: Reload

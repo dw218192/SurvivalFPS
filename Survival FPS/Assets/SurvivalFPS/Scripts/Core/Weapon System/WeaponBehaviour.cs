@@ -396,7 +396,7 @@ namespace SurvivalFPS.Core.Weapon
                 return m_WeaponConfig.recoilSettingsWhenCrouching;
             }
 
-            if (Mathf.Approximately(m_FPSController.XZVelocity.magnitude, 0.0f))
+            if (m_FPSController.XZVelocity.magnitude < 0.1f)
             {
                 return m_WeaponConfig.recoilSettingsWhenStill;
             }
@@ -413,7 +413,7 @@ namespace SurvivalFPS.Core.Weapon
                 return m_WeaponConfig.accuracySettingsWhenCrouching;
             }
 
-            if (Mathf.Approximately(m_FPSController.XZVelocity.magnitude, 0.0f))
+            if (m_FPSController.XZVelocity.magnitude < 0.1f)
             {
                 return m_WeaponConfig.accuracySettingsWhenStill;
             }

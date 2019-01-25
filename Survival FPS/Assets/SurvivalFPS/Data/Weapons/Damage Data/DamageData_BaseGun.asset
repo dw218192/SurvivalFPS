@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DamagePerShot: 30
   m_PenetratingPower: 10
-  m_ImpactForce: 50
+  m_ImpactForce: 100
   m_ImpactBloodAmount: 60

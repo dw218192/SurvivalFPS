@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -88,7 +88,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 20600c1f847e96444809f1eb7a47b40c,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -326,31 +327,6 @@ PrefabInstance:
       propertyPath: m_Waypoints
       value: 
       objectReference: {fileID: 49196627}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_LowerBodyCrawlThreshold
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_LowerBodyLimpThreshold
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_UpperBodyDamageThreshold
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_StartingLowerBodyDamage
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114078044580724374, guid: 24242cc0b4a27654883d0b6592d01bd9,
-        type: 3}
-      propertyPath: m_StartingUpperBodyDamage
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
 --- !u!1 &732213299

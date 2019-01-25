@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45bec589f585a84ca0896fe54c67e84, type: 3}
   m_Name: AccuracyWhenCrouching_BaseGun
   m_EditorClassIdentifier: 
-  m_BaseAccuracy: 95
+  m_BaseAccuracy: 97
   m_AccuracyRecoveryRate: 50
   m_AccuracyDropPerShot: 7

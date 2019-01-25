@@ -50,7 +50,8 @@ namespace SurvivalFPS.Core.Weapon
         protected AudioSource m_AudioSource;
         protected GameObject m_GunGameObject; //the runtime gun game object
         protected SkinnedMeshRenderer m_GunMesh; //reference to its mesh renderer
-        protected Animator m_GunAnimator;
+        protected Animator m_GunAnimator; //this gun's animator only
+        protected PlayerAnimatorManager m_PlayerAnimManager; //the player's anim manager that manages enabled animators on its list
         protected float m_FireRate = -1.0f;
 
         //properties
@@ -88,8 +89,6 @@ namespace SurvivalFPS.Core.Weapon
         public abstract bool isFiring { get; }
         public abstract bool isReloading { get; }
 
-
-
         /// <summary>
         /// this function must be called before using the weapon system
         /// </summary>
@@ -121,14 +120,14 @@ namespace SurvivalFPS.Core.Weapon
                     //enable the weapon behaviour that's attached to whoever is using it
                     m_WeaponBehaviour.enabled = true;
                     //enable the animator if it is previously disabled
-                    m_WeaponBehaviour.animatorManager.EnableAnimator(m_GunAnimator);
+                    m_PlayerAnimManager.EnableAnimator(m_GunAnimator);
                 }
                 else
                 {
                     //enable the weapon behaviour that's attached to whoever is using it
                     m_WeaponBehaviour.enabled = false;
                     //disable the animator
-                    m_WeaponBehaviour.animatorManager.DisableAnimator(m_GunAnimator);
+                    m_PlayerAnimManager.DisableAnimator(m_GunAnimator);
                 }
 
                 //enable/disable the mesh
@@ -138,13 +137,24 @@ namespace SurvivalFPS.Core.Weapon
         public override bool isFiring { get { return m_WeaponBehaviour.isFiring; } }
         public override bool isReloading { get { return m_WeaponBehaviour.isReloading; } }
 
-        protected void SetModel(PlayerManager player)
+        public override void Initialize(PlayerManager player)
+        {
+            m_WeaponBehaviour = player.gameObject.AddComponent<T>();
+            m_PlayerAnimManager = player.GetComponent<PlayerAnimatorManager>();
+
+            SetModel(player);
+            SetAudioSource(player);
+            SetAnimator(player);
+        }
+
+        //initialization functions
+        private void SetModel(PlayerManager player)
         {
             m_GunGameObject = Instantiate(m_GunModelPrefab, player.weaponSocket);
             m_GunMesh = m_GunGameObject.GetComponentInChildren<SkinnedMeshRenderer>();
         }
         //---initialization functions---
-        protected void SetAnimator(PlayerManager player)
+        private void SetAnimator(PlayerManager player)
         {
             //the gun's animator
             m_GunAnimator = m_GunGameObject.GetComponent<Animator>();
@@ -165,7 +175,7 @@ namespace SurvivalFPS.Core.Weapon
             //set the runtime controller of this gun animator
             m_GunAnimator.runtimeAnimatorController = m_AnimatorController;
         }
-        protected void SetAudioSource(PlayerManager player)
+        private void SetAudioSource(PlayerManager player)
         {
             m_AudioSource = player.GetComponent<AudioSource>();
         }

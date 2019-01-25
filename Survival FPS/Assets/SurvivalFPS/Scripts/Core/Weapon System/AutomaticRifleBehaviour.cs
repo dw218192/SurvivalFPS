@@ -7,9 +7,6 @@ namespace SurvivalFPS.Core.Weapon
 {
     public class AutomaticRifleBehaviour : WeaponBehaviour<AutomaticRifleConfig>
     {
-        /// <summary>
-        /// called when the weapon controller initializes the weapons
-        /// </summary>
         public override void Initialize()
         {
             base.Initialize();

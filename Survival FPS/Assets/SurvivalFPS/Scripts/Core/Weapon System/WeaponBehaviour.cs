@@ -19,23 +19,22 @@ namespace SurvivalFPS.Core.Weapon
     {
         protected int m_CurrentAmmo = 0;
 
-        //set by config
-        protected FirstPersonController m_FPSController;
-        protected Animator m_Animator; //animator of this weapon only
-        protected PlayerAnimatorManager m_AnimatorManager; //animator collection of the player
-        protected AudioManager m_AudioManager; //audio manager of the player
-        protected Camera m_PlayerCamera; //central manager of the player
-
         //states
         protected bool m_IsFiring;
         protected bool m_IsReloading;
 
-        //public properties
-        //set by config
+        //private internal fields set by config
+        protected FirstPersonController m_FPSController;
+        protected Animator m_Animator; //animator of this weapon only
+        protected PlayerAnimatorManager m_AnimatorManager; //animator collection of the player
+        protected PlayerWeaponController m_WeaponController; //weapon controller
+        protected AudioManager m_AudioManager; //audio manager of the player
+        protected Camera m_PlayerCamera; //central manager of the player
         public FirstPersonController FPSController { set { m_FPSController = value; } }
         public Animator animator { set { m_Animator = value; } }
         public AudioManager audioManager { set { m_AudioManager = value; }}
-        public PlayerAnimatorManager animatorManager { get { return m_AnimatorManager; } set { m_AnimatorManager = value; } }
+        public PlayerAnimatorManager animatorManager { set { m_AnimatorManager = value; } }
+        public PlayerWeaponController weaponController { set { m_WeaponController = value; }}
         public Camera playerCamera { set { m_PlayerCamera = value; }}
 
         public int currentAmmo { get { return m_CurrentAmmo; } }
@@ -52,6 +51,8 @@ namespace SurvivalFPS.Core.Weapon
 
         protected virtual void Awake() { }
         protected virtual void Start() { }
+
+        public abstract void Initialize();
     }
 
     /// <summary>
@@ -96,7 +97,7 @@ namespace SurvivalFPS.Core.Weapon
         protected sealed override void Awake() { }
         protected sealed override void Start() { }
 
-        public virtual void Initialize()
+        public override void Initialize()
         {
             m_CurrentAmmo = m_WeaponConfig.ammoCapacity;
 

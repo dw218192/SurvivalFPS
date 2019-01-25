@@ -10,13 +10,8 @@ namespace SurvivalFPS.Core.Weapon
     {
         public override void Initialize(PlayerManager player)
         {
-            m_WeaponBehaviour = player.gameObject.AddComponent<AutomaticRifleBehaviour>();
+            base.Initialize(player);
             m_WeaponBehaviour.weaponConfig = this;
-
-            SetModel(player);
-            SetAudioSource(player);
-            SetAnimator(player);
-
             m_WeaponBehaviour.Initialize();
         }
     }

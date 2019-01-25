@@ -15,13 +15,14 @@ namespace SurvivalFPS.Core.FPS
         [SerializeField] private List<WeaponConfig> m_Weapons;
         [SerializeField] private bool m_AutoReload;
 
+        //consider removing manually coupling arm & hand animators
         [Header("debug")]
         [SerializeField] private Animator m_HandAnimator;
         [SerializeField] private Animator m_ArmAnimator;
-        [SerializeField] private int m_CurrentWeaponAmmo;
 
         //internal variables
         private WeaponConfig m_CurrentWeapon;
+        [SerializeField] private int m_CurrentWeaponAmmo;
 
         private PlayerManager m_PlayerManager;
         private FirstPersonController m_FPSController;
@@ -29,6 +30,10 @@ namespace SurvivalFPS.Core.FPS
 
         private float m_EquipTimer;
 
+        //public properties
+        public bool fireLeadingEdge { get; private set; }
+
+        //delegates
         private event Action<WeaponConfig> OnWeaponChanged;
         public void RegisterWeaponChangeEvent(Action<WeaponConfig> action)
         {
@@ -72,6 +77,8 @@ namespace SurvivalFPS.Core.FPS
                 //wait for the weapon to be fully equipped
                 if(m_EquipTimer <= 0.0f)
                 {
+                    fireLeadingEdge = Input.GetButtonDown("Fire1");
+
                     bool canFire = !m_FPSController.running && !m_CurrentWeapon.isReloading;
 
                     if (canFire && Input.GetButton("Fire1"))

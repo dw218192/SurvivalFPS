@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Glock21c
+  m_Controller: {fileID: 9100000, guid: 92a7ae90e85d03e4eaabb3a5e03b51c6, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 85b9c01d87e887f4d99071928dd293cb, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: e216edd135a1a054c8942f313afd1437, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 95eba2e0b45c635448e1e5cb3aae4f9d, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: ba65d7169bd12234bac74369b2c33d60, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 4203e9a17e02f0b4a8a1b4d69279e780, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: b619053efaa750b429b36763ba188e92, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 860e01de32b99d24db494547f87059a4, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 85c3f4da6b340bb4fb77c335dd2e68a5, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 8b0104c2469ae424fa1cfa0c4a9d668f, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 47c5ef347798a29488fa908333f3c35f, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 49caad0fe479d6948ab690bebc5f2a73, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: bd84f30b63182ed4da1dc948cdd729ec, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: eea0eb420ead16f4eb29e0e10fd2432b, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 92eed7d98899928428ea4a4ade978d83, type: 3}

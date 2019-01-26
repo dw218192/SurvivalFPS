@@ -236,14 +236,20 @@ namespace SurvivalFPS.AI
                 PauseMachine();
             }
 
-            if (m_IsDead && m_CurrentStateType != AIStateType.Dead)
+            if (m_IsDead)
             {
-                TryChangeState(AIStateType.Dead);
+                if(m_CurrentStateType != AIStateType.Dead)
+                {
+                    TryChangeState(AIStateType.Dead);
+                }
             }
 
-            else if (m_AIBoneControlType == AIBoneControlType.Ragdoll && m_CurrentStateType != AIStateType.Collapsed)
+            else if (m_AIBoneControlType == AIBoneControlType.Ragdoll)
             {
-                TryChangeState(AIStateType.Collapsed);
+                if(m_CurrentStateType != AIStateType.Collapsed)
+                {
+                    TryChangeState(AIStateType.Collapsed);
+                }
             }
         }
 
@@ -422,6 +428,7 @@ namespace SurvivalFPS.AI
                 if (m_IsDead)
                 {
                     ResumeMachine();
+                    return;
                 }
 
                 // Calculate blended bone positions by interplating between ragdoll bone snapshots and animated bone positions

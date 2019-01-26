@@ -55,6 +55,7 @@ namespace SurvivalFPS.Core
                 info.playerAudioManager = GetComponent<AudioManager>();
                 info.playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
                 info.playerMotionController = GetComponent<FirstPersonController>();
+                info.playerWeaponController = GetComponent<PlayerWeaponController>();
                 info.collider = m_Collider;
                 info.meleeTrigger = m_MeleeTrigger;
 

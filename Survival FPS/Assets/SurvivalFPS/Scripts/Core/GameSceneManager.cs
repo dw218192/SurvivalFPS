@@ -18,6 +18,7 @@ namespace SurvivalFPS
         public FirstPersonController playerMotionController = null;
         public PlayerAnimatorManager playerAnimatorManager = null;
         public AudioManager playerAudioManager = null;
+        public PlayerWeaponController playerWeaponController = null;
     }
 
     /// <summary>

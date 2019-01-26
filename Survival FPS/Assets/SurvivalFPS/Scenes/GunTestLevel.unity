@@ -278,6 +278,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Omni Zombie Mortimer
       objectReference: {fileID: 0}
+    - target: {fileID: 1368244323850896, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.038
@@ -562,6 +566,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114422897003315320, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Weapons.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114422897003315320, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Weapons.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: bacc9b882a8d0684facaf5e66e135bf4,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0402f824a9ab3c48bd00b73817e2459, type: 3}
 --- !u!1 &1438994880

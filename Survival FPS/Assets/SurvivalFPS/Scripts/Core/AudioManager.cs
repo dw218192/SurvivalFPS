@@ -119,8 +119,11 @@ namespace SurvivalFPS.Core
         {
             for (int i = 0; i < clips.Length; i ++)
             {
-                m_AudioSource.PlayOneShot(clips[i]);
-                yield return new WaitForSeconds(clips[i].length + timeBetween);
+                if(clips[i] != null)
+                {
+                    m_AudioSource.PlayOneShot(clips[i]);
+                    yield return new WaitForSeconds(clips[i].length + timeBetween);
+                }
             }
 
             m_PlayInSequenceRoutine = null;

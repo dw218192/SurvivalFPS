@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a32126ac56e10415a9c9c42c5edc1b61, type: 3}
   m_Name: DamageData_BaseGun
   m_EditorClassIdentifier: 
-  m_DamagePerShot: 30
+  m_DamagePerShot: 90
   m_PenetratingPower: 10
-  m_ImpactForce: 100
+  m_ImpactForce: 20
   m_ImpactBloodAmount: 60

@@ -11,7 +11,6 @@ namespace SurvivalFPS.Core.Weapon
     {
         //an imported asset with model and animator
         [SerializeField] protected GameObject m_GunModelPrefab;
-        [SerializeField] protected GameObject m_BulletHolePrefab; //TODO
 
         //damage settings
         [SerializeField] protected DamageData m_DamageSetting;
@@ -165,6 +164,7 @@ namespace SurvivalFPS.Core.Weapon
             //set the links to the behaviour component
             weaponBehaviour.FPSController = info.playerMotionController;
             weaponBehaviour.animator = m_GunAnimator;
+            weaponBehaviour.weaponController = info.playerWeaponController;
             weaponBehaviour.animatorManager = info.playerAnimatorManager;
             weaponBehaviour.audioManager = info.playerAudioManager;
             weaponBehaviour.playerCamera = info.playerCamera;

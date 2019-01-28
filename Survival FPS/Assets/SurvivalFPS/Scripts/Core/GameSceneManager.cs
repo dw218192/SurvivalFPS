@@ -47,10 +47,13 @@ namespace SurvivalFPS
         [SerializeField] private string m_ReanimateBackParameterName;
         [SerializeField] private string m_IncapacitatedParameterName;
         [SerializeField] private string m_NoLegParameterName;
+        [SerializeField] private string m_BehaviourStateParameterName;
         [Header("Zombie Animation Controller Layer Indices")]
         [SerializeField] private int m_HitLayer;
         [Header("Zombie Animation Controller State Names")]
         [SerializeField] private string m_FeedingStateName;
+        [SerializeField] private string m_CrawlFeedingStateName;
+
         [Header("Player Animation Controller Parameters")]
         [SerializeField] private string m_ReloadParameterName;
         [SerializeField] private string m_ReloadCurveParameterName;
@@ -75,9 +78,10 @@ namespace SurvivalFPS
         private int m_ReanimateBackParameterName_Hash = -1;
         private int m_IncapacitatedParameterName_Hash = -1;
         private int m_NoLegParameterName_Hash = -1;
+        private int m_BehaviourStateParameterName_Hash = -1;
         //Player Animation Controller State Names
         private int m_FeedingStateName_Hash = -1;
-
+        private int m_CrawlFeedingStateName_Hash = -1;
         //Player Animation Controller Parameters
         private int m_ReloadParameterName_Hash = -1;
         private int m_ReloadCurveParameterName_Hash = -1;
@@ -122,10 +126,12 @@ namespace SurvivalFPS
         public int ReanimateBackParameterName_Hash { get { return m_ReanimateBackParameterName_Hash; } }
         public int IncapacitatedParameterName_Hash { get { return m_IncapacitatedParameterName_Hash; } }
         public int NoLegParameterName_Hash { get { return m_NoLegParameterName_Hash; } }
+        public int behaviourStateParameterName_Hash { get { return m_BehaviourStateParameterName_Hash; } }
         //Zombie Animation Controller Layers
         public int hitLayerIndex { get { return m_HitLayer; }}
         //player animator state name info
         public int feedingStateName_Hash { get { return m_FeedingStateName_Hash; } }
+        public int crawlFeedingStateName_Hash { get { return m_CrawlFeedingStateName_Hash; } }
         //player animator controller info
         public string reloadParameterName { get { return m_ReloadParameterName; } }
         public string reloadCurveParameterName { get { return m_ReloadCurveParameterName; } }
@@ -135,7 +141,6 @@ namespace SurvivalFPS
         //player animator state name info
         public int reloadStateNameHash { get { return m_ReloadStateName_Hash; } }
         public int fireStateNameHash { get { return m_FireStateName_Hash; } }
-
 
         protected override void Awake()
         {
@@ -167,6 +172,7 @@ namespace SurvivalFPS
             m_ReanimateBackParameterName_Hash = Animator.StringToHash(m_ReanimateBackParameterName);
             m_IncapacitatedParameterName_Hash = Animator.StringToHash(m_IncapacitatedParameterName);
             m_NoLegParameterName_Hash = Animator.StringToHash(m_NoLegParameterName);
+            m_BehaviourStateParameterName_Hash = Animator.StringToHash(m_BehaviourStateParameterName);
 
             m_PlayerLayer = LayerMask.NameToLayer("Player");
             m_ZombieBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
@@ -178,6 +184,9 @@ namespace SurvivalFPS
             m_ReloadParameterName_Hash = Animator.StringToHash(m_ReloadParameterName);
             m_ReloadCurveParameterName_Hash = Animator.StringToHash(m_ReloadCurveParameterName);
             m_FireParameterName_Hash = Animator.StringToHash(m_FireParameterName);
+
+            m_FeedingStateName_Hash = Animator.StringToHash(m_FeedingStateName);
+            m_CrawlFeedingStateName_Hash = Animator.StringToHash(m_CrawlFeedingStateName);
 
             m_ReloadStateName_Hash = Animator.StringToHash(m_ReloadStateName);
             m_FireStateName_Hash = Animator.StringToHash(m_FireStateName);

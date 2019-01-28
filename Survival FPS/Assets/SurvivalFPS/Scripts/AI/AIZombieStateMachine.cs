@@ -74,6 +74,7 @@ namespace SurvivalFPS.AI
         private int m_ReanimBackTriggerHash = -1;
         private int m_IncapacitatedHash = -1;
         private int m_NoLegHash = -1;
+        private int m_StateHash = -1;
 
         // animator layer
         private int m_HitLayerIndex = -1;
@@ -223,6 +224,8 @@ namespace SurvivalFPS.AI
                 m_ReanimBackTriggerHash = gameSceneManager.ReanimateBackParameterName_Hash;
                 m_IncapacitatedHash = gameSceneManager.IncapacitatedParameterName_Hash;
                 m_NoLegHash = gameSceneManager.NoLegParameterName_Hash;
+
+                m_StateHash = gameSceneManager.behaviourStateParameterName_Hash;
             }
         }
 
@@ -284,6 +287,7 @@ namespace SurvivalFPS.AI
                 m_Animator.SetBool(m_FeedingHash, m_Feeding);
                 m_Animator.SetInteger(m_SeekingHash, m_Seeking);
                 m_Animator.SetInteger(m_AttackHash, m_AttackType);
+                m_Animator.SetInteger(m_StateHash, (int) m_CurrentStateType);
             }
         }
 
@@ -397,13 +401,16 @@ namespace SurvivalFPS.AI
 
                     //find a valid nav mesh position closest to our new root position
                     NavMeshHit navMeshHit;
+                    Vector3 baseOffset = Vector3.zero;
+                    if (m_navAgent) baseOffset.y = m_navAgent.baseOffset;
+
                     if (NavMesh.SamplePosition(newRootPosition, out navMeshHit, 25.0f, NavMesh.AllAreas))
                     {
-                        transform.position = navMeshHit.position;
+                        transform.position = navMeshHit.position + baseOffset;
                     }
                     else
                     {
-                        transform.position = newRootPosition;
+                        transform.position = newRootPosition + baseOffset;
                     }
               
                     //old body orientation

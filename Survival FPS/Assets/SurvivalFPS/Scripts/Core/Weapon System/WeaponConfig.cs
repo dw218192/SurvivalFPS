@@ -151,6 +151,7 @@ namespace SurvivalFPS.Core.Weapon
         {
             m_GunGameObject = Instantiate(m_GunModelPrefab, player.weaponSocket);
             m_GunMesh = m_GunGameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+            m_GunMesh.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
         //---initialization functions---
         private void SetAnimator(PlayerManager player)

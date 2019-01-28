@@ -61,8 +61,10 @@ MonoBehaviour:
   m_ReanimateBackParameterName: Reanimate From Back
   m_IncapacitatedParameterName: Incapacitated
   m_NoLegParameterName: No leg
+  m_BehaviourStateParameterName: BehaviourState
   m_HitLayer: 2
-  m_FeedingStateName: Feeding_state
+  m_FeedingStateName: Feeding_State
+  m_CrawlFeedingStateName: Crawl_Feeding_State
   m_ReloadParameterName: Reload
   m_ReloadCurveParameterName: ReloadCurveParam
   m_FireParameterName: Fire

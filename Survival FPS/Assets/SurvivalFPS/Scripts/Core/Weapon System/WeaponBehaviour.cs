@@ -251,7 +251,7 @@ namespace SurvivalFPS.Core.Weapon
                 //if the weapon got switched out in the middle of the reloading
                 if (!m_WeaponConfig.isActive)
                 {
-                    ExitReloading();
+                    ExitReloading(true);
                     yield break;
                 }
 
@@ -270,7 +270,7 @@ namespace SurvivalFPS.Core.Weapon
                 //if the weapon got switched out in the middle of the reloading
                 if (!m_WeaponConfig.isActive)
                 {
-                    ExitReloading();
+                    ExitReloading(true);
                     yield break;
                 }
 
@@ -279,12 +279,15 @@ namespace SurvivalFPS.Core.Weapon
 
             //we've finished reloading
             m_CurrentAmmo = m_WeaponConfig.ammoCapacity;
-            ExitReloading();
+            ExitReloading(false);
         }
 
-        private void ExitReloading()
+        private void ExitReloading(bool interrupted)
         {
-            m_FireTimer = 0.0f;
+            if (interrupted)
+            {
+                m_FireTimer = 0.0f;
+            }
 
             //clean the flags
             m_ReloadingRoutine = null;

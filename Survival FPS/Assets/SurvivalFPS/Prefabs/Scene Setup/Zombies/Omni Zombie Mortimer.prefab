@@ -1204,6 +1204,7 @@ MonoBehaviour:
   m_WaypointAngleThreshold: 10
   m_ThreatAngleThreshold: 25
   m_DirectionChangeTime: 0.9
+  m_TurnSpeed: 40
 --- !u!114 &114321726858294550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5241,7 +5242,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1956657855557762}
   m_LocalRotation: {x: -0.024960484, y: 0.024960574, z: 0.7066662, w: 0.70666605}
-  m_LocalPosition: {x: -0.01, y: -0.03, z: -0.19}
+  m_LocalPosition: {x: -0.01, y: -0.032, z: -0.226}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4107957094607958}

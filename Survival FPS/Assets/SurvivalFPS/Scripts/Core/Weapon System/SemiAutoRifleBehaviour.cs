@@ -28,7 +28,7 @@ namespace SurvivalFPS.Core.Weapon
 
         public override void DryFire()
         {
-            if (m_DryFireTimer >= m_WeaponConfig.fireRate * 6.0f)
+            if (m_WeaponController.fireLeadingEdge)
             {
                 m_AudioManager.PlayRandom(m_WeaponConfig.dryFireSounds);
                 m_DryFireTimer = 0.0f;

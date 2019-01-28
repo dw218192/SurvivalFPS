@@ -11,6 +11,7 @@ namespace SurvivalFPS.AI
         [SerializeField] float m_WaypointAngleThreshold = 10.0f;
         [SerializeField] float m_ThreatAngleThreshold = 10.0f;
         [SerializeField] [Range(0.5f, 1.5f)] float m_DirectionChangeTime;
+        [SerializeField] float m_TurnSpeed = 40.0f;
 
         private float m_Timer = 0.0f;
         private float m_DirectionChangeTimer;
@@ -51,6 +52,25 @@ namespace SurvivalFPS.AI
             if (m_Timer <= 0.0f)
             {
                 return AIStateType.Patrol;
+            }
+
+            //if the rotation is not handled by the animator, slowly rotate the zombie to face the threat
+            if (!m_ZombieStateMachine.useRootRotation)
+            {
+                Quaternion newRot;
+                if (m_ZombieStateMachine.navAgent.desiredVelocity.sqrMagnitude > Mathf.Epsilon)
+                {
+                    if (Random.value < m_ZombieStateMachine.intelligence)
+                    {
+                        newRot = Quaternion.LookRotation(m_ZombieStateMachine.navAgent.desiredVelocity);
+                    }
+                    else
+                    {
+                        newRot = Quaternion.LookRotation(- m_ZombieStateMachine.navAgent.desiredVelocity);
+                    }
+
+                    m_ZombieStateMachine.transform.rotation = Quaternion.RotateTowards(m_ZombieStateMachine.transform.rotation, newRot, Time.deltaTime * m_TurnSpeed);
+                }
             }
 
             if (m_ZombieStateMachine.visualThreat)
@@ -110,7 +130,6 @@ namespace SurvivalFPS.AI
                     SeekAround((int)Mathf.Sign(Random.Range(-1.0f, 1.0f)));
                 }
             }
-
 
             return AIStateType.Alerted;
         }

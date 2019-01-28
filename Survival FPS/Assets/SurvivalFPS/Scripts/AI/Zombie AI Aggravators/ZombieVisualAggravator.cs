@@ -70,7 +70,7 @@ namespace SurvivalFPS.AI
                     return false;
                 }
 
-                RaycastHit[] hits = Physics.RaycastAll(head, headToThreat.normalized, zombie.sensorRadius * zombie.sight, layerMask);
+                RaycastHit[] hits = Physics.RaycastAll(head, headToThreat.normalized, zombie.sensorRadius * zombie.sight, layerMask, QueryTriggerInteraction.Collide);
 
                 //find the closest collider that's hit
                 float closestColliderDistance = float.MaxValue;

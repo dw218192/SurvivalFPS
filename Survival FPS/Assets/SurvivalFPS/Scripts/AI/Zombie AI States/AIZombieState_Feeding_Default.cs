@@ -11,6 +11,7 @@ namespace SurvivalFPS.AI
         [SerializeField] [Range(1, 100)] private int m_BloodParticleBurstAmount = 10;
 
         private int m_EatingAnimStateHash = -1;
+        private int m_CrawlEatingAnimStateHash = -1;
         private int m_AnimCinematicLayer = -1;
 
         private Transform m_BloodParticleMount;
@@ -19,6 +20,7 @@ namespace SurvivalFPS.AI
         public override void Initialize()
         {
             base.Initialize();
+            m_CrawlEatingAnimStateHash = GameSceneManager.Instance.crawlFeedingStateName_Hash;
             m_EatingAnimStateHash = GameSceneManager.Instance.feedingStateName_Hash;
             m_BloodParticleMount = m_ZombieStateMachine.bloodParticleMount;
         }
@@ -98,7 +100,8 @@ namespace SurvivalFPS.AI
                 }
             }
 
-            if(m_ZombieStateMachine.animator.GetCurrentAnimatorStateInfo(m_AnimCinematicLayer).shortNameHash == m_EatingAnimStateHash)
+            int stateNameHash = m_ZombieStateMachine.animator.GetCurrentAnimatorStateInfo(m_AnimCinematicLayer).shortNameHash;
+            if (stateNameHash == m_EatingAnimStateHash || stateNameHash == m_CrawlEatingAnimStateHash)
             {
                 m_ZombieStateMachine.satisfaction = Mathf.Min(1.0f, m_ZombieStateMachine.satisfaction + Time.deltaTime * m_ZombieStateMachine.replenishRate);
                 
@@ -132,7 +135,28 @@ namespace SurvivalFPS.AI
                 }
             }
 
+            StickToFood();
+
             return AIStateType.Feeding;
+        }
+
+        //TODO better calculation of head pos
+        private void StickToFood()
+        {
+            Vector3 offset = Vector3.zero;
+            if (m_ZombieStateMachine.navAgent)
+            {
+                offset.y = m_ZombieStateMachine.navAgent.baseOffset;
+            }
+
+            Vector3 headToTarget = m_ZombieStateMachine.GetCurrentTarget().lastKnownPosition - m_ZombieStateMachine.animator.GetBoneTransform(HumanBodyBones.Head).position;
+            headToTarget = Vector3.ProjectOnPlane(headToTarget, Vector3.up);
+            headToTarget += offset;
+
+            if (headToTarget.sqrMagnitude >= 0.1f)
+            {
+                m_ZombieStateMachine.transform.position = Vector3.MoveTowards(m_ZombieStateMachine.transform.position, m_ZombieStateMachine.transform.position + headToTarget, Time.deltaTime * 20.0f);
+            }
         }
     }
 }

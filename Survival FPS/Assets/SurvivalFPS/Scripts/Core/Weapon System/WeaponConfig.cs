@@ -167,7 +167,6 @@ namespace SurvivalFPS.Core.Weapon
             weaponBehaviour.animator = m_GunAnimator;
             weaponBehaviour.weaponController = info.playerWeaponController;
             weaponBehaviour.animatorManager = info.playerAnimatorManager;
-            weaponBehaviour.audioManager = info.playerAudioManager;
             weaponBehaviour.playerCamera = info.playerCamera;
 
             //add the animator to the player animator manager

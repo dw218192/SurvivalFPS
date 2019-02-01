@@ -29,10 +29,10 @@ namespace SurvivalFPS.Core.Weapon
         protected PlayerAnimatorManager m_AnimatorManager; //animator collection of the player
         protected PlayerWeaponController m_WeaponController; //weapon controller
         protected AudioManager m_AudioManager; //audio manager of the player
+        protected GameSceneManager m_GameSceneManager; //game scene manager of the player
         protected Camera m_PlayerCamera; //central manager of the player
         public FirstPersonController FPSController { set { m_FPSController = value; } }
         public Animator animator { set { m_Animator = value; } }
-        public AudioManager audioManager { set { m_AudioManager = value; }}
         public PlayerAnimatorManager animatorManager { set { m_AnimatorManager = value; } }
         public PlayerWeaponController weaponController { set { m_WeaponController = value; }}
         public Camera playerCamera { set { m_PlayerCamera = value; }}
@@ -94,7 +94,12 @@ namespace SurvivalFPS.Core.Weapon
 
 
         //don't use these
-        protected sealed override void Awake() { }
+        protected sealed override void Awake()
+        {
+            //reference to singleton managers
+            m_AudioManager = AudioManager.Instance;
+            m_GameSceneManager = GameSceneManager.Instance;
+        }
         protected sealed override void Start() { }
 
         public override void Initialize()
@@ -106,7 +111,7 @@ namespace SurvivalFPS.Core.Weapon
             if (weaponController) weaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
         
             //general settings of the muzzle flash particle effect
-            m_MuzzleFlash = GameSceneManager.Instance.muzzleFlashParticleSystem;
+            m_MuzzleFlash = m_GameSceneManager.muzzleFlashParticleSystem;
             var mainModule = m_MuzzleFlash.main;
             mainModule.playOnAwake = false;
             mainModule.simulationSpace = ParticleSystemSimulationSpace.Local;
@@ -168,7 +173,7 @@ namespace SurvivalFPS.Core.Weapon
         {
             if (m_IsFiring)
             {
-                m_AnimatorManager.SetBool(GameSceneManager.Instance.fireParameterNameHash, false);
+                m_AnimatorManager.SetBool(m_GameSceneManager.fireParameterNameHash, false);
                 m_IsFiring = false;
             }
         }
@@ -184,8 +189,8 @@ namespace SurvivalFPS.Core.Weapon
 
 
             //play fire animation
-            m_AnimatorManager.SetBool(GameSceneManager.Instance.fireParameterNameHash, true);
-            m_AnimatorManager.Play(GameSceneManager.Instance.fireStateNameHash, -1);
+            m_AnimatorManager.SetBool(m_GameSceneManager.fireParameterNameHash, true);
+            m_AnimatorManager.Play(m_GameSceneManager.fireStateNameHash, -1);
 
             m_AudioManager.PlayRandom(m_WeaponConfig.fireSounds);
 
@@ -242,11 +247,11 @@ namespace SurvivalFPS.Core.Weapon
             //set the parameter to begin the transition into the reloading animation
             if (m_AnimatorManager)
             {
-                m_AnimatorManager.SetBool(GameSceneManager.Instance.reloadParameterHash, true);
+                m_AnimatorManager.SetBool(m_GameSceneManager.reloadParameterHash, true);
             }
 
             //wait for the reload animation to begin playing
-            while (m_Animator.GetCurrentAnimatorStateInfo(0).shortNameHash != GameSceneManager.Instance.reloadStateNameHash)
+            while (m_Animator.GetCurrentAnimatorStateInfo(0).shortNameHash != m_GameSceneManager.reloadStateNameHash)
             {
                 //if the weapon got switched out in the middle of the reloading
                 if (!m_WeaponConfig.isActive)
@@ -265,7 +270,7 @@ namespace SurvivalFPS.Core.Weapon
             m_AudioManager.PlayRandom(() => m_WeaponConfig.isActive, m_WeaponConfig.reloadSounds);
 
             //only increment the ammo when the animation reaches a specific point (i.e. magazine changed)
-            while (m_Animator.GetFloat(GameSceneManager.Instance.reloadCurveParameterName) < -0.5f)
+            while (m_Animator.GetFloat(m_GameSceneManager.reloadCurveParameterName) < -0.5f)
             {
                 //if the weapon got switched out in the middle of the reloading
                 if (!m_WeaponConfig.isActive)
@@ -296,8 +301,8 @@ namespace SurvivalFPS.Core.Weapon
             //turn off the animator flag of this weapon and other related animators (arms/hands/etc)
             if (m_AnimatorManager)
             {
-                m_Animator.SetBool(GameSceneManager.Instance.reloadParameterHash, false);
-                m_AnimatorManager.SetBool(GameSceneManager.Instance.reloadParameterHash, false);
+                m_Animator.SetBool(m_GameSceneManager.reloadParameterHash, false);
+                m_AnimatorManager.SetBool(m_GameSceneManager.reloadParameterHash, false);
             }
         }
         #endregion
@@ -455,7 +460,7 @@ namespace SurvivalFPS.Core.Weapon
 
             //Debug.DrawLine(startPoint, startPoint + direction, Color.red);
 
-            if (Physics.Raycast(ray, out hit, m_WeaponConfig.range, GameSceneManager.Instance.shootableLayerMask))
+            if (Physics.Raycast(ray, out hit, m_WeaponConfig.range, m_GameSceneManager.shootableLayerMask))
             {
                 // bullet hole
                 if (BulletHoleManager.Instance)
@@ -511,7 +516,6 @@ namespace SurvivalFPS.Core.Weapon
                 }
 
                 m_AnimatorManager.Play("Bring Up Weapon", -1, 0.0f);
-
                 m_AudioManager.PlayInSequence(0.1f, m_WeaponConfig.bringUpSound, m_WeaponConfig.weaponEquipSound);
             }
         }

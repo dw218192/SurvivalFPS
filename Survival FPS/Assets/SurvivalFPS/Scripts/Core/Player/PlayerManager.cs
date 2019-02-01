@@ -7,7 +7,6 @@ using SurvivalFPS.AI;
 
 namespace SurvivalFPS.Core
 {
-    [RequireComponent(typeof(AudioManager))]
     [RequireComponent(typeof(FirstPersonController))]
     [RequireComponent(typeof(PlayerAnimatorManager))]
     [DisallowMultipleComponent]
@@ -52,7 +51,6 @@ namespace SurvivalFPS.Core
                 PlayerInfo info = new PlayerInfo();
                 info.playerCamera = m_Camera;
                 info.playerManager = this;
-                info.playerAudioManager = GetComponent<AudioManager>();
                 info.playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
                 info.playerMotionController = GetComponent<FirstPersonController>();
                 info.playerWeaponController = GetComponent<PlayerWeaponController>();

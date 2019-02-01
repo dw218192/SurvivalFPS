@@ -94,7 +94,6 @@ namespace SurvivalFPS.Core.FPS
         [SerializeField] private Transform m_ArmAndHand;
 
         [SerializeField] private PlayerAnimatorManager m_AnimatorManager;
-        [SerializeField] private AudioManager m_AudioManager;
 
         [SerializeField] private MovementSettings m_MovementSetting = new MovementSettings();
         [SerializeField] private AdvancedSettings m_AdvancedSetting = new AdvancedSettings();
@@ -137,7 +136,6 @@ namespace SurvivalFPS.Core.FPS
         public bool crouching { get { return m_MovementSetting.Crouching; } }
         //other properties
         public PlayerAnimatorManager playerAnimatorManager { get { return m_AnimatorManager; } }
-        public AudioManager audioManager { get { return m_AudioManager; } }
         public Vector3 punchAngle { get { return m_PunchAngle; } set { m_PunchAngle = value; } }
 
         private void ChangeState(FPSCharacterState newState)

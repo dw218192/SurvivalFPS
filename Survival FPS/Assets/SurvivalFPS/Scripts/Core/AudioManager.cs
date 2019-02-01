@@ -2,18 +2,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
+using SurvivalFPS.Utility;
 
 namespace SurvivalFPS.Core
 {
-    public class AudioManager : MonoBehaviour
+    public class TrackInfo
     {
+        public string Name;
+        public AudioMixerGroup Group;
+        public IEnumerator TrackFaderRoutine;
+    }
+
+    public class AudioManager : SingletonBehaviour<AudioManager>
+    {
+        [SerializeField] AudioMixer m_Mixer = null;
+        [SerializeField] Dictionary<string, TrackInfo> m_Tracks = new Dictionary<string, TrackInfo>();
+
         private AudioSource m_AudioSource;
         private IEnumerator m_PlayInSequenceRoutine;
         private IEnumerator m_PlayWhileRoutine;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            DontDestroyOnLoad(gameObject);
             AddAudioSource();
+
+            if (!m_Mixer) return;
+
+            AudioMixerGroup[] groups = m_Mixer.FindMatchingGroups(string.Empty);
+
+            foreach (AudioMixerGroup group in groups)
+            {
+                TrackInfo trackInfo = new TrackInfo();
+                trackInfo.Name = group.name;
+                trackInfo.Group = group;
+                trackInfo.TrackFaderRoutine = null;
+                m_Tracks[group.name] = trackInfo;
+            }
         }
 
         // Start is called before the first frame update
@@ -26,6 +53,69 @@ namespace SurvivalFPS.Core
         void Update()
         {
 
+        }
+
+        public float GetTrackVolume(string name)
+        {
+            if (!m_Mixer) return float.MinValue;
+            TrackInfo trackInfo;
+
+            if (m_Tracks.TryGetValue(name, out trackInfo))
+            {
+                float volume;
+                m_Mixer.GetFloat(name, out volume);
+                return volume;
+            }
+
+            return float.MinValue;
+        }
+
+        public AudioMixerGroup GetAudioGroupByName(string name)
+        {
+            TrackInfo trackInfo;
+
+            if (m_Tracks.TryGetValue(name, out trackInfo))
+            {
+                return trackInfo.Group;
+            }
+
+            return null;
+        }
+
+        public void SetTrackVolume(string name, float volume, float fadeTime = 0.0f)
+        {
+            if (!m_Mixer) return;
+            TrackInfo trackInfo;
+
+            if(m_Tracks.TryGetValue(name, out trackInfo))
+            {
+                if (trackInfo.TrackFaderRoutine != null) StopCoroutine(trackInfo.TrackFaderRoutine);
+
+                if (fadeTime == 0.0f)
+                {
+                    m_Mixer.SetFloat(name, volume);
+                }
+                else
+                {
+                    trackInfo.TrackFaderRoutine = _setTrackVolumeRoutine(name, volume, fadeTime);
+                }
+            }
+        }
+
+        protected IEnumerator _setTrackVolumeRoutine(string name, float volume, float fadeTime)
+        {
+            float startVolume = 0.0f;
+            float time = 0.0f;
+            m_Mixer.GetFloat(name, out startVolume);
+
+            while(time<fadeTime)
+            {
+                time += Time.unscaledDeltaTime;
+                m_Mixer.SetFloat(name, Mathf.Lerp(startVolume, volume, time / fadeTime));
+                yield return null;
+            }
+
+            m_Mixer.SetFloat(name, volume);
         }
 
         private void AddAudioSource()

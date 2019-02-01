@@ -21,18 +21,18 @@ namespace SurvivalFPS.AI
         [SerializeField] private float m_MemoryRetainingTime;
 
         //what's the zombie's starting upper body damage
-        [SerializeField] [Range(0, 100)] private int m_StartingUpperBodyDamage; //TODO
+        [SerializeField] [Range(0, 100)] private int m_StartingUpperBodyDamage;
         //what's the zombie's starting lower body damage
-        [SerializeField] [Range(0, 100)] private int m_StartingLowerBodyDamage; //TODO
-        [SerializeField] [Range(0, 100)] private int m_UpperBodyDamageThreshold; //TODO
+        [SerializeField] [Range(0, 100)] private int m_StartingLowerBodyDamage;
+        [SerializeField] [Range(0, 100)] private int m_UpperBodyDamageThreshold;
         //how much damage the zombie needs to receive before it starts limping?
-        [SerializeField] [Range(0, 30)] private int m_LowerBodyLimpThreshold; //TODO
+        [SerializeField] [Range(0, 30)] private int m_LowerBodyLimpThreshold;
         //how much damage the zombie needs to receive before it starts crawling?
         [SerializeField] [Range(31, 60)] private int m_LowerBodyCrawlThreshold;
         //how much damage the zombie needs to receive before it loses its ability to move?
-        [SerializeField] [Range(61, 80)] private int m_LowerBodyNoLegThreshold; //TODO
+        [SerializeField] [Range(61, 80)] private int m_LowerBodyNoLegThreshold;
         //how much damage the zombie needs to receive before all it can do is twitching?
-        [SerializeField] [Range(81, 100)] private int m_IncapacitatedThreshold; //TODO
+        [SerializeField] [Range(81, 100)] private int m_IncapacitatedThreshold;
 
         [SerializeField] [Range(0.0f, 0.02f)] private float m_ReplenishRate;
         [SerializeField] [Range(0.0f, 0.0005f)] private float m_DepletionRate;
@@ -77,6 +77,8 @@ namespace SurvivalFPS.AI
         private int m_StateHash = -1;
 
         // animator layer
+        private int m_UpperBodyIndex = -1;
+        private int m_LowerBodyIndex = -1;
         private int m_HitLayerIndex = -1;
         private float m_HitLayerWeight;
 
@@ -156,7 +158,11 @@ namespace SurvivalFPS.AI
         /// </summary>
         public Transform bloodParticleMount { get { return m_BloodParticleMount; } }
         /// <summary>
-        /// has the zombie received enough damage so that it should be limping?
+        /// is the upper body damaged enough to be displayed in the animation?
+        /// </summary>
+        public bool isUpperBodyDamaged { get { return m_UpperBodyDamage >= m_UpperBodyDamageThreshold; } }
+        /// <summary>
+        /// has the zombie received enough damage so that it should be limping or crawling?
         /// </summary>
         public bool shouldLimp { get { return m_LowerBodyDamage >= m_LowerBodyLimpThreshold; } }
         /// <summary>
@@ -170,7 +176,7 @@ namespace SurvivalFPS.AI
         /// <summary>
         /// after reanimated,has the zombie received enough damage so that it should be twitching?
         /// </summary>
-        public bool shouldIncapacitate { get { return (m_TotalHealth - m_Health) >= m_IncapacitatedThreshold; } }
+        public bool shouldIncapacitate { get { return (m_Attributes.totalHealth - m_Health) >= m_IncapacitatedThreshold; } }
 
         /// <summary>
         /// the zombie's current upper body damage
@@ -219,6 +225,8 @@ namespace SurvivalFPS.AI
                 m_HitTypeHash = gameSceneManager.hitTypeParameterName_Hash;
                 m_HitTriggerHash = gameSceneManager.hitParameterName_Hash;
                 m_HitLayerIndex = gameSceneManager.hitLayerIndex;
+                m_LowerBodyIndex = gameSceneManager.lowerbodyIndex;
+                m_UpperBodyIndex = gameSceneManager.upperbodyIndex;
 
                 m_ReanimFrontTriggerHash = gameSceneManager.ReanimateFrontParameterName_Hash;
                 m_ReanimBackTriggerHash = gameSceneManager.ReanimateBackParameterName_Hash;
@@ -232,11 +240,11 @@ namespace SurvivalFPS.AI
         protected override void EarlyUpdateStateMachine()
         {
             //if we are hadicapped after reanimation
-            //or we are in the middle of reanimation
             //pause the AI behaviours
             if (shouldIncapacitate || shouldNoLeg )
             {
                 PauseMachine();
+                TryChangeState(AIStateType.Dead);
             }
 
             if (m_IsDead)
@@ -298,6 +306,19 @@ namespace SurvivalFPS.AI
                 //damage
                 m_Animator.SetBool(m_CrawlingHash, shouldCrawl);
 
+                if(m_LowerBodyIndex != -1)
+                {
+                    //only activate this layer if this zombie should limp and should not crawl
+                    float weight = shouldLimp && !shouldCrawl ? 1.0f : 0.0f;
+                    m_Animator.SetLayerWeight(m_LowerBodyIndex, weight);
+                }
+
+                if(m_UpperBodyIndex != -1)
+                {
+                    float weight = isUpperBodyDamaged && !shouldCrawl ? 1.0f : 0.0f;
+                    m_Animator.SetLayerWeight(m_UpperBodyIndex, weight);
+                }
+
                 //what the zombie will be after reanimation
                 m_Animator.SetBool(m_NoLegHash, shouldNoLeg);
                 m_Animator.SetBool(m_IncapacitatedHash, shouldIncapacitate);
@@ -311,7 +332,11 @@ namespace SurvivalFPS.AI
         {
             if (m_Animator != null)
             {
-                m_Animator.SetLayerWeight(m_HitLayerIndex, m_HitLayerWeight);
+                if(m_HitLayerIndex != -1)
+                {
+                    m_Animator.SetLayerWeight(m_HitLayerIndex, m_HitLayerWeight);
+                }
+
                 //damage
                 m_Animator.SetTrigger(m_HitTriggerHash);
                 m_Animator.SetInteger(m_HitTypeHash, m_HitType);
@@ -434,7 +459,6 @@ namespace SurvivalFPS.AI
                 // if we are killed in this process
                 if (m_IsDead)
                 {
-                    ResumeMachine();
                     return;
                 }
 
@@ -462,8 +486,6 @@ namespace SurvivalFPS.AI
             m_AIBoneControlType = AIBoneControlType.Animated;
             if (m_navAgent) m_navAgent.enabled = true;
             if (m_Collider) m_Collider.enabled = true;
-
-            ResumeMachine();
 
             TryChangeState(AIStateType.Alerted);
         }

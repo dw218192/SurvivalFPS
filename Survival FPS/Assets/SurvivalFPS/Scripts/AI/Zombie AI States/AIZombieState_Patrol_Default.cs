@@ -143,16 +143,6 @@ namespace SurvivalFPS.AI
                 return AIStateType.Alerted;
             }
 
-            //manually rotate the zombie using slerp if root rotation is not enabled
-            if (!m_ZombieStateMachine.useRootRotation)
-            {
-                if (m_ZombieStateMachine.navAgent.desiredVelocity.sqrMagnitude > Mathf.Epsilon)
-                {
-                    Quaternion newRot = Quaternion.LookRotation(m_ZombieStateMachine.navAgent.desiredVelocity);
-                    m_ZombieStateMachine.transform.rotation = Quaternion.RotateTowards(m_ZombieStateMachine.transform.rotation, newRot, Time.deltaTime * m_TurnSpeed);
-                }
-            }
-
             //if the path is still pending
             if (m_ZombieStateMachine.navAgent.pathPending)
             {

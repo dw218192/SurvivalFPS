@@ -54,25 +54,6 @@ namespace SurvivalFPS.AI
                 return AIStateType.Patrol;
             }
 
-            //if the rotation is not handled by the animator, slowly rotate the zombie to face the threat
-            if (!m_ZombieStateMachine.useRootRotation)
-            {
-                Quaternion newRot;
-                if (m_ZombieStateMachine.navAgent.desiredVelocity.sqrMagnitude > Mathf.Epsilon)
-                {
-                    if (Random.value < m_ZombieStateMachine.intelligence)
-                    {
-                        newRot = Quaternion.LookRotation(m_ZombieStateMachine.navAgent.desiredVelocity);
-                    }
-                    else
-                    {
-                        newRot = Quaternion.LookRotation(- m_ZombieStateMachine.navAgent.desiredVelocity);
-                    }
-
-                    m_ZombieStateMachine.transform.rotation = Quaternion.RotateTowards(m_ZombieStateMachine.transform.rotation, newRot, Time.deltaTime * m_TurnSpeed);
-                }
-            }
-
             if (m_ZombieStateMachine.visualThreat)
             {
                 m_ZombieStateMachine.SetTarget(m_ZombieStateMachine.visualThreat);
@@ -140,6 +121,27 @@ namespace SurvivalFPS.AI
             {
                 m_ZombieStateMachine.seeking = direction;
                 m_DirectionChangeTimer = 0.0f;
+            }
+        }
+
+        protected override void RotateAI()
+        {
+            if (!m_ZombieStateMachine.useRootRotation)
+            {
+                Quaternion newRot;
+                if (m_ZombieStateMachine.navAgent.desiredVelocity.sqrMagnitude > Mathf.Epsilon)
+                {
+                    if (Random.value < m_ZombieStateMachine.intelligence)
+                    {
+                        newRot = Quaternion.LookRotation(m_ZombieStateMachine.navAgent.desiredVelocity);
+                    }
+                    else
+                    {
+                        newRot = Quaternion.LookRotation(-m_ZombieStateMachine.navAgent.desiredVelocity);
+                    }
+
+                    m_ZombieStateMachine.transform.rotation = Quaternion.RotateTowards(m_ZombieStateMachine.transform.rotation, newRot, Time.deltaTime * m_TurnSpeed);
+                }
             }
         }
     }

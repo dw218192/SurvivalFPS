@@ -7,7 +7,7 @@ namespace SurvivalFPS.AI
     public class AIZombieState_Attack_Default : AIZombieState
     {
         [SerializeField] [Range(0.0f, 2.0f)] float m_AttackMotionSpeed = 0.0f;
-        [SerializeField] [Range(100.0f, 300.0f)] float m_TurnSpeed = 200.0f;
+        [SerializeField] [Range(100.0f, 600.0f)] float m_TurnSpeed = 200.0f;
 
         [SerializeField] [Range(0.0f, 10.0f)] float m_LookAtWeight = 0.7f;
         [SerializeField] [Range(0.0f, 90.0f)] float m_LookAtWeightChangeRate = 50.0f;
@@ -54,19 +54,6 @@ namespace SurvivalFPS.AI
             else
             {
                 m_ZombieStateMachine.speed = 0;
-            }
-
-            Vector3 targetPos;
-            Quaternion newRot;
-
-            //quickly rotate to face our target
-            if (!m_ZombieStateMachine.useRootRotation)
-            {
-                targetPos = m_ZombieStateMachine.GetCurrentTarget().lastKnownPosition;
-                targetPos.y = m_ZombieStateMachine.transform.position.y;
-                newRot = Quaternion.LookRotation(targetPos - m_ZombieStateMachine.transform.position);
-
-                m_ZombieStateMachine.transform.rotation = Quaternion.RotateTowards(m_ZombieStateMachine.transform.rotation, newRot, m_TurnSpeed * Time.deltaTime);
             }
 
             //if we are in melee range
@@ -142,6 +129,19 @@ namespace SurvivalFPS.AI
                 }
                 m_ZombieStateMachine.animator.SetLookAtWeight(m_CurrentLookAtWeight);
             }
+        }
+
+        protected override void RotateAI()
+        {
+            Vector3 targetPos;
+            Quaternion newRot;
+
+            //quickly rotate to face our target
+            targetPos = m_ZombieStateMachine.GetCurrentTarget().lastKnownPosition;
+            targetPos.y = m_ZombieStateMachine.transform.position.y;
+            newRot = Quaternion.LookRotation(targetPos - m_ZombieStateMachine.transform.position);
+
+            m_ZombieStateMachine.transform.rotation = Quaternion.RotateTowards(m_ZombieStateMachine.transform.rotation, newRot, m_TurnSpeed * Time.deltaTime);
         }
     }
 

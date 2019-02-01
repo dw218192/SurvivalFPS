@@ -12,7 +12,6 @@ namespace SurvivalFPS.AI
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(Collider))]
-    [RequireComponent(typeof(CharacterJoint))]
     public class AIBodyPart : MonoBehaviour, IWeaponDamageable
     {
         [SerializeField] AIBodyPartType m_Type;
@@ -43,11 +42,11 @@ namespace SurvivalFPS.AI
         {
             switch(m_Type)
             {
-                case AIBodyPartType.Head: return 1.0f;
-                case AIBodyPartType.UpperBody: return 0.09f;
+                case AIBodyPartType.Head: return 2.0f;
+                case AIBodyPartType.UpperBody: return 1.0f;//0.09f;
                 case AIBodyPartType.UpperBodyLimb:
-                case AIBodyPartType.LowerBodyLimb: return 0.05f;
-                case AIBodyPartType.LowerBody: return 0.08f;
+                case AIBodyPartType.LowerBodyLimb: return 0.5f;
+                case AIBodyPartType.LowerBody: return 0.5f;
             }
 
             return 0.0f;

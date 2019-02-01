@@ -29,6 +29,23 @@ namespace SurvivalFPS.AI
             {
                 m_StateMachine.transform.rotation = m_StateMachine.animator.rootRotation;
             }
+            else
+            {
+                RotateAI();
+            }
+        }
+
+        /// <summary>
+        /// How should the AI be rotated if root rotation is not enabled?
+        /// </summary>
+        protected virtual void RotateAI() 
+        {
+            Quaternion newRot;
+            if (m_StateMachine.navAgent.desiredVelocity.sqrMagnitude > Mathf.Epsilon)
+            {
+                newRot = Quaternion.LookRotation(m_StateMachine.navAgent.desiredVelocity, transform.up);
+                m_StateMachine.transform.rotation = Quaternion.RotateTowards(m_StateMachine.transform.rotation, newRot, Time.deltaTime * m_StateMachine.turnSpeed);
+            }
         }
 
         public virtual void OnAnimatorIKUpdated() { }

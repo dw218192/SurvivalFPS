@@ -84,17 +84,6 @@ namespace SurvivalFPS.AI
                 return AIStateType.Alerted;
             }
 
-            //if the rotation is not handled by the animator, slowly rotate the zombie to face the threat
-            if (!m_ZombieStateMachine.useRootRotation)
-            {
-                Quaternion newRot;
-                if (m_ZombieStateMachine.navAgent.desiredVelocity.sqrMagnitude > Mathf.Epsilon)
-                {
-                    newRot = Quaternion.LookRotation(m_ZombieStateMachine.navAgent.desiredVelocity);
-                    m_ZombieStateMachine.transform.rotation = Quaternion.RotateTowards(m_ZombieStateMachine.transform.rotation, newRot, Time.deltaTime * m_TurnSpeed);
-                }
-            }
-
             if (!m_ZombieStateMachine.isTargetReached)
             {
                 if (m_ZombieStateMachine.audioThreat == null && m_ZombieStateMachine.visualThreat == null)

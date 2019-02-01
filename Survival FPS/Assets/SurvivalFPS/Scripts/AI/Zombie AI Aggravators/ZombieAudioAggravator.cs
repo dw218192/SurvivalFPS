@@ -9,21 +9,63 @@ namespace SurvivalFPS.AI
     [RequireComponent(typeof(SphereCollider))]
     public class ZombieAudioAggravator : ZombieAggravator
     {
+        //sound emission
+        private bool m_IsEmitting;
+        private IEnumerator m_EmissionRoutine;
+        private float m_Interpolator;
+
         private SphereCollider m_SphereCollider;
         public override Collider aggravatorCollider { get { return m_SphereCollider; } }
 
-        private void Awake()
+        protected override void Awake()
         {
             m_SphereCollider = GetComponent<SphereCollider>();
+            m_SphereCollider.radius = 0.0f;
+        }
+
+        public void EmitSound(float duration, float range, bool shouldDecay)
+        {
+            if (m_EmissionRoutine != null)
+            {
+                StopCoroutine(m_EmissionRoutine);
+            }
+
+            m_Interpolator = 0.0f;
+            m_EmissionRoutine = _EmitSoundRoutine(duration, range, shouldDecay);
+            StartCoroutine(m_EmissionRoutine);
+        }
+
+        private IEnumerator _EmitSoundRoutine(float duration, float range, bool shouldDecay)
+        {
+            m_SphereCollider.radius = range;
+            m_IsEmitting = true;
+
+            while(m_Interpolator <= duration)
+            {
+                m_Interpolator += Time.deltaTime;
+
+                if (shouldDecay)
+                {
+                    m_SphereCollider.radius = Mathf.Lerp(0.0f, range, m_Interpolator / duration);
+                }
+
+                yield return null;
+            }
+
+            m_SphereCollider.radius = 0.0f;
+            m_IsEmitting = false;
         }
 
         public override void TryBecomeThreat(AIZombieStateMachine zombie)
         {
-            if(!zombie.IsTargetRecentlyInvestigated(this))
+            if(m_IsEmitting)
             {
-                if (CanBecomeThreat(zombie))
+                if (!zombie.IsTargetRecentlyInvestigated(this))
                 {
-                    zombie.audioThreat = this;
+                    if (CanBecomeThreat(zombie))
+                    {
+                        zombie.audioThreat = this;
+                    }
                 }
             }
         }
@@ -42,6 +84,7 @@ namespace SurvivalFPS.AI
                         return true;
                     }
                 }
+
             }
             return false;
         }

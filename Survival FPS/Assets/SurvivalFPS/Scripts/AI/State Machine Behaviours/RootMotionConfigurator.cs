@@ -6,8 +6,11 @@ namespace SurvivalFPS.AI
 {
     public class RootMotionConfigurator : AIStateMachineLink
     {
-        [SerializeField] private int m_RootPosition = 0;
-        [SerializeField] private int m_RootRotation = 0;
+        [SerializeField] private bool m_UseRootPosition = false;
+        [SerializeField] private bool m_UseRootRotation = false;
+
+        private int m_RootPosition = 0;
+        private int m_RootRotation = 0;
 
         private bool m_Incremented = false;
 
@@ -15,6 +18,25 @@ namespace SurvivalFPS.AI
         {
             if (m_StateMachine)
             {
+                int value = IntPowOfTwo(layerIndex);
+                if (m_UseRootPosition)
+                {
+                    m_RootPosition = value;
+                }
+                else
+                {
+                    m_RootPosition = - value;
+                }
+
+                if (m_UseRootRotation)
+                {
+                    m_RootRotation = value;
+                }
+                else
+                {
+                    m_RootRotation = - value;
+                }
+
                 m_StateMachine.AddRootMotionRequest(m_RootPosition, m_RootRotation);
                 m_Incremented = true;
             }
@@ -26,6 +48,11 @@ namespace SurvivalFPS.AI
             {
                 m_StateMachine.AddRootMotionRequest(-m_RootPosition, -m_RootRotation);
             }
+        }
+
+        private int IntPowOfTwo(int power)
+        {
+            return 1 << power;
         }
     }
 }

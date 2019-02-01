@@ -13,7 +13,10 @@ namespace SurvivalFPS.AI
         public AggravatorData data { get { return m_OverridingList; } }
         public abstract Collider aggravatorCollider { get; }
 
-        protected virtual void Awake() { }
+        protected virtual void Awake() 
+        {
+            
+        }
         protected virtual void Start() { }
 
         /// <summary>

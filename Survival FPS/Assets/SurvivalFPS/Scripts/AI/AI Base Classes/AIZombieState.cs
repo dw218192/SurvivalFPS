@@ -32,7 +32,7 @@ namespace SurvivalFPS.AI
                 {
                     ZombieAggravator zombieAggravator = other.GetComponent<ZombieAggravator>();
 
-                    if(zombieAggravator)
+                    if(zombieAggravator && zombieAggravator.enabled)
                     {
                         zombieAggravator.TryBecomeThreat(m_ZombieStateMachine);
                     }

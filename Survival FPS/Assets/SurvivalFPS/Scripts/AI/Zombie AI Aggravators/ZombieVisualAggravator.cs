@@ -36,7 +36,7 @@ namespace SurvivalFPS.AI
                 //if the this aggravator is visible
                 RaycastHit hitInfo;
 
-                if (IsColliderVisible(zombie, out hitInfo, GameSceneManager.Instance.obstaclesLayerMask))
+                if (IsColliderVisible(zombie, out hitInfo, GameSceneManager.Instance.visualRaycastLayerMask))
                 {
                     //other conditions specific to an aggravator
                     if (AdditionalThreatCondition(zombie))
@@ -61,6 +61,13 @@ namespace SurvivalFPS.AI
             {
                 Vector3 head = zombie.sensorPosition;
 
+                //if our head is inside the trigger of this visual aggravator
+                //don't bother raycasting
+                if (m_Collider.bounds.Contains(head))
+                {
+                    return true;
+                }
+
                 Vector3 headToThreat = transform.position - head;
                 float angle = Vector3.Angle(headToThreat, zombie.transform.forward);
 
@@ -79,29 +86,27 @@ namespace SurvivalFPS.AI
                 {
                     if (hit.distance < closestColliderDistance)
                     {
-                        //if it's the zombie's body part
+                        //if it's a zombie's body part
                         if (hit.transform.gameObject.layer == GameSceneManager.Instance.zombieBodyPartLayer)
                         {
-                            //if it's not our body part
-                            if (zombie != GameSceneManager.Instance.GetAIStateMachineByColliderID(hit.collider.GetInstanceID()))
+                            //if it's not this zombie's body part
+                            if (zombie == GameSceneManager.Instance.GetAIStateMachineByColliderID(hit.collider.GetInstanceID()))
                             {
-                                closestColliderDistance = hit.distance;
-                                closestCollider = hit.collider;
-                                hitInfo = hit;
+                                continue;
                             }
                         }
-                        else
-                        {
-                            closestColliderDistance = hit.distance;
-                            closestCollider = hit.collider;
-                            hitInfo = hit;
-                        }
+
+                        closestColliderDistance = hit.distance;
+                        closestCollider = hit.collider;
+                        hitInfo = hit;
                     }
                 }
 
-
-                //if (closestCollider)
-                //   Debug.Log(closestCollider.name);
+                /*
+                Debug.DrawRay(head, headToThreat, Color.red);
+                if (closestCollider)
+                   Debug.Log(closestCollider.name);
+                */
 
                 //if the closest collider hit is the target, then the target is visible
                 return (closestCollider && closestCollider.gameObject == gameObject);

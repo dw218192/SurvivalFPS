@@ -62,7 +62,9 @@ MonoBehaviour:
   m_IncapacitatedParameterName: Incapacitated
   m_NoLegParameterName: No leg
   m_BehaviourStateParameterName: BehaviourState
-  m_HitLayer: 2
+  m_UpperBodyLayer: 2
+  m_LowerBodyLayer: 1
+  m_HitLayer: 4
   m_FeedingStateName: Feeding_State
   m_CrawlFeedingStateName: Crawl_Feeding_State
   m_ReloadParameterName: Reload

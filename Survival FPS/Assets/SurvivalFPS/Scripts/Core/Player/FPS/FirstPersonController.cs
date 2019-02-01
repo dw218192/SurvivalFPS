@@ -13,6 +13,7 @@ namespace SurvivalFPS.Core.FPS
         [Serializable]
         public class MovementSettings
         {
+            public float BodyContactDrag = 50f;
             public float GroundedMotionDrag = 10f;
             [Range(1.0f, 1000.0f)] public float SlowDownRate = 100.0f;
             public float ForwardSpeed = 8.0f;   // Speed when walking forward
@@ -108,6 +109,7 @@ namespace SurvivalFPS.Core.FPS
         private CapsuleCollider m_Capsule;
         private Vector3 m_GroundContactNormal;
         private bool m_PreviouslyGrounded, m_IsGrounded;
+        private int m_BodyContactCnt = 0;
 
         private Vector2 m_Input;
         private bool m_JumpKeyPressed;
@@ -211,7 +213,7 @@ namespace SurvivalFPS.Core.FPS
 
         private void GroundedUpdate()
         {
-            m_RigidBody.drag = m_MovementSetting.GroundedMotionDrag;
+            m_RigidBody.drag = m_MovementSetting.GroundedMotionDrag + (m_BodyContactCnt > 0 ? m_MovementSetting.BodyContactDrag : 0);
 
             if (!m_IsGrounded)
             {
@@ -257,7 +259,7 @@ namespace SurvivalFPS.Core.FPS
 
         private void CrouchingUpdate()
         {
-            m_RigidBody.drag = m_MovementSetting.GroundedMotionDrag;
+            m_RigidBody.drag = m_MovementSetting.GroundedMotionDrag + (m_BodyContactCnt > 0 ? m_MovementSetting.BodyContactDrag : 0);
 
             if (!m_CrouchKeyPressed)
             {
@@ -449,6 +451,49 @@ namespace SurvivalFPS.Core.FPS
             {
                 m_IsGrounded = false;
                 m_GroundContactNormal = Vector3.up;
+            }
+        }
+
+        //add drag if we are in close contact with some AI
+        private void OnCollisionEnter(Collision collision)
+        {
+            AIStateMachine aI = GameSceneManager.Instance.GetAIStateMachineByColliderID(collision.collider.GetInstanceID());
+            //if it's an AI body
+            if (aI != null)
+            {
+                m_BodyContactCnt += 1;
+
+                StartCoroutine(_bodyContactHelper(aI, collision.collider));
+            }
+        }
+
+        //instead of using OnCollisionExit
+        //this helper tracks the ai the player has collided with and makes sure drag doesn't stay there after
+        //that AI is killed (in which case the collider will be disabled and onCollisionExit won't fire)
+        //or we are not colliding with it
+        private IEnumerator _bodyContactHelper(AIStateMachine targetToTrack, Collider colliderHit)
+        {
+            RaycastHit raycastHit;
+            while(true)
+            {
+                if (!targetToTrack.isActiveAI)
+                {
+                    m_BodyContactCnt -= 1;
+                    yield break;
+                }
+
+                Vector3 start = transform.position;
+                Vector3 dir = targetToTrack.sensorPosition - start;
+                dir = Vector3.ProjectOnPlane(dir, m_GroundContactNormal);
+
+                Ray ray = new Ray(start, dir);
+                if (!colliderHit.Raycast(ray, out raycastHit, m_Capsule.radius + 0.2f))
+                {
+                    m_BodyContactCnt -= 1;
+                    yield break;
+                }
+
+                yield return null;
             }
         }
     }

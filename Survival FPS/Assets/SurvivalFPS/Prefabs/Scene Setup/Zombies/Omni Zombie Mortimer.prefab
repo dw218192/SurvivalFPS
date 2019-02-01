@@ -1108,7 +1108,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0
+  m_BaseOffset: -0.1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &114078044580724374
@@ -1123,6 +1123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65f4ff744106324cb084402ba6cb3b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Attributes:
+    damagePerSec: 10
+    totalHealth: 100
+    turnSpeed: 300
   visualThreat: {fileID: 0}
   audioThreat: {fileID: 0}
   m_Health: 100
@@ -1145,8 +1149,6 @@ MonoBehaviour:
   - {fileID: 1557573508}
   - {fileID: 75738067}
   m_StoppingDistance: 1
-  m_DamagePerSec: 50
-  m_TotalHealth: 100
   m_Fov: 225
   m_Sight: 1
   m_Hearing: 0.663
@@ -1157,7 +1159,7 @@ MonoBehaviour:
   m_MemoryRetainingTime: 200
   m_StartingUpperBodyDamage: 0
   m_StartingLowerBodyDamage: 0
-  m_UpperBodyDamageThreshold: 100
+  m_UpperBodyDamageThreshold: 20
   m_LowerBodyLimpThreshold: 30
   m_LowerBodyCrawlThreshold: 60
   m_LowerBodyNoLegThreshold: 80
@@ -2132,7 +2134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4042277062989112}
   - component: {fileID: 863968657}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Omni Zombie Mortimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

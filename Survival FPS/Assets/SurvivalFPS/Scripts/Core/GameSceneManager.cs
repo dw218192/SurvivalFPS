@@ -49,11 +49,12 @@ namespace SurvivalFPS
         [SerializeField] private string m_NoLegParameterName;
         [SerializeField] private string m_BehaviourStateParameterName;
         [Header("Zombie Animation Controller Layer Indices")]
+        [SerializeField] private int m_UpperBodyLayer;
+        [SerializeField] private int m_LowerBodyLayer;
         [SerializeField] private int m_HitLayer;
         [Header("Zombie Animation Controller State Names")]
         [SerializeField] private string m_FeedingStateName;
         [SerializeField] private string m_CrawlFeedingStateName;
-
         [Header("Player Animation Controller Parameters")]
         [SerializeField] private string m_ReloadParameterName;
         [SerializeField] private string m_ReloadCurveParameterName;
@@ -94,7 +95,7 @@ namespace SurvivalFPS
         //layers
         private int m_ZombieBodyPartLayer = -1;
         private int m_PlayerLayer = -1;
-        private int m_ObstaclesLayerMask = -1;
+        private int m_VisualRaycastLayerMask = -1;
         private int m_ShootableLayerMask = -1;
         private int m_GeometryLayerMask = -1;
 
@@ -108,7 +109,7 @@ namespace SurvivalFPS
         //layer information
         public int zombieBodyPartLayer { get { return m_ZombieBodyPartLayer; } }
         public int playerLayer { get { return m_PlayerLayer; } }
-        public int obstaclesLayerMask { get { return m_ObstaclesLayerMask; } }
+        public int visualRaycastLayerMask { get { return m_VisualRaycastLayerMask; } }
         public int shootableLayerMask { get { return m_ShootableLayerMask; } }
         public int geometryLayerMask { get { return m_GeometryLayerMask; } }
         //zombie animator controller Parameter info
@@ -128,6 +129,8 @@ namespace SurvivalFPS
         public int NoLegParameterName_Hash { get { return m_NoLegParameterName_Hash; } }
         public int behaviourStateParameterName_Hash { get { return m_BehaviourStateParameterName_Hash; } }
         //Zombie Animation Controller Layers
+        public int upperbodyIndex { get { return m_UpperBodyLayer; }}
+        public int lowerbodyIndex { get { return m_LowerBodyLayer; }}
         public int hitLayerIndex { get { return m_HitLayer; }}
         //player animator state name info
         public int feedingStateName_Hash { get { return m_FeedingStateName_Hash; } }
@@ -178,7 +181,7 @@ namespace SurvivalFPS
             m_ZombieBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
 
             m_GeometryLayerMask = LayerMask.GetMask("Obstacle");
-            m_ObstaclesLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
+            m_VisualRaycastLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
             m_ShootableLayerMask = LayerMask.GetMask("AI Body Part", "Visual Aggravator", "Obstacle");
 
             m_ReloadParameterName_Hash = Animator.StringToHash(m_ReloadParameterName);

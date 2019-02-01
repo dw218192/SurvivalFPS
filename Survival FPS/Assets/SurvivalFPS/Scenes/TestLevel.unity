@@ -159,8 +159,14 @@ PrefabInstance:
     - target: {fileID: 114422897003315320, guid: c0402f824a9ab3c48bd00b73817e2459,
         type: 3}
       propertyPath: m_Weapons.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114422897003315320, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Weapons.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: bacc9b882a8d0684facaf5e66e135bf4,
+        type: 2}
     - target: {fileID: 1400197927372032, guid: c0402f824a9ab3c48bd00b73817e2459, type: 3}
       propertyPath: m_TagString
       value: MainCamera

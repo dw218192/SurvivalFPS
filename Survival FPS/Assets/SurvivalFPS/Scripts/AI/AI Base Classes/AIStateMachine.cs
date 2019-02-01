@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using SurvivalFPS.Utility;
+using System;
 
 namespace SurvivalFPS.AI
 {
@@ -61,6 +61,17 @@ namespace SurvivalFPS.AI
     [SelectionBase]
     public abstract class AIStateMachine : MonoBehaviour
     {
+        //configuration classes
+        [Serializable]
+        public class AIAttributes
+        {
+            [Range(0, 100)] public float damagePerSec = 10;
+            [Range(0, 100)] public int totalHealth = 100;
+            [Range(10, 360)] public float turnSpeed = 60; //turnning speed when not using root rot
+        }
+        //AI default attributes
+        [SerializeField] protected AIAttributes m_Attributes;
+
         //----public fields set by child states each frame----
         [HideInInspector] public ZombieVisualAggravator visualThreat = null;
         [HideInInspector] public ZombieAudioAggravator audioThreat = null;
@@ -76,7 +87,7 @@ namespace SurvivalFPS.AI
         //animator related
         protected int m_RootRotationRefCount = 0;
         protected int m_RootPositionRefCount = 0;
-        protected bool m_CinematicEnabled = false;
+        protected bool m_CinematicEnabled = false; //TODO
         public bool cinematicEnabled { get { return m_CinematicEnabled; } set { m_CinematicEnabled = value; } }
         //component cache
         protected Animator m_Animator = null;
@@ -99,10 +110,6 @@ namespace SurvivalFPS.AI
         //body parts that are used for ragroll
         [SerializeField] protected List<AIBodyPart> m_BodyParts;
         [SerializeField] [Range(0.0f, 15.0f)] protected float m_StoppingDistance = 1.0f;
-        //AI default attributes
-        [SerializeField] [Range(0, 100)] protected float m_DamagePerSec;
-        [SerializeField] [Range(0, 100)] protected int m_TotalHealth = 100;
-
 
         //----public properties----
         public Animator animator { get { return m_Animator; } }
@@ -119,20 +126,32 @@ namespace SurvivalFPS.AI
         /// how much damage this AI can inflict per second 
         /// </summary>
         /// <value>The damage per sec.</value>
-        public float damagePerSec { get { return m_DamagePerSec; } }
+        public float damagePerSec { get { return m_Attributes.damagePerSec; } }
         /// <summary>
         /// the maximum health level of the AI
         /// </summary>
-        public int totalHealth { get { return m_TotalHealth; } set { m_TotalHealth = value; } }
-
+        public int totalHealth { get { return m_Attributes.totalHealth; } }
+        /// <summary>
+        /// the turn speed of the AI when it is not using root rotation
+        /// </summary>
+        public float turnSpeed { get { return m_Attributes.turnSpeed; } }
         /// <summary>
         /// the current health level of the AI
         /// </summary>
         public int currentHealth { get { return m_Health; } set { m_Health = value; } }
-
         //debugging
         public SphereCollider targetTrigger { get { return m_TargetTrigger; } }
-
+        /// <summary>
+        /// is this AI actively doing something? e.g. not in a ragdoll/ not dead/ is updating its states
+        /// </summary>
+        public bool isActiveAI
+        {
+            get
+            {
+                return (m_AIBoneControlType == AIBoneControlType.Animated
+                        && m_UpdateState);
+            }
+        }
         /// <summary>
         /// the position of the center of the AI sensor trigger in world space
         /// </summary>
@@ -322,7 +341,7 @@ namespace SurvivalFPS.AI
                     else if (m_States.TryGetValue(AIStateType.Idle, out newState))
                     {
                         ChangeState(newState);
-                        Debug.LogWarning("the next state cannot be found; going to the idle state...");
+                        Debug.LogWarning("AI state machine -- the next state cannot be found; going to the idle state...");
                     }
                 }
             }
@@ -383,7 +402,7 @@ namespace SurvivalFPS.AI
             }
             else
             {
-                Debug.LogWarning("no sphere collider found!");
+                Debug.LogWarning("AI state machine -- no target trigger found!");
             }
 
             if(setNavAgentTarget)
@@ -408,7 +427,7 @@ namespace SurvivalFPS.AI
             }
             else
             {
-                Debug.LogWarning("no sphere collider found!");
+                Debug.LogWarning("AI state machine -- no target trigger found!");
             }
 
             if (setNavAgentTarget)
@@ -433,7 +452,7 @@ namespace SurvivalFPS.AI
             }
             else
             {
-                Debug.LogWarning("no sphere collider found!");
+                Debug.LogWarning("AI state machine -- no target trigger found!");
             }
 
             if (setNavAgentTarget)
@@ -458,7 +477,7 @@ namespace SurvivalFPS.AI
             }
             else
             {
-                Debug.LogWarning("no sphere collider found!");
+                Debug.LogWarning("AI state machine -- no target trigger found!");
             }
 
             if (setNavAgentTarget)
@@ -480,11 +499,31 @@ namespace SurvivalFPS.AI
             }
             else
             {
-                Debug.LogWarning("no sphere collider found!");
+                Debug.LogWarning("AI state machine -- no target trigger found!");
             }
 
             m_IsTargetReached = false;
         }
+
+        /*
+        private bool FindNearestNavPoint(Vector3 source, out Vector3 result)
+        {
+            //find a valid nav mesh position closest to our new root position
+            NavMeshHit navMeshHit;
+            bool posFound = NavMesh.SamplePosition(source, out navMeshHit, 25.0f, NavMesh.AllAreas);
+
+            if (posFound)
+            {
+                result = navMeshHit.position;
+            }
+            else
+            {
+                result = Vector3.positiveInfinity;
+            }
+
+            return posFound;
+        }
+        */
 
         /// <summary>
         /// called by unity, when the AI's capsule collider just collided with the target trigger
@@ -578,7 +617,9 @@ namespace SurvivalFPS.AI
 
         private void UpdateNavAgentControl()
         {
-            NavAgentControl(useRootPosition, !useRootRotation);
+            //if we are using root position, let the navagent update the position based on the velocity
+            //calculated in the animator
+            NavAgentControl(useRootPosition, false);
         }
 
         public virtual void Die()

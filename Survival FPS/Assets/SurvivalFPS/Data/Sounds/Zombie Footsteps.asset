@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Zombie Footsteps
   m_EditorClassIdentifier: 
   m_AudioGroup: Zombies
-  m_Volume: 1
+  m_Volume: 0.5
   m_SpatialBlend: 1
   m_Priority: 128
   m_AudioClipBanks:
@@ -25,7 +25,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 287f48f91734c8548881af21fc2db29b, type: 3}
     - {fileID: 8300000, guid: 5d42ddaffd0850745b2f1956537e85f2, type: 3}
     - {fileID: 8300000, guid: 5b85c3e8cb3bb6948b5d485dee02ebd1, type: 3}
-    LastClipPlayed: {fileID: 0}
+    LastClipPlayed: {fileID: 8300000, guid: 287f48f91734c8548881af21fc2db29b, type: 3}
     AllowConsecutiveSameClip: 0
   - ClipBankName: Metal
     Clips:

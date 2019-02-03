@@ -1059,7 +1059,7 @@ Animator:
   m_GameObject: {fileID: 1185311432067338}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 6544c00f0f508d94da21af53dab3858e, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2ac6af7aa83594492bb0d2f077d20cc6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -3263,7 +3263,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Weapons:
-  - {fileID: 11400000, guid: f40443b2cdbe7204eb9259bfdf25d2f4, type: 2}
   - {fileID: 11400000, guid: bacc9b882a8d0684facaf5e66e135bf4, type: 2}
   m_AutoReload: 1
   m_HandAnimator: {fileID: 95010429257859168}
@@ -3288,7 +3287,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676563148279492}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ecaa09d90f37b884ca88bff40058dfd6, type: 3}
   m_Name: 
@@ -3587,7 +3586,7 @@ Animator:
   m_GameObject: {fileID: 1780695302038538}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 12c96e49c3ab55a47ab570ffc67f53f6, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2ac6af7aa83594492bb0d2f077d20cc6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

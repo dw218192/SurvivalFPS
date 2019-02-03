@@ -245,8 +245,6 @@ namespace SurvivalFPS.AI
             if (shouldIncapacitate || shouldNoLeg)
             {
                 PauseMachine();
-                TryChangeState(AIStateType.Dead);
-                return;
             }
 
             if (m_IsDead)

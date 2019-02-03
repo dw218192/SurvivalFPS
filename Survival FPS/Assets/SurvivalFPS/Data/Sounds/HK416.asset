@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AudioGroup: Player
   m_Volume: 1
-  m_SpatialBlend: 1
+  m_SpatialBlend: 0
   m_Priority: 255
   m_AudioClipBanks:
   - ClipBankName: BringUp

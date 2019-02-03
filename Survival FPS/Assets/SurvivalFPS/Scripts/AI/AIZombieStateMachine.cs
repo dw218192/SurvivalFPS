@@ -37,13 +37,14 @@ namespace SurvivalFPS.AI
         [SerializeField] [Range(0.0f, 0.02f)] private float m_ReplenishRate;
         [SerializeField] [Range(0.0f, 0.0005f)] private float m_DepletionRate;
         //transforms
-        [SerializeField] Transform m_BloodParticleMount; //used for blood particle effects
-        [SerializeField] Transform m_HipBoneAlignmentTransform; //used in ragdoll
-        [SerializeField] Transform m_HipTransform;
+        [SerializeField] private Transform m_BloodParticleMount; //used for blood particle effects
+        //used in zombie reanimation
+        [SerializeField] private Transform m_HipBoneAlignmentTransform; //used in ragdoll
+        [SerializeField] private Transform m_HipTransform;
         //--- reanimation variables ---
-        [SerializeField] float m_ReanimBlendTime = 1.5f; //how long it takes to go from ragdoll to reanimate a zombie; used in ragdoll to reanimation
-        [SerializeField] float m_ReanimWaitTime = 3.0f; //how long the zombie is in ragdoll before reanimation
-        [SerializeField] float m_ragDollEndTime = -1.0f; //the time when the reanimation begins
+        [SerializeField] private float m_ReanimBlendTime = 1.5f; //how long it takes to go from ragdoll to reanimate a zombie; used in ragdoll to reanimation
+        [SerializeField] private float m_ReanimWaitTime = 3.0f; //how long the zombie is in ragdoll before reanimation
+        [SerializeField] private float m_ragDollEndTime = -1.0f; //the time when the reanimation begins
         private IEnumerator m_ReanimationRoutine = null;
         private float m_MecanimTransitionTime = 0.1f; //hacky tiny delay to wait for the animator
         //in the late update function, don't try to perform lerp till the animator starts to play the animation
@@ -241,10 +242,11 @@ namespace SurvivalFPS.AI
         {
             //if we are hadicapped after reanimation
             //pause the AI behaviours
-            if (shouldIncapacitate || shouldNoLeg )
+            if (shouldIncapacitate || shouldNoLeg)
             {
                 PauseMachine();
                 TryChangeState(AIStateType.Dead);
+                return;
             }
 
             if (m_IsDead)
@@ -487,6 +489,8 @@ namespace SurvivalFPS.AI
             if (m_navAgent) m_navAgent.enabled = true;
             if (m_Collider) m_Collider.enabled = true;
 
+            //reset nav agent position
+            m_navAgent.destination = m_Target.lastKnownPosition;
             TryChangeState(AIStateType.Alerted);
         }
 

@@ -1149,6 +1149,8 @@ MonoBehaviour:
   - {fileID: 1557573508}
   - {fileID: 75738067}
   m_StoppingDistance: 1
+  m_RightFootTransform: {fileID: 4421716758982838}
+  m_LeftFootTransform: {fileID: 4618013748958316}
   m_Fov: 225
   m_Sight: 1
   m_Hearing: 0.663
@@ -1203,8 +1205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MaxDuration: 5
-  m_WaypointAngleThreshold: 10
-  m_ThreatAngleThreshold: 25
+  m_WaypointAngleThreshold: 40
+  m_ThreatAngleThreshold: 40
   m_DirectionChangeTime: 0.9
   m_TurnSpeed: 40
 --- !u!114 &114321726858294550

@@ -70,18 +70,6 @@ namespace SurvivalFPS.AI
             base.OnExitState();
         }
 
-        public override void OnReachDestination()
-        {
-            base.OnReachDestination();
-            if (m_ZombieStateMachine && !m_ZombieStateMachine.IsDead)
-            {
-                if (m_ZombieStateMachine.currentTargetType == AITargetType.Waypoint)
-                {
-                    NextWaypoint();
-                }
-            }
-        }
-
         //head movement
         /*
         public override void OnAnimatorIKUpdated()
@@ -134,30 +122,38 @@ namespace SurvivalFPS.AI
             }
 
 
-            //-----handle the rotation of the game object-----
-
-            //large turns are handled by the alerted state
-            float angle = Vector3.Angle(m_ZombieStateMachine.transform.forward, (m_ZombieStateMachine.navAgent.steeringTarget - m_ZombieStateMachine.transform.position));
-            if (angle > m_TurnOnSpotThreshold)
+            if(!m_ZombieStateMachine.isTargetReached)
             {
-                return AIStateType.Alerted;
-            }
+                //large turns are handled by the alerted state
+                float angle = Vector3.Angle(m_ZombieStateMachine.transform.forward, (m_ZombieStateMachine.navAgent.steeringTarget - m_ZombieStateMachine.transform.position));
+                if (angle > m_TurnOnSpotThreshold)
+                {
+                    return AIStateType.Alerted;
+                }
 
-            //if the path is still pending
-            if (m_ZombieStateMachine.navAgent.pathPending)
-            {
-                m_ZombieStateMachine.speed = 0;
-                return AIStateType.Patrol;
+                //if the path is still pending
+                if (m_ZombieStateMachine.navAgent.pathPending)
+                {
+                    m_ZombieStateMachine.speed = 0;
+                    return AIStateType.Patrol;
+                }
+                else
+                {
+                    m_ZombieStateMachine.speed = m_PatrolSpeed;
+                }
+
+                //move onto the next waypoint if there is something wrong with the path 
+                if (m_ZombieStateMachine.navAgent.isPathStale || m_ZombieStateMachine.navAgent.pathStatus != NavMeshPathStatus.PathComplete)
+                {
+                    NextWaypoint();
+                }
             }
             else
             {
-                m_ZombieStateMachine.speed = m_PatrolSpeed;
-            }
-
-            //move onto the next waypoint if there is something wrong with the path 
-            if (m_ZombieStateMachine.navAgent.isPathStale || m_ZombieStateMachine.navAgent.pathStatus != NavMeshPathStatus.PathComplete)
-            {
-                NextWaypoint();
+                if (m_ZombieStateMachine.currentTargetType == AITargetType.Waypoint)
+                {
+                    NextWaypoint();
+                }
             }
 
             return AIStateType.Patrol;

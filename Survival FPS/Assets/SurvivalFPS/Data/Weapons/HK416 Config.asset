@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GunModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
     type: 3}
-  m_BulletHolePrefab: {fileID: 0}
   m_DamageSetting: {fileID: 11400000, guid: a4d39bb84d61648e6807e944eab4ffcf, type: 2}
   m_RecoilSettingWhenStill: {fileID: 11400000, guid: c044b3eb963202a4a8e745fb638c4a33,
     type: 2}
@@ -43,11 +42,4 @@ MonoBehaviour:
   m_RecoilEnabled: 1
   m_MuzzleEffect: 1
   m_SpitShells: 1
-  m_ReloadSounds:
-  - {fileID: 8300000, guid: b286242c0122d234ea3ab17b51752727, type: 3}
-  m_FireSounds:
-  - {fileID: 8300000, guid: e98f55afd7399f84eb9595a9175bb0bd, type: 3}
-  m_DryFireSounds:
-  - {fileID: 8300000, guid: 443f53e2e5a774a42ab5d734d6596d03, type: 3}
-  m_BringUpSound: {fileID: 8300000, guid: e5a7c9c426fdd584c957e02aaa2940e4, type: 3}
-  m_WeaponEquipSound: {fileID: 8300000, guid: aef6ed55ad7ad084b8f3f5a0a0fe3f52, type: 3}
+  m_AudioCollection: {fileID: 11400000, guid: 749670f63ae5f4d41909a0329d20345e, type: 2}

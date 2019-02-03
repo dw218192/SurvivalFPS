@@ -28,7 +28,6 @@ namespace SurvivalFPS.Core.Weapon
         protected Animator m_Animator; //animator of this weapon only
         protected PlayerAnimatorManager m_AnimatorManager; //animator collection of the player
         protected PlayerWeaponController m_WeaponController; //weapon controller
-        protected AudioManager m_AudioManager; //audio manager of the player
         protected GameSceneManager m_GameSceneManager; //game scene manager of the player
         protected Camera m_PlayerCamera; //central manager of the player
         public FirstPersonController FPSController { set { m_FPSController = value; } }
@@ -97,7 +96,6 @@ namespace SurvivalFPS.Core.Weapon
         protected sealed override void Awake()
         {
             //reference to singleton managers
-            m_AudioManager = AudioManager.Instance;
             m_GameSceneManager = GameSceneManager.Instance;
         }
         protected sealed override void Start() { }
@@ -107,8 +105,8 @@ namespace SurvivalFPS.Core.Weapon
             m_CurrentAmmo = m_WeaponConfig.ammoCapacity;
 
             //register events
-            PlayerWeaponController weaponController = m_FPSController.GetComponent<PlayerWeaponController>();
-            if (weaponController) weaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
+            m_WeaponController = m_FPSController.GetComponent<PlayerWeaponController>();
+            if (m_WeaponController) m_WeaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
         
             //general settings of the muzzle flash particle effect
             m_MuzzleFlash = m_GameSceneManager.muzzleFlashParticleSystem;
@@ -192,8 +190,6 @@ namespace SurvivalFPS.Core.Weapon
             m_AnimatorManager.SetBool(m_GameSceneManager.fireParameterNameHash, true);
             m_AnimatorManager.Play(m_GameSceneManager.fireStateNameHash, -1);
 
-            m_AudioManager.PlayRandom(m_WeaponConfig.fireSounds);
-
             m_CurrentAmmo--;
             m_ShotsFired = m_WeaponConfig.ammoCapacity - m_CurrentAmmo;
 
@@ -265,9 +261,6 @@ namespace SurvivalFPS.Core.Weapon
 
             //the reloading animation starts playing
             m_IsReloading = true;
-
-            yield return new WaitForSecondsRealtime(0.6f);
-            m_AudioManager.PlayRandom(() => m_WeaponConfig.isActive, m_WeaponConfig.reloadSounds);
 
             //only increment the ammo when the animation reaches a specific point (i.e. magazine changed)
             while (m_Animator.GetFloat(m_GameSceneManager.reloadCurveParameterName) < -0.5f)
@@ -515,8 +508,7 @@ namespace SurvivalFPS.Core.Weapon
                     m_MuzzleFlash.transform.localPosition = m_WeaponConfig.fireStartSpot.position;
                 }
 
-                m_AnimatorManager.Play("Bring Up Weapon", -1, 0.0f);
-                m_AudioManager.PlayInSequence(0.1f, m_WeaponConfig.bringUpSound, m_WeaponConfig.weaponEquipSound);
+                m_AnimatorManager.Play(m_GameSceneManager.bringUpStateNameHash, -1, 0.0f);
             }
         }
 

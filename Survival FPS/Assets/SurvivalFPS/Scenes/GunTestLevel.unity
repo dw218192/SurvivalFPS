@@ -166,7 +166,7 @@ Transform:
   - {fileID: 1785603956}
   - {fileID: 1648427765}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &98515562 stripped
 GameObject:
@@ -310,6 +310,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Omni Zombie Mortimer
       objectReference: {fileID: 0}
+    - target: {fileID: 1368244323850896, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.038
@@ -340,7 +344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 24242cc0b4a27654883d0b6592d01bd9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -570,6 +574,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 1457376c85fa6fe4fb5d2b58ea9e1bf8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 1457376c85fa6fe4fb5d2b58ea9e1bf8, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
@@ -695,6 +703,32 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114422897003315320, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Weapons.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114422897003315320, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Weapons.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: bacc9b882a8d0684facaf5e66e135bf4,
+        type: 2}
+    - target: {fileID: 7081822352301043815, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 95010429257859168, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2ac6af7aa83594492bb0d2f077d20cc6, type: 2}
+    - target: {fileID: 95659326263080106, guid: c0402f824a9ab3c48bd00b73817e2459,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2ac6af7aa83594492bb0d2f077d20cc6, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0402f824a9ab3c48bd00b73817e2459, type: 3}
 --- !u!1 &1438994880
@@ -860,6 +894,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Omni Zombie Luke
       objectReference: {fileID: 0}
+    - target: {fileID: 1368244323850896, guid: 55b01c1ea41c346898094d4a7a7076c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 55b01c1ea41c346898094d4a7a7076c1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.04
@@ -890,7 +928,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 55b01c1ea41c346898094d4a7a7076c1, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4042277062989112, guid: 55b01c1ea41c346898094d4a7a7076c1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -904,6 +942,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114113080696203460, guid: 55b01c1ea41c346898094d4a7a7076c1,
+        type: 3}
+      propertyPath: m_Waypoints
+      value: 
+      objectReference: {fileID: 49196627}
+    - target: {fileID: 114085436114281560, guid: 55b01c1ea41c346898094d4a7a7076c1,
+        type: 3}
+      propertyPath: m_WaypointAngleThreshold
+      value: 40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 55b01c1ea41c346898094d4a7a7076c1, type: 3}
 --- !u!1001 &6848295178449519296
@@ -916,7 +964,7 @@ PrefabInstance:
     - target: {fileID: 3647242236667818674, guid: 2a442eb2524b0104fb4f6f31c0ed9983,
         type: 3}
       propertyPath: m_Name
-      value: Managers
+      value: SceneManagers
       objectReference: {fileID: 0}
     - target: {fileID: 1860052911618389223, guid: 2a442eb2524b0104fb4f6f31c0ed9983,
         type: 3}

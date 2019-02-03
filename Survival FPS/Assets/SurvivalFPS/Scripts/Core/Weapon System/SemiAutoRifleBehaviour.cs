@@ -30,7 +30,6 @@ namespace SurvivalFPS.Core.Weapon
         {
             if (m_WeaponController.fireLeadingEdge)
             {
-                m_AudioManager.PlayRandom(m_WeaponConfig.dryFireSounds);
                 m_DryFireTimer = 0.0f;
             }
         }

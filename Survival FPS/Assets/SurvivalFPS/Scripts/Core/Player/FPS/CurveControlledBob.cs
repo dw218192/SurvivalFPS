@@ -138,6 +138,8 @@ namespace SurvivalFPS.Core.FPS
                 }
             }
 
+            m_PrevYPlayHead = m_YPlayHead;
+            m_PrevXPlayHead = m_XPlayHead;
 
             float xPos = m_BobCurve.Evaluate(m_XPlayHead) * m_HorizontalMultiplier;
             float yPos = m_BobCurve.Evaluate(m_YPlayHead) * m_VerticalMultiplier;

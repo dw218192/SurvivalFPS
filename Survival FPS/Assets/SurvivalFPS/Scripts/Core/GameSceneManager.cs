@@ -5,6 +5,7 @@ using SurvivalFPS.Core;
 using SurvivalFPS.Core.FPS;
 using SurvivalFPS.AI;
 using SurvivalFPS.Utility;
+using SurvivalFPS.Core.Audio;
 
 namespace SurvivalFPS
 {
@@ -17,7 +18,6 @@ namespace SurvivalFPS
         public PlayerManager playerManager = null;
         public FirstPersonController playerMotionController = null;
         public PlayerAnimatorManager playerAnimatorManager = null;
-        public AudioManager playerAudioManager = null;
         public PlayerWeaponController playerWeaponController = null;
     }
 
@@ -27,9 +27,10 @@ namespace SurvivalFPS
     /// </summary>
     public class GameSceneManager : SingletonBehaviour<GameSceneManager>
     {
-        [Header("Scene Special Effects")]
+        [Header("Scene Effects")]
         [SerializeField] private ParticleSystem m_BloodParticleSystem;
         [SerializeField] private ParticleSystem m_MuzzleFlashParticleSystem;
+        [SerializeField] private AudioCollection m_HitSounds;
         private ParticleSystem m_BloodParticleSystem_Instance;
         private ParticleSystem m_MuzzleFlashParticleSystem_Instance;
         [Header("Zombie Animation Controller Parameters")]
@@ -60,6 +61,7 @@ namespace SurvivalFPS
         [SerializeField] private string m_ReloadCurveParameterName;
         [SerializeField] private string m_FireParameterName;
         [Header("Player Animation Controller State Names")]
+        [SerializeField] private string m_BringUpStateName;
         [SerializeField] private string m_ReloadStateName;
         [SerializeField] private string m_FireStateName;
 
@@ -80,21 +82,25 @@ namespace SurvivalFPS
         private int m_IncapacitatedParameterName_Hash = -1;
         private int m_NoLegParameterName_Hash = -1;
         private int m_BehaviourStateParameterName_Hash = -1;
-        //Player Animation Controller State Names
+        //Zombie Animation Controller State Names
         private int m_FeedingStateName_Hash = -1;
         private int m_CrawlFeedingStateName_Hash = -1;
         //Player Animation Controller Parameters
         private int m_ReloadParameterName_Hash = -1;
         private int m_ReloadCurveParameterName_Hash = -1;
         private int m_FireParameterName_Hash = -1;
-
         //Player Animation Controller State Names
+        private int m_BringUpStateName_Hash = -1;
         private int m_ReloadStateName_Hash = -1;
         private int m_FireStateName_Hash = -1;
-
         //layers
-        private int m_ZombieBodyPartLayer = -1;
+        private int m_AIBodyPartLayer = -1;
         private int m_PlayerLayer = -1;
+        private int m_AITriggerLayer = -1;
+        private int m_AIEntityLayer = -1;
+        private int m_AIEntityTriggerLayer = -1;
+
+        //masks used in raycast mostly
         private int m_VisualRaycastLayerMask = -1;
         private int m_ShootableLayerMask = -1;
         private int m_GeometryLayerMask = -1;
@@ -106,9 +112,13 @@ namespace SurvivalFPS
         //special effects
         public ParticleSystem bloodParticleSystem { get { return m_BloodParticleSystem_Instance; } }
         public ParticleSystem muzzleFlashParticleSystem { get { return m_MuzzleFlashParticleSystem_Instance; } }
+        public AudioCollection hitSounds { get { return m_HitSounds; } }
         //layer information
-        public int zombieBodyPartLayer { get { return m_ZombieBodyPartLayer; } }
+        public int aITriggerLayer { get { return m_AITriggerLayer; }}
+        public int aIBodyPartLayer { get { return m_AIBodyPartLayer; } }
         public int playerLayer { get { return m_PlayerLayer; } }
+        public int aIEntityLayer { get { return m_AIEntityLayer; }}
+        public int aIEntityTriggerLayer { get { return m_AIEntityTriggerLayer; }}
         public int visualRaycastLayerMask { get { return m_VisualRaycastLayerMask; } }
         public int shootableLayerMask { get { return m_ShootableLayerMask; } }
         public int geometryLayerMask { get { return m_GeometryLayerMask; } }
@@ -142,8 +152,10 @@ namespace SurvivalFPS
         public int reloadCurveParameterHash { get { return m_ReloadCurveParameterName_Hash; } }
         public int fireParameterNameHash { get { return m_FireParameterName_Hash; } }
         //player animator state name info
+        public int bringUpStateNameHash { get { return m_BringUpStateName_Hash; } }
         public int reloadStateNameHash { get { return m_ReloadStateName_Hash; } }
         public int fireStateNameHash { get { return m_FireStateName_Hash; } }
+
 
         protected override void Awake()
         {
@@ -178,7 +190,10 @@ namespace SurvivalFPS
             m_BehaviourStateParameterName_Hash = Animator.StringToHash(m_BehaviourStateParameterName);
 
             m_PlayerLayer = LayerMask.NameToLayer("Player");
-            m_ZombieBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
+            m_AIBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
+            m_AITriggerLayer = LayerMask.NameToLayer("AI Trigger");
+            m_AIEntityLayer = LayerMask.NameToLayer("AI Entity");
+            m_AIEntityTriggerLayer = LayerMask.NameToLayer("AI Entity Trigger");
 
             m_GeometryLayerMask = LayerMask.GetMask("Obstacle");
             m_VisualRaycastLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
@@ -191,6 +206,7 @@ namespace SurvivalFPS
             m_FeedingStateName_Hash = Animator.StringToHash(m_FeedingStateName);
             m_CrawlFeedingStateName_Hash = Animator.StringToHash(m_CrawlFeedingStateName);
 
+            m_BringUpStateName_Hash = Animator.StringToHash(m_BringUpStateName);
             m_ReloadStateName_Hash = Animator.StringToHash(m_ReloadStateName);
             m_FireStateName_Hash = Animator.StringToHash(m_FireStateName);
         }
@@ -286,6 +302,8 @@ namespace SurvivalFPS
             return val;
         }
 #endregion
+
+
     }
 }
 

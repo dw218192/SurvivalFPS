@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using SurvivalFPS.AI;
+using SurvivalFPS.Core.Audio;
 
 namespace SurvivalFPS.Core.FPS
 {
@@ -83,12 +84,12 @@ namespace SurvivalFPS.Core.FPS
         public class AdvancedSettings
         {
             public float groundCheckDistance = 0.01f; // distance for checking if the controller is grounded ( 0.01f seems to work best for this )
-            public float stickToGroundForce= 0.5f; // stops the character
+            public float stickToGroundForce = 0.5f; // stops the character
             public bool airControl; // can the user control the direction that is being moved in the air
             [Tooltip("set it to 0.1 or more if you get stuck in wall")]
             public float shellOffset; //reduce the radius by that ratio to avoid getting stuck in wall (a value of 0.1f is nice)
         }
-
+        [SerializeField] private AudioCollection m_FootStepSounds;
         [SerializeField] private Flashlight m_Flashlight;
         [SerializeField] private Camera m_Camera;
         [SerializeField] private Transform m_ArmAndHand;
@@ -166,16 +167,16 @@ namespace SurvivalFPS.Core.FPS
             m_LocalSpaceCamPos = m_Camera.transform.localPosition;
             m_LocalSpaceWeaponPos = m_ArmAndHand.transform.localPosition;
             m_PrevState = m_State;
+
+            //register footstep sound event
+            m_HeadBob.RegisterEvent(1.0f, PlayFootstepSound, CurveControlledBob.HeadBobCallBackType.Vertical);
         }
-
-        //warning: this script needs to be executed after PlayerManager!
-
 
         private void Update()
         {
             RotateView();
 
-            if(Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F))
             {
                 m_Flashlight.gameObject.SetActive(!m_Flashlight.gameObject.activeSelf);
             }
@@ -196,11 +197,11 @@ namespace SurvivalFPS.Core.FPS
             {
                 GroundedUpdate();
             }
-            else if(m_State == FPSCharacterState.Crouching)
+            else if (m_State == FPSCharacterState.Crouching)
             {
                 CrouchingUpdate();
             }
-            else if(m_State == FPSCharacterState.AirBorne)
+            else if (m_State == FPSCharacterState.AirBorne)
             {
                 AirBorneUpdate();
             }
@@ -249,7 +250,7 @@ namespace SurvivalFPS.Core.FPS
                 return;
             }
 
-            if(m_AdvancedSetting.airControl)
+            if (m_AdvancedSetting.airControl)
             {
                 Move();
             }
@@ -285,11 +286,11 @@ namespace SurvivalFPS.Core.FPS
 
         private void ResizeCollider()
         {
-            if(m_State == FPSCharacterState.AirBorne || m_State == FPSCharacterState.Grounded)
+            if (m_State == FPSCharacterState.AirBorne || m_State == FPSCharacterState.Grounded)
             {
                 m_Capsule.height = m_CharacterHeight;
             }
-            else if(m_State == FPSCharacterState.Crouching)
+            else if (m_State == FPSCharacterState.Crouching)
             {
                 m_Capsule.height = m_CharacterHeight / 2.0f;
             }
@@ -472,7 +473,7 @@ namespace SurvivalFPS.Core.FPS
         private IEnumerator _bodyContactHelper(AIStateMachine targetToTrack, Collider colliderHit)
         {
             RaycastHit raycastHit;
-            while(true)
+            while (true)
             {
                 if (!targetToTrack.isActiveAI)
                 {
@@ -494,5 +495,26 @@ namespace SurvivalFPS.Core.FPS
                 yield return null;
             }
         }
+
+#region Footstep sounds
+        private void PlayFootstepSound()
+        {
+            if(m_FootStepSounds)
+            {
+                AudioClip soundClip = m_FootStepSounds[0];
+                //TODO switch sound banks based on ground material
+                if(soundClip)
+                {
+                    AudioManager.Instance.PlayOneShotSound(m_FootStepSounds.audioGroup, 
+                                                           soundClip, 
+                                                           transform.position, 
+                                                           m_FootStepSounds.volume, 
+                                                           m_FootStepSounds.spatialBlend, 
+                                                           m_FootStepSounds.priority);
+                }
+            }
+        }
+
+#endregion
     }
 }

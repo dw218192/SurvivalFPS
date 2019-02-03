@@ -106,10 +106,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BulletPoolManager
       objectReference: {fileID: 0}
-    - target: {fileID: 1836385034104856, guid: 9011d1bcab6bf85418daa32e2ac6f120, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4127668000199430, guid: 9011d1bcab6bf85418daa32e2ac6f120, type: 3}
       propertyPath: m_LocalPosition.x
       value: 338.66525

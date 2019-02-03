@@ -110,7 +110,10 @@ namespace SurvivalFPS.AI
         //body parts that are used for ragroll
         [SerializeField] protected List<AIBodyPart> m_BodyParts;
         [SerializeField] [Range(0.0f, 15.0f)] protected float m_StoppingDistance = 1.0f;
-
+        //transform info about body parts
+        //used in footstep track
+        [SerializeField] private Transform m_RightFootTransform;
+        [SerializeField] private Transform m_LeftFootTransform;
         //----public properties----
         public Animator animator { get { return m_Animator; } }
         public NavMeshAgent navAgent { get { return m_navAgent; } }
@@ -207,8 +210,12 @@ namespace SurvivalFPS.AI
         /// </summary>
         public bool IsDead { get { return m_IsDead; } }
 
+        //transform info
+        public Transform leftFootTransform { get { return m_LeftFootTransform; } }
+        public Transform rightFootTransform { get { return m_RightFootTransform; } }
 
-        //overwrittable methods
+
+        //----overwrittable methods----
         /// <summary>
         /// this method is coupled to the start method, for additional initialization work
         /// </summary>
@@ -235,29 +242,38 @@ namespace SurvivalFPS.AI
             m_Animator = GetComponent<Animator>();
             m_Collider = GetComponent<CapsuleCollider>();
             m_navAgent = GetComponent<NavMeshAgent>();
+
+            //set layers
+            gameObject.layer = GameSceneManager.Instance.aIEntityLayer;
+
+            if(m_TargetTrigger)
+            {
+                m_TargetTrigger.gameObject.layer = GameSceneManager.Instance.aIEntityTriggerLayer;
+            }
+            else
+            {
+                Debug.LogWarning(gameObject.name + ": " + "AI Target Trigger is missing! This AI will not work properly");
+            }
+
+            if (m_SensorTrigger)
+            {
+                m_SensorTrigger.gameObject.layer = GameSceneManager.Instance.aITriggerLayer;
+            }
+            else
+            {
+                Debug.LogWarning(gameObject.name + ": " + "AI Sensor Trigger is missing! This AI will not work properly");
+            }
         }
 
         private void Start()
         {
-            //register colliders to the scene manager
-            if (GameSceneManager.Instance)
-            {
-                if (m_Collider) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_Collider.GetInstanceID(), this);
-                if (m_SensorTrigger) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_SensorTrigger.GetInstanceID(), this);
-                //anything else that may be added
-            }
-            else
-            {
-                Debug.LogWarning("AI state machine -- game scene manager is null");
-            }
+            if (m_Collider) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_Collider.GetInstanceID(), this);
+            if (m_SensorTrigger) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_SensorTrigger.GetInstanceID(), this);
+            //anything else that may be added
 
             foreach (AIBodyPart bodyPart in m_BodyParts)
             {
-                //register colliders to the scene manager
-                if (GameSceneManager.Instance)
-                {
-                    GameSceneManager.Instance.RegisterAIStateMachineByColliderID(bodyPart.bodyPartCollider.GetInstanceID(), this);
-                }
+                GameSceneManager.Instance.RegisterAIStateMachineByColliderID(bodyPart.bodyPartCollider.GetInstanceID(), this);
 
                 bodyPart.owner = this;
                 bodyPart.rigidBody.isKinematic = true;

@@ -3068,11 +3068,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18562d23b91c3994cb845f7946f7bbd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_FootStepSounds: {fileID: 11400000, guid: 57ba9d073ff7547e0962d5a35827697d, type: 2}
   m_Flashlight: {fileID: 114476769068625424}
   m_Camera: {fileID: 20528234201305626}
   m_ArmAndHand: {fileID: 4947743558071286}
   m_AnimatorManager: {fileID: 114893468735563778}
-  m_AudioManager: {fileID: 0}
   m_MovementSetting:
     BodyContactDrag: 30
     GroundedMotionDrag: 10
@@ -3188,8 +3188,8 @@ MonoBehaviour:
     m_HorizontalMultiplier: 0.001
     m_VerticalMultiplier: 0.004
     m_VerticalHorizontalSpeedRatio: 2
-    m_BaseInterval: 2.5
-    m_RunStepMultiplier: 0.75
+    m_BaseInterval: 2
+    m_RunStepMultiplier: 1.15
     m_CrouchStepMultiplier: 0.5
   m_WeaponBob:
     m_BobCurve:

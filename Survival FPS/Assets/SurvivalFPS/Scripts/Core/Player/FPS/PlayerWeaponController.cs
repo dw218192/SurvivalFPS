@@ -15,10 +15,11 @@ namespace SurvivalFPS.Core.FPS
         [SerializeField] private List<WeaponConfig> m_Weapons;
         [SerializeField] private bool m_AutoReload;
 
-        //consider removing manually coupling arm & hand animators
+        //TODO: consider removing manually coupling arm & hand animators
         [Header("debug")]
         [SerializeField] private Animator m_HandAnimator;
         [SerializeField] private Animator m_ArmAnimator;
+        private AnimatorOverrideController m_HandAndArmOverride; //override for hand/arm
 
         //internal variables
         private WeaponConfig m_CurrentWeapon;
@@ -32,6 +33,7 @@ namespace SurvivalFPS.Core.FPS
 
         //public properties
         public bool fireLeadingEdge { get; private set; }
+        public WeaponConfig currentWeapon { get { return m_CurrentWeapon; } }
 
         //delegates
         private event Action<WeaponConfig> OnWeaponChanged;
@@ -53,6 +55,7 @@ namespace SurvivalFPS.Core.FPS
             m_PlayerAnimManager.AddAnimator(m_HandAnimator);
             m_PlayerAnimManager.AddAnimator(m_ArmAnimator);
 
+            //initialize weapon configs and behaviors
             foreach (WeaponConfig weapon in m_Weapons)
             {
                 weapon.Initialize(m_PlayerManager);
@@ -128,8 +131,9 @@ namespace SurvivalFPS.Core.FPS
             m_CurrentWeapon.isActive = true;
 
             //change the runtime controller of the hand and the arm
-            m_ArmAnimator.runtimeAnimatorController = m_CurrentWeapon.animatorController;
-            m_HandAnimator.runtimeAnimatorController = m_CurrentWeapon.animatorController;
+            //do not simply assign, because weapon anim controller is different from FPS anim controller
+            //in terms of state machine behaviours
+            SetHandAndArmAnimationOverride();
 
             //put the weapon in the correct position
             PutCurrentWeaponInHand();
@@ -141,7 +145,7 @@ namespace SurvivalFPS.Core.FPS
             m_EquipTimer = m_CurrentWeapon.equipTime;
         }
 
-        public void PutCurrentWeaponInHand()
+        private void PutCurrentWeaponInHand()
         {
             m_HandAnimator.transform.localPosition = m_CurrentWeapon.gripTransform.position;
             m_HandAnimator.transform.localRotation = m_CurrentWeapon.gripTransform.rotation;
@@ -151,6 +155,19 @@ namespace SurvivalFPS.Core.FPS
 
             m_CurrentWeapon.gunGameObject.transform.localPosition = m_CurrentWeapon.gripTransform.position;
             m_CurrentWeapon.gunGameObject.transform.localRotation = m_CurrentWeapon.gripTransform.rotation;
+        }
+
+        private void SetHandAndArmAnimationOverride()
+        {
+            m_HandAndArmOverride = new AnimatorOverrideController();
+            List<KeyValuePair<AnimationClip, AnimationClip>> overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>(m_CurrentWeapon.animatorController.overridesCount);
+            m_CurrentWeapon.animatorController.GetOverrides(overrides);
+
+            m_HandAndArmOverride.runtimeAnimatorController = m_ArmAnimator.runtimeAnimatorController;
+            m_HandAndArmOverride.ApplyOverrides(overrides);
+
+            m_ArmAnimator.runtimeAnimatorController = m_HandAndArmOverride;
+            m_HandAnimator.runtimeAnimatorController = m_HandAndArmOverride;
         }
     }
 }

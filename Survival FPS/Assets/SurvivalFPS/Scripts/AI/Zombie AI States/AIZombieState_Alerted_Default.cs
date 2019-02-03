@@ -72,7 +72,7 @@ namespace SurvivalFPS.AI
             float angle;
             if (m_ZombieStateMachine.currentTargetType == AITargetType.Waypoint)
             {
-                angle = MonobehaviourUtility.SignedAngleBetween(m_ZombieStateMachine.transform.forward, m_ZombieStateMachine.navAgent.steeringTarget - m_ZombieStateMachine.transform.position);
+                angle = MonobehaviourUtility.SignedAngleBetween(m_ZombieStateMachine.transform.forward, m_ZombieStateMachine.GetCurrentTarget().lastKnownPosition - m_ZombieStateMachine.transform.position);
 
                 if (Mathf.Abs(angle) < m_WaypointAngleThreshold)
                 {

@@ -42,11 +42,4 @@ MonoBehaviour:
   m_RecoilEnabled: 1
   m_MuzzleEffect: 1
   m_SpitShells: 1
-  m_ReloadSounds:
-  - {fileID: 8300000, guid: 282a40eb5d784c942b57c4446e2145af, type: 3}
-  m_FireSounds:
-  - {fileID: 8300000, guid: c2f893d20af691945b6b8aa3a8524dbc, type: 3}
-  m_DryFireSounds:
-  - {fileID: 8300000, guid: 443f53e2e5a774a42ab5d734d6596d03, type: 3}
-  m_BringUpSound: {fileID: 0}
-  m_WeaponEquipSound: {fileID: 8300000, guid: a7c954b8ddfdded479c1e004448d20f7, type: 3}
+  m_AudioCollection: {fileID: 11400000, guid: 43aaadbc07bd74c20bbfb578ff4e11fe, type: 2}

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4725d5eb65cf54802a27a5025f3add21, type: 3}
+  m_Name: Hit Sounds
+  m_EditorClassIdentifier: 
+  m_AudioGroup: Zombies
+  m_Volume: 1
+  m_SpatialBlend: 1
+  m_Priority: 255
+  m_AudioClipBanks:
+  - ClipBankName: Head
+    Clips:
+    - {fileID: 8300000, guid: 2067dd079bf6cb1498a1786abed3adc5, type: 3}
+    - {fileID: 8300000, guid: 85e326960213468439168986f466a33d, type: 3}
+    - {fileID: 8300000, guid: 788990a9f763bae4dbd6605520872a47, type: 3}
+    LastClipPlayed: {fileID: 0}
+    AllowConsecutiveSameClip: 1
+  - ClipBankName: Body
+    Clips:
+    - {fileID: 8300000, guid: 27cf2b4c887c3e74ba8a14323ee38762, type: 3}
+    - {fileID: 8300000, guid: 17919607c163ed14481f502eb08b1dfa, type: 3}
+    - {fileID: 8300000, guid: 538297a56cf51e64a85514181998f326, type: 3}
+    - {fileID: 8300000, guid: 716008c2efc7d794c8a3d682bdc6a52e, type: 3}
+    LastClipPlayed: {fileID: 0}
+    AllowConsecutiveSameClip: 1

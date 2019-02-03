@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4725d5eb65cf54802a27a5025f3add21, type: 3}
+  m_Name: HK416
+  m_EditorClassIdentifier: 
+  m_AudioGroup: Player
+  m_Volume: 1
+  m_SpatialBlend: 1
+  m_Priority: 255
+  m_AudioClipBanks:
+  - ClipBankName: BringUp
+    Clips:
+    - {fileID: 8300000, guid: e5a7c9c426fdd584c957e02aaa2940e4, type: 3}
+    - {fileID: 8300000, guid: aef6ed55ad7ad084b8f3f5a0a0fe3f52, type: 3}
+    LastClipPlayed: {fileID: 0}
+    AllowConsecutiveSameClip: 0
+  - ClipBankName: Fire
+    Clips:
+    - {fileID: 8300000, guid: e98f55afd7399f84eb9595a9175bb0bd, type: 3}
+    LastClipPlayed: {fileID: 0}
+    AllowConsecutiveSameClip: 0
+  - ClipBankName: Reload
+    Clips:
+    - {fileID: 8300000, guid: b286242c0122d234ea3ab17b51752727, type: 3}
+    LastClipPlayed: {fileID: 0}
+    AllowConsecutiveSameClip: 0

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SurvivalFPS.Core.Weapon;
+using SurvivalFPS.Core.Audio;
 
 namespace SurvivalFPS.AI
 {
@@ -32,7 +33,15 @@ namespace SurvivalFPS.AI
         private Vector3 m_PositionEndOfRagdoll;
         private Quaternion m_RotationEndOfRagdoll;
         private Quaternion m_LocalRotationEndOfRagdoll;
+        private GameSceneManager m_GameSceneManager;
 
+        private void Awake()
+        {
+            m_RigidBody = GetComponent<Rigidbody>();
+            m_Collider = GetComponent<Collider>();
+            m_GameSceneManager = GameSceneManager.Instance;
+            gameObject.layer = m_GameSceneManager.aIBodyPartLayer;
+        }
 
         /// <summary>
         /// Gets the damage multiplier. (multiplier >= 0.0)
@@ -128,13 +137,6 @@ namespace SurvivalFPS.AI
             }
         }
 
-        private void Awake()
-        {
-            m_RigidBody = GetComponent<Rigidbody>();
-            m_Collider = GetComponent<Collider>();
-            gameObject.layer = GameSceneManager.Instance.zombieBodyPartLayer;
-        }
-
         public void TakeDamage(WeaponConfig weaponUsed, Vector3 hitPosition, Vector3 hitDirection, GameObject instigator)
         {
             DamageData damageData = weaponUsed.damageSetting;
@@ -144,8 +146,9 @@ namespace SurvivalFPS.AI
             m_Owner.currentHealth -= actualDamage;
             SetBodyPartDamage(actualDamage);
 
-            //hit effects (force, blood)
+            //hit effects (force, blood, sound)
             PlayBloodSpecialEffect(damageData.impactBloodAmount);
+            PlayHitSounds();
             if (damageData.impactForce > 0.0f)
             {
                 m_RigidBody.AddForce(hitDirection.normalized * damageData.impactForce, ForceMode.Impulse);
@@ -185,11 +188,49 @@ namespace SurvivalFPS.AI
         {
             if (GameSceneManager.Instance)
             {
-                ParticleSystem bloodEffect = GameSceneManager.Instance.bloodParticleSystem;
+                ParticleSystem bloodEffect = m_GameSceneManager.bloodParticleSystem;
                 bloodEffect.transform.position = transform.position;
                 var mainModule = bloodEffect.main;
                 mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
                 bloodEffect.Emit(amount);
+            }
+        }
+
+        private void PlayHitSounds()
+        {
+            AudioCollection hitSounds = m_GameSceneManager.hitSounds;
+            if (m_Owner)
+            {
+                switch (m_Type)
+                {
+                    case AIBodyPartType.Head:
+                        {
+                            AudioManager.Instance.PlayOneShotSound(
+                                hitSounds.audioGroup,
+                                hitSounds[0],
+                                transform.position,
+                                hitSounds.volume,
+                                hitSounds.spatialBlend,
+                                hitSounds.priority
+                            );
+                            break;
+                        }
+                    case AIBodyPartType.UpperBody:
+                    case AIBodyPartType.UpperBodyLimb:
+                    case AIBodyPartType.LowerBodyLimb:
+                    case AIBodyPartType.LowerBody:
+                        {
+                            AudioManager.Instance.PlayOneShotSound(
+                                hitSounds.audioGroup,
+                                hitSounds[1],
+                                transform.position,
+                                hitSounds.volume,
+                                hitSounds.spatialBlend,
+                                hitSounds.priority
+                            );
+                            break;
+                        }
+                }
             }
         }
     }

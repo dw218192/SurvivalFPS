@@ -31,7 +31,6 @@ namespace SurvivalFPS.Core.Weapon
         {
             if( m_DryFireTimer >= m_WeaponConfig.fireRate * 6.0f )
             {
-                m_AudioManager.PlayRandom(m_WeaponConfig.dryFireSounds);
                 m_DryFireTimer = 0.0f;
             }
         }

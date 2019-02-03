@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SurvivalFPS.Utility;
 using SurvivalFPS.Core.FPS;
-using System;
+using SurvivalFPS.Core.Audio;
 
 namespace SurvivalFPS.Core.Weapon
 {
@@ -27,7 +27,7 @@ namespace SurvivalFPS.Core.Weapon
         //crosshair settings
         [SerializeField] private Texture2D m_CrossHairTexture;
 
-        [SerializeField] protected RuntimeAnimatorController m_AnimatorController;
+        [SerializeField] protected AnimatorOverrideController m_AnimatorController;
         [SerializeField] protected Transform m_GripTransform;
         [SerializeField] protected Transform m_FireStartSpot;
         [SerializeField] protected int m_AmmoCapacity;
@@ -39,11 +39,7 @@ namespace SurvivalFPS.Core.Weapon
         [SerializeField] protected bool m_SpitShells = true;
 
         //sounds
-        [SerializeField] private AudioClip[] m_ReloadSounds;
-        [SerializeField] private AudioClip[] m_FireSounds;
-        [SerializeField] private AudioClip[] m_DryFireSounds;
-        [SerializeField] private AudioClip m_BringUpSound;
-        [SerializeField] private AudioClip m_WeaponEquipSound;
+        [SerializeField] private AudioCollection m_AudioCollection;
 
         //set in initialization
         protected AudioSource m_AudioSource;
@@ -54,7 +50,7 @@ namespace SurvivalFPS.Core.Weapon
         protected float m_FireRate = -1.0f;
 
         //properties
-        public RuntimeAnimatorController animatorController { get { return m_AnimatorController; } }
+        public AnimatorOverrideController animatorController { get { return m_AnimatorController; } }
         public Animator animator { get { return m_GunAnimator; } }
         public GameObject gunGameObject { get { return m_GunGameObject; } }
         public Transform gripTransform { get { return m_GripTransform; } }
@@ -76,11 +72,7 @@ namespace SurvivalFPS.Core.Weapon
         public bool recoilEnabled { get { return m_RecoilEnabled; } }
         public bool muzzleEffect { get { return m_MuzzleEffect; } }
         public bool spitShells { get { return m_SpitShells; } }
-        public AudioClip[] reloadSounds { get { return m_ReloadSounds; } }
-        public AudioClip[] fireSounds { get { return m_FireSounds; } }
-        public AudioClip[] dryFireSounds { get { return m_DryFireSounds; } }
-        public AudioClip bringUpSound { get { return m_BringUpSound; } }
-        public AudioClip weaponEquipSound { get { return m_WeaponEquipSound; } }
+        public AudioCollection audioCollection { get { return m_AudioCollection; }}
 
         //runtime properties
         public abstract int currentAmmo { get; }
@@ -174,6 +166,13 @@ namespace SurvivalFPS.Core.Weapon
 
             //set the runtime controller of this gun animator
             m_GunAnimator.runtimeAnimatorController = m_AnimatorController;
+
+            //initialize state machine behaviors
+            PlayerStateMachineLink[] stateMachineBehaviors = m_GunAnimator.GetBehaviours<PlayerStateMachineLink>();
+            foreach (PlayerStateMachineLink stateMachineBehavior in stateMachineBehaviors)
+            {
+                stateMachineBehavior.playerWeaponController = info.playerWeaponController;
+            }
         }
         private void SetAudioSource(PlayerManager player)
         {

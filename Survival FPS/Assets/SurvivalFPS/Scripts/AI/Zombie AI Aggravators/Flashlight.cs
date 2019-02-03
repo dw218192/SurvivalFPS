@@ -83,7 +83,7 @@ namespace SurvivalFPS.AI
                 if (hit.distance < closestColliderDistance)
                 {
                     //if it's the zombie's body part
-                    if (hit.transform.gameObject.layer == GameSceneManager.Instance.zombieBodyPartLayer)
+                    if (hit.transform.gameObject.layer == GameSceneManager.Instance.aIBodyPartLayer)
                     {
                         //if it's not our body part
                         if (zombie != GameSceneManager.Instance.GetAIStateMachineByColliderID(hit.rigidbody.GetInstanceID()))

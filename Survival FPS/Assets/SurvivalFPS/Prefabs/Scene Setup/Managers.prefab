@@ -87,6 +87,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114207674660731744, guid: 9a62debdab7f62f48a4d8e4cf3b62a5c,
+        type: 3}
+      propertyPath: m_BulletHitSounds
+      value: 
+      objectReference: {fileID: 11400000, guid: 2f3bb3a9887ce4c47bccc0ce9f312428,
+        type: 2}
+    - target: {fileID: 114207674660731744, guid: 9a62debdab7f62f48a4d8e4cf3b62a5c,
+        type: 3}
+      propertyPath: m_ZombieHitSounds
+      value: 
+      objectReference: {fileID: 11400000, guid: bf4e554d7630e4ad08b62103e92ed086,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a62debdab7f62f48a4d8e4cf3b62a5c, type: 3}
 --- !u!4 &6853137208257566755 stripped

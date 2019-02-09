@@ -45,7 +45,7 @@ namespace SurvivalFPS.Core.Audio
                 List<AudioClip> clipList = clipBank.Clips;
 
                 AudioClip clip;
-                if (!clipBank.AllowConsecutiveSameClip)
+                if (!clipBank.AllowConsecutiveSameClip && clipBank.Clips.Count > 1)
                 {
                     do
                     {

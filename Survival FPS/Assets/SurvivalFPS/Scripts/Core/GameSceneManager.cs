@@ -30,7 +30,8 @@ namespace SurvivalFPS
         [Header("Scene Effects")]
         [SerializeField] private ParticleSystem m_BloodParticleSystem;
         [SerializeField] private ParticleSystem m_MuzzleFlashParticleSystem;
-        [SerializeField] private AudioCollection m_HitSounds;
+        [SerializeField] private AudioCollection m_BulletHitSounds;
+        [SerializeField] private AudioCollection m_PlayerInjuredSounds;
         private ParticleSystem m_BloodParticleSystem_Instance;
         private ParticleSystem m_MuzzleFlashParticleSystem_Instance;
         [Header("Zombie Animation Controller Parameters")]
@@ -112,7 +113,8 @@ namespace SurvivalFPS
         //special effects
         public ParticleSystem bloodParticleSystem { get { return m_BloodParticleSystem_Instance; } }
         public ParticleSystem muzzleFlashParticleSystem { get { return m_MuzzleFlashParticleSystem_Instance; } }
-        public AudioCollection hitSounds { get { return m_HitSounds; } }
+        public AudioCollection bulletHitSounds { get { return m_BulletHitSounds; } }
+        public AudioCollection playerInjuredSounds { get { return m_PlayerInjuredSounds; } }
         //layer information
         public int aITriggerLayer { get { return m_AITriggerLayer; }}
         public int aIBodyPartLayer { get { return m_AIBodyPartLayer; } }

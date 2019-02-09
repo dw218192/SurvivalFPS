@@ -35,12 +35,17 @@ namespace SurvivalFPS.AI
         private Quaternion m_LocalRotationEndOfRagdoll;
         private GameSceneManager m_GameSceneManager;
 
+        //sounds
+        private AudioCollection m_BulletHitSounds;
+
         private void Awake()
         {
             m_RigidBody = GetComponent<Rigidbody>();
             m_Collider = GetComponent<Collider>();
             m_GameSceneManager = GameSceneManager.Instance;
             gameObject.layer = m_GameSceneManager.aIBodyPartLayer;
+
+            m_BulletHitSounds = m_GameSceneManager.bulletHitSounds;
         }
 
         /// <summary>
@@ -148,7 +153,9 @@ namespace SurvivalFPS.AI
 
             //hit effects (force, blood, sound)
             PlayBloodSpecialEffect(damageData.impactBloodAmount);
+
             PlayHitSounds();
+
             if (damageData.impactForce > 0.0f)
             {
                 m_RigidBody.AddForce(hitDirection.normalized * damageData.impactForce, ForceMode.Impulse);
@@ -198,7 +205,6 @@ namespace SurvivalFPS.AI
 
         private void PlayHitSounds()
         {
-            AudioCollection hitSounds = m_GameSceneManager.hitSounds;
             if (m_Owner)
             {
                 switch (m_Type)
@@ -206,12 +212,12 @@ namespace SurvivalFPS.AI
                     case AIBodyPartType.Head:
                         {
                             AudioManager.Instance.PlayOneShotSound(
-                                hitSounds.audioGroup,
-                                hitSounds[0],
+                                m_BulletHitSounds.audioGroup,
+                                m_BulletHitSounds[0],
                                 transform.position,
-                                hitSounds.volume,
-                                hitSounds.spatialBlend,
-                                hitSounds.priority
+                                m_BulletHitSounds.volume,
+                                m_BulletHitSounds.spatialBlend,
+                                m_BulletHitSounds.priority
                             );
                             break;
                         }
@@ -221,12 +227,12 @@ namespace SurvivalFPS.AI
                     case AIBodyPartType.LowerBody:
                         {
                             AudioManager.Instance.PlayOneShotSound(
-                                hitSounds.audioGroup,
-                                hitSounds[1],
+                                m_BulletHitSounds.audioGroup,
+                                m_BulletHitSounds[1],
                                 transform.position,
-                                hitSounds.volume,
-                                hitSounds.spatialBlend,
-                                hitSounds.priority
+                                m_BulletHitSounds.volume,
+                                m_BulletHitSounds.spatialBlend,
+                                m_BulletHitSounds.priority
                             );
                             break;
                         }

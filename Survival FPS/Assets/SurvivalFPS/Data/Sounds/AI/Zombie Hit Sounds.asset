@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4725d5eb65cf54802a27a5025f3add21, type: 3}
+  m_Name: Zombie Hit Sounds
+  m_EditorClassIdentifier: 
+  m_AudioGroup: Zombies
+  m_Volume: 1
+  m_SpatialBlend: 1
+  m_Priority: 128
+  m_AudioClipBanks:
+  - ClipBankName: Grunts
+    Clips:
+    - {fileID: 8300000, guid: 8cbf8458283696146ac2699557f1e0c1, type: 3}
+    - {fileID: 8300000, guid: 3e703f4403efbff48be50cead011c71f, type: 3}
+    - {fileID: 8300000, guid: 0c095fd43449edc47adedb4c381d8de4, type: 3}
+    - {fileID: 8300000, guid: 0408ae5663c511749a62ce945140f903, type: 3}
+    - {fileID: 8300000, guid: a746a0eac60a03e459b5cb7123c44f81, type: 3}
+    - {fileID: 8300000, guid: 56ca0fbdbd16497449a3863a92f09c1a, type: 3}
+    - {fileID: 8300000, guid: 72ed4084fdd229a479a022a01f47f448, type: 3}
+    - {fileID: 8300000, guid: 454bc5e5618798147bc39c172af259e0, type: 3}
+    - {fileID: 8300000, guid: 117ef6b16d577d84d9376b707b0562d7, type: 3}
+    - {fileID: 8300000, guid: 137bb003119aa47dfb5ed791d840d650, type: 3}
+    - {fileID: 8300000, guid: 0e84038961d6c4b72af49c11e1553b9e, type: 3}
+    - {fileID: 8300000, guid: 931523c039e8648f2ae2785389e68571, type: 3}
+    LastClipPlayed: {fileID: 0}
+    AllowConsecutiveSameClip: 1
+  - ClipBankName: Hits
+    Clips:
+    - {fileID: 8300000, guid: 586cfcb05377e724d8745c2e15e9f425, type: 3}
+    - {fileID: 8300000, guid: d71e348ac9761814db52bb3b90685705, type: 3}
+    - {fileID: 8300000, guid: 6cddebdee611e1341b8acad885a263c1, type: 3}
+    - {fileID: 8300000, guid: 829dc1c5ced7b6641a878daa9f0e1c3e, type: 3}
+    - {fileID: 8300000, guid: 5b3b84dd36099bd438de9c83e4401267, type: 3}
+    - {fileID: 8300000, guid: 9484be7f875ca7e4cadfb6978c135d80, type: 3}
+    - {fileID: 8300000, guid: a77b45f451ade8644a4b633a803df0f9, type: 3}
+    LastClipPlayed: {fileID: 0}
+    AllowConsecutiveSameClip: 1

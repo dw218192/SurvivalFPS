@@ -23,7 +23,7 @@ namespace SurvivalFPS.Core.Weapon
         private WeaponConfig m_CurrentWeapon;
         private AudioCollection m_AudioCollection;
         private AudioManager m_AudioManager;
-        private ulong m_AudioSourceID;
+        private ulong m_CurSoundID;
         private GameSceneManager m_GameSceneManager;
 
         //track the clip index in the audio bank
@@ -37,8 +37,8 @@ namespace SurvivalFPS.Core.Weapon
         {
             if(m_playerWeaponController)
             {
-                m_playerWeaponController.RegisterWeaponChangeEvent(OnPlayerWeaponChanged);
                 m_CurrentWeapon = m_playerWeaponController.currentWeapon;
+                m_playerWeaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
 
                 if(m_CurrentWeapon)
                     m_AudioCollection = m_CurrentWeapon.audioCollection;
@@ -63,7 +63,7 @@ namespace SurvivalFPS.Core.Weapon
             m_PreviousChannel = 0;
         }
 
-        public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex, AnimatorControllerPlayable controller)
+        public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (layerIndex != 0 && Mathf.Approximately(animator.GetLayerWeight(layerIndex), 0.0f)) return;
             if (m_playerWeaponController == null) return;
@@ -96,13 +96,17 @@ namespace SurvivalFPS.Core.Weapon
             m_PreviousChannel = channel;
         }
 
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+        }
+
         private void PlayClipHelper(out AudioClip clip, int bankIndex, int clipIndex)
         {
             clip = m_AudioCollection[bankIndex, clipIndex];
 
             if (clip)
             {
-                m_AudioSourceID = m_AudioManager.PlayOneShotSound(
+                m_CurSoundID = m_AudioManager.PlayOneShotSound(
                     m_AudioCollection.audioGroup,
                     clip,
                     m_playerWeaponController.transform.position,
@@ -112,9 +116,9 @@ namespace SurvivalFPS.Core.Weapon
             }
         }
 
-        private void OnPlayerWeaponChanged(WeaponConfig currentWeapon)
+        void OnWeaponChanged(WeaponConfig config)
         {
-            //TODO stop the sound
+            m_AudioManager.StopSound(m_CurSoundID);
         }
     }
 }

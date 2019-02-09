@@ -214,6 +214,17 @@ namespace SurvivalFPS.AI
         public Transform leftFootTransform { get { return m_LeftFootTransform; } }
         public Transform rightFootTransform { get { return m_RightFootTransform; } }
 
+        //delegates
+        private event Action OnAIDeath;
+        public void RegisterAIDeathEvent(Action action)
+        {
+            OnAIDeath += action;
+        }
+        private event Action OnRagdoll;
+        public void RegisterRagdollEvent(Action action)
+        {
+            OnRagdoll += action;
+        }
 
         //----overwrittable methods----
         /// <summary>
@@ -642,6 +653,11 @@ namespace SurvivalFPS.AI
         {
             if(!m_IsDead)
             {
+                //inform listeners
+                if(OnAIDeath != null)
+                    OnAIDeath();
+
+                //ragdoll the AI
                 m_IsDead = true;
                 RagDoll();
             }
@@ -652,6 +668,10 @@ namespace SurvivalFPS.AI
         /// </summary>
         public virtual void RagDoll()
         {
+            //inform listeners
+            if(OnRagdoll != null)
+                OnRagdoll();
+
             m_AIBoneControlType = AIBoneControlType.Ragdoll;
 
             if (m_navAgent) m_navAgent.enabled = false;

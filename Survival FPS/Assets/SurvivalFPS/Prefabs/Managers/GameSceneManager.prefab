@@ -47,7 +47,9 @@ MonoBehaviour:
     type: 3}
   m_MuzzleFlashParticleSystem: {fileID: 3114876941108972571, guid: 26ec9a6123e49bc4e91d136179e7b8f9,
     type: 3}
-  m_HitSounds: {fileID: 11400000, guid: 2f3bb3a9887ce4c47bccc0ce9f312428, type: 2}
+  m_BulletHitSounds: {fileID: 11400000, guid: 2f3bb3a9887ce4c47bccc0ce9f312428, type: 2}
+  m_PlayerInjuredSounds: {fileID: 11400000, guid: 315be67bba8814bfb98eabb9cb73b2d5,
+    type: 2}
   m_SpeedParameterName: Speed
   m_SeekingParameterName: Seeking
   m_FeedingParameterName: Feeding

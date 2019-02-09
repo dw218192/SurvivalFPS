@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4725d5eb65cf54802a27a5025f3add21, type: 3}
+  m_Name: Zombie Sounds
+  m_EditorClassIdentifier: 
+  m_AudioGroup: Zombies
+  m_Volume: 1
+  m_SpatialBlend: 1
+  m_Priority: 128
+  m_AudioClipBanks:
+  - ClipBankName: Roaming
+    Clips:
+    - {fileID: 8300000, guid: b6f264f6aa228b4498b62e52ba29aaf3, type: 3}
+    - {fileID: 8300000, guid: 6106198c7caff8b4182e95674b6eaaf2, type: 3}
+    - {fileID: 8300000, guid: 3c6a29a3bfcb75445ad1c581fcab2ec1, type: 3}
+    - {fileID: 8300000, guid: dee12096002e8dd4684a6447411d85ee, type: 3}
+    - {fileID: 8300000, guid: cfb19b1cb4b352a4080e54fdd5a61a1b, type: 3}
+    - {fileID: 8300000, guid: 440097b3bed975045b3c0714e977941c, type: 3}
+    - {fileID: 8300000, guid: 36a99317666529847aea2b1737a1c2a0, type: 3}
+    - {fileID: 8300000, guid: ed8939ac26b0b1b4b9df381fc8859821, type: 3}
+    - {fileID: 8300000, guid: 2381493b17878c94aa8c3cc0dd73f81c, type: 3}
+    - {fileID: 8300000, guid: 88abe345d2737c54390f5386d3d0b657, type: 3}
+    - {fileID: 8300000, guid: e3037dc47e7c65b4097f21ceec38f518, type: 3}
+    - {fileID: 8300000, guid: 90d342cf6f89440b9aa6c6ef4af6af88, type: 3}
+    - {fileID: 8300000, guid: 8c8b4012f639545b2a1f70a2082307b3, type: 3}
+    - {fileID: 8300000, guid: ad7b6eb3c723442b483e6b280fa02230, type: 3}
+    LastClipPlayed: {fileID: 8300000, guid: 3c6a29a3bfcb75445ad1c581fcab2ec1, type: 3}
+    AllowConsecutiveSameClip: 1
+  - ClipBankName: Alerted
+    Clips:
+    - {fileID: 8300000, guid: c143bcdfbdddd4540bd58eacebb7c9be, type: 3}
+    - {fileID: 8300000, guid: 86abf02b29ef7d545994bb7287ec636a, type: 3}
+    LastClipPlayed: {fileID: 8300000, guid: 3c6a29a3bfcb75445ad1c581fcab2ec1, type: 3}
+    AllowConsecutiveSameClip: 1
+  - ClipBankName: Attack
+    Clips:
+    - {fileID: 8300000, guid: 2628db55e50fe41cc9879051d359847a, type: 3}
+    - {fileID: 8300000, guid: 94e452828af664292a97c95ec9452126, type: 3}
+    - {fileID: 8300000, guid: 2c706f39dc7b645e0a17766d7757d4c5, type: 3}
+    - {fileID: 8300000, guid: c5e72c14120434b7d8c3248afc4851b6, type: 3}
+    - {fileID: 8300000, guid: 2e0680160a6414c50821ce2b3586bedf, type: 3}
+    - {fileID: 8300000, guid: 7666bab29b4a04b149e8f5cefdf0c6e6, type: 3}
+    LastClipPlayed: {fileID: 8300000, guid: 3c6a29a3bfcb75445ad1c581fcab2ec1, type: 3}
+    AllowConsecutiveSameClip: 1
+  - ClipBankName: Feeding
+    Clips:
+    - {fileID: 8300000, guid: 0227e31fc2166444e8be7426d9a08fb2, type: 3}
+    - {fileID: 8300000, guid: 22c73fa770bd541458808e8b6c02cfe5, type: 3}
+    - {fileID: 8300000, guid: b6e37604f0b544911b4eafbe4c27856f, type: 3}
+    LastClipPlayed: {fileID: 8300000, guid: 3c6a29a3bfcb75445ad1c581fcab2ec1, type: 3}
+    AllowConsecutiveSameClip: 1

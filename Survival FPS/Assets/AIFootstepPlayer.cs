@@ -8,6 +8,8 @@ namespace SurvivalFPS.AI
     public class AIFootstepPlayer : AIStateMachineLink
     {
         [SerializeField] private AudioCollection m_AudioCollection = null;
+        [SerializeField] private int m_BankNum = 0;
+
         private bool m_HasPlayedPrevFrame = false; //avoid playing the same sound multiple times
         private AudioManager m_AudioManager;
 
@@ -34,7 +36,7 @@ namespace SurvivalFPS.AI
                 if(!m_HasPlayedPrevFrame)
                 {
                     m_AudioManager.PlayOneShotSound(m_AudioCollection.audioGroup,
-                                                    m_AudioCollection[0],
+                                                    m_AudioCollection[m_BankNum],
                                                     m_StateMachine.transform.position,
                                                     m_AudioCollection.volume,
                                                     m_AudioCollection.spatialBlend,

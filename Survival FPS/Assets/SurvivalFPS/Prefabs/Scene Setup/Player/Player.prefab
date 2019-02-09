@@ -3054,8 +3054,7 @@ MonoBehaviour:
   m_CameraBloodEffect: {fileID: 1339698019661551458}
   m_Camera: {fileID: 20528234201305626}
   m_PlayerAttributeSettings:
-    maxHealth: 100
-  m_Health: 0
+    MaxHealth: 100
 --- !u!114 &114597288940846152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3074,6 +3073,11 @@ MonoBehaviour:
   m_ArmAndHand: {fileID: 4947743558071286}
   m_AnimatorManager: {fileID: 114893468735563778}
   m_MovementSetting:
+    FreezeMovement: 0
+    SaminaSlowDownLowerBound: 0.4
+    Maxstamina: 100
+    StaminaRecovery: 5
+    StaminaDepletion: 10
     BodyContactDrag: 30
     GroundedMotionDrag: 10
     SlowDownRate: 100
@@ -3267,6 +3271,8 @@ MonoBehaviour:
   m_AutoReload: 1
   m_HandAnimator: {fileID: 95010429257859168}
   m_ArmAnimator: {fileID: 95659326263080106}
+  m_ArmAndHandController: {fileID: 9100000, guid: 2ac6af7aa83594492bb0d2f077d20cc6,
+    type: 2}
   m_CurrentWeaponAmmo: 0
 --- !u!114 &114893468735563778
 MonoBehaviour:
@@ -3287,7 +3293,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676563148279492}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ecaa09d90f37b884ca88bff40058dfd6, type: 3}
   m_Name: 

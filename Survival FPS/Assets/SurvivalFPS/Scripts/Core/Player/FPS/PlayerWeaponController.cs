@@ -19,11 +19,15 @@ namespace SurvivalFPS.Core.FPS
         [Header("debug")]
         [SerializeField] private Animator m_HandAnimator;
         [SerializeField] private Animator m_ArmAnimator;
-        private AnimatorOverrideController m_HandAndArmOverride; //override for hand/arm
+        [SerializeField] private RuntimeAnimatorController m_ArmAndHandController;
+        private List<AnimatorOverrideController> m_HandAndArmOverrides = new List<AnimatorOverrideController>(); 
+        //overrides for hand/arm corresponding to each weapon
 
         //internal variables
         private WeaponConfig m_CurrentWeapon;
         [SerializeField] private int m_CurrentWeaponAmmo;
+        private int m_CurrentWeaponIndex = 0;
+        private int m_LastWeaponIndex = -1;
 
         private PlayerManager m_PlayerManager;
         private FirstPersonController m_FPSController;
@@ -60,6 +64,14 @@ namespace SurvivalFPS.Core.FPS
             {
                 weapon.Initialize(m_PlayerManager);
                 weapon.isActive = false;
+
+                m_HandAndArmOverrides.Add(new AnimatorOverrideController());
+            }
+
+            //generate overrides for the arm and hand
+            for (int i = 0; i < m_HandAndArmOverrides.Count; i ++)
+            {
+                SetHandAndArmAnimationOverride(m_HandAndArmOverrides[i], m_Weapons[i].animatorController);
             }
 
             SetCurrentWeapon(0);
@@ -96,6 +108,12 @@ namespace SurvivalFPS.Core.FPS
                         return;
                     }
 
+                    if (Input.GetButtonDown("Last Weapon") && m_LastWeaponIndex != -1)
+                    {
+                        SetCurrentWeapon(m_LastWeaponIndex);
+                        return;
+                    }
+
                     if (m_AutoReload && m_CurrentWeapon.currentAmmo <= 0)
                     {
                         m_CurrentWeapon.Reload();
@@ -107,6 +125,8 @@ namespace SurvivalFPS.Core.FPS
                 {
                     for (int i = 0; i < m_Weapons.Count; i++)
                     {
+                        if (i == m_CurrentWeaponIndex) continue;
+
                         if (Input.GetKeyDown((KeyCode)(i + 49)))
                         {
                             SetCurrentWeapon(i);
@@ -121,19 +141,23 @@ namespace SurvivalFPS.Core.FPS
         {
             if(m_CurrentWeapon)
             {
+                m_LastWeaponIndex = m_CurrentWeaponIndex;
                 //disable the mesh and the animator of the previous weapon
                 m_CurrentWeapon.isActive = false;
             }
 
             m_CurrentWeapon = m_Weapons[index];
+            m_CurrentWeaponIndex = index;
 
             //enable the weapon mesh and the weapon animator
             m_CurrentWeapon.isActive = true;
 
             //change the runtime controller of the hand and the arm
-            //do not simply assign, because weapon anim controller is different from FPS anim controller
+            //do not simply assign the weapon override controller,
+            //because weapon anim controller is different from FPS anim controller
             //in terms of state machine behaviours
-            SetHandAndArmAnimationOverride();
+            m_ArmAnimator.runtimeAnimatorController = m_HandAndArmOverrides[index];
+            m_HandAnimator.runtimeAnimatorController = m_HandAndArmOverrides[index];
 
             //put the weapon in the correct position
             PutCurrentWeaponInHand();
@@ -157,17 +181,19 @@ namespace SurvivalFPS.Core.FPS
             m_CurrentWeapon.gunGameObject.transform.localRotation = m_CurrentWeapon.gripTransform.rotation;
         }
 
-        private void SetHandAndArmAnimationOverride()
+        private void SetHandAndArmAnimationOverride(AnimatorOverrideController armAndHandOverride, AnimatorOverrideController weaponOverride)
         {
-            m_HandAndArmOverride = new AnimatorOverrideController();
-            List<KeyValuePair<AnimationClip, AnimationClip>> overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>(m_CurrentWeapon.animatorController.overridesCount);
-            m_CurrentWeapon.animatorController.GetOverrides(overrides);
+            if (armAndHandOverride == null || weaponOverride == null) 
+            {
+                Debug.LogWarning(typeof(PlayerWeaponController) + " - SetHandAndArmAnimationOverride: override controller is null");
+                return;
+            }
 
-            m_HandAndArmOverride.runtimeAnimatorController = m_ArmAnimator.runtimeAnimatorController;
-            m_HandAndArmOverride.ApplyOverrides(overrides);
+            List<KeyValuePair<AnimationClip, AnimationClip>> overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>(weaponOverride.overridesCount);
+            weaponOverride.GetOverrides(overrides);
 
-            m_ArmAnimator.runtimeAnimatorController = m_HandAndArmOverride;
-            m_HandAnimator.runtimeAnimatorController = m_HandAndArmOverride;
+            armAndHandOverride.runtimeAnimatorController = m_ArmAnimator.runtimeAnimatorController;
+            armAndHandOverride.ApplyOverrides(overrides);
         }
     }
 }

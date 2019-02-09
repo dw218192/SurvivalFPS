@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4725d5eb65cf54802a27a5025f3add21, type: 3}
+  m_Name: Zombie Footsteps
+  m_EditorClassIdentifier: 
+  m_AudioGroup: Zombies
+  m_Volume: 1
+  m_SpatialBlend: 1
+  m_Priority: 128
+  m_AudioClipBanks:
+  - ClipBankName: Normal
+    Clips:
+    - {fileID: 8300000, guid: e2aa73f17e270fb468496e76fc43d980, type: 3}
+    - {fileID: 8300000, guid: d27d0da9cc74dd945a4b73145d97b5d7, type: 3}
+    - {fileID: 8300000, guid: 6221ed2f95cb8c14485266ccda325d50, type: 3}
+    - {fileID: 8300000, guid: eb2efff96b7bb6b40b1af24147cd0aca, type: 3}
+    - {fileID: 8300000, guid: 44878d9692a233d45803b52e1e8a71e3, type: 3}
+    - {fileID: 8300000, guid: 823651da8946ea542a48bdbad80a3f41, type: 3}
+    - {fileID: 8300000, guid: 3d4531481b63ddf4ba38660364ad4f27, type: 3}
+    - {fileID: 8300000, guid: 2c4d4a063c8659a4a821777674aa779e, type: 3}
+    - {fileID: 8300000, guid: cf59fed1951ae5a45ac2394412dd21e0, type: 3}
+    - {fileID: 8300000, guid: 0d7fd0e538ccb154c8a38649e79a89dc, type: 3}
+    - {fileID: 8300000, guid: 82f16f22f25bd014ea58046e4ed3c021, type: 3}
+    - {fileID: 8300000, guid: 79c59f11d10d19c4189ef5150b00b71c, type: 3}
+    - {fileID: 8300000, guid: 0ae4e8d03ad8b8540a2a529178437634, type: 3}
+    - {fileID: 8300000, guid: 3be69e59506df7142985af2c180be033, type: 3}
+    - {fileID: 8300000, guid: ae5d0502dcec38b42bb19d815271c7c3, type: 3}
+    LastClipPlayed: {fileID: 8300000, guid: 79c59f11d10d19c4189ef5150b00b71c, type: 3}
+    AllowConsecutiveSameClip: 0
+  - ClipBankName: Crawling
+    Clips:
+    - {fileID: 8300000, guid: 0bf733812c45a440fa17e4e2cc45f7ec, type: 3}
+    - {fileID: 8300000, guid: 8f6b5e65abc3f4d4abcf5d113841cda8, type: 3}
+    - {fileID: 8300000, guid: 34767f6b4d2574de9a7e3e7346bd1f11, type: 3}
+    - {fileID: 8300000, guid: 592ab1b970cbc428eb6e02f1644b51cf, type: 3}
+    - {fileID: 8300000, guid: 160d93b1171fa4c23a221845c9cf9499, type: 3}
+    - {fileID: 8300000, guid: f4d489679c9684a27bd376eda9c89c6d, type: 3}
+    LastClipPlayed: {fileID: 8300000, guid: 0bf733812c45a440fa17e4e2cc45f7ec, type: 3}
+    AllowConsecutiveSameClip: 1

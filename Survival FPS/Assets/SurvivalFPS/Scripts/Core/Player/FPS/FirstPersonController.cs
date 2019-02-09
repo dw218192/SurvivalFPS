@@ -12,18 +12,21 @@ namespace SurvivalFPS.Core.FPS
         public enum FPSCharacterState { Grounded, AirBorne, Crouching }
 
         [Serializable]
-        public class MovementSettings
+        private class MovementSettings
         {
+            public bool FreezeMovement;
+            [Range(0.2f, 1.0f)] public float SaminaSlowDownLowerBound;
+            public float Maxstamina;
+            public float StaminaRecovery = 5.0f;
+            public float StaminaDepletion = 10.0f;
             public float BodyContactDrag = 50f;
             public float GroundedMotionDrag = 10f;
             [Range(1.0f, 1000.0f)] public float SlowDownRate = 100.0f;
             public float ForwardSpeed = 8.0f;   // Speed when walking forward
             public float BackwardSpeed = 4.0f;  // Speed when walking backwards
             public float StrafeSpeed = 4.0f;    // Speed when walking sideways
-
-            public float CrouchMultiplier = 0.5f; // Speed when crounching
-            public float RunMultiplier = 2.0f;   // Speed when sprinting
-
+            public float CrouchMultiplier = 0.5f; // Speed Multiplier when crounching
+            public float RunMultiplier = 2.0f;   // Speed Multiplier when sprinting
             public float JumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
             [HideInInspector] public float CurrentTargetSpeed = 8f;
@@ -31,7 +34,7 @@ namespace SurvivalFPS.Core.FPS
             private bool m_Running;
             private bool m_Crouching;
 
-            public void UpdateDesiredTargetSpeed(Vector2 input)
+            public void UpdateMovementSetting(Vector2 input)
             {
                 if (input.x > 0 || input.x < 0)
                 {
@@ -81,7 +84,7 @@ namespace SurvivalFPS.Core.FPS
         }
 
         [Serializable]
-        public class AdvancedSettings
+        private class AdvancedSettings
         {
             public float groundCheckDistance = 0.01f; // distance for checking if the controller is grounded ( 0.01f seems to work best for this )
             public float stickToGroundForce = 0.5f; // stops the character
@@ -89,6 +92,7 @@ namespace SurvivalFPS.Core.FPS
             [Tooltip("set it to 0.1 or more if you get stuck in wall")]
             public float shellOffset; //reduce the radius by that ratio to avoid getting stuck in wall (a value of 0.1f is nice)
         }
+
         [SerializeField] private AudioCollection m_FootStepSounds;
         [SerializeField] private Flashlight m_Flashlight;
         [SerializeField] private Camera m_Camera;
@@ -110,6 +114,7 @@ namespace SurvivalFPS.Core.FPS
         private Vector3 m_GroundContactNormal;
         private bool m_PreviouslyGrounded, m_IsGrounded;
         private int m_BodyContactCnt = 0;
+        private float m_Stamina;
 
         private Vector2 m_Input;
         private bool m_JumpKeyPressed;
@@ -128,6 +133,7 @@ namespace SurvivalFPS.Core.FPS
         private FPSCharacterState m_PrevState;
 
         //public properties
+        public float maxStamina { get { return m_MovementSetting.Maxstamina; }}
         public Vector3 velocity { get { return m_RigidBody.velocity; } }
         public Vector2 XZVelocity { get { return new Vector2(m_RigidBody.velocity.x, m_RigidBody.velocity.z); } }
         //state properties
@@ -138,6 +144,9 @@ namespace SurvivalFPS.Core.FPS
         //other properties
         public PlayerAnimatorManager playerAnimatorManager { get { return m_AnimatorManager; } }
         public Vector3 punchAngle { get { return m_PunchAngle; } set { m_PunchAngle = value; } }
+
+        //delegate
+        public event Action<int> OnStaminaChanged;
 
         private void ChangeState(FPSCharacterState newState)
         {
@@ -172,6 +181,11 @@ namespace SurvivalFPS.Core.FPS
             m_HeadBob.RegisterEvent(1.0f, PlayFootstepSound, CurveControlledBob.HeadBobCallBackType.Vertical);
         }
 
+        private void Start()
+        {
+            m_Stamina = m_MovementSetting.Maxstamina;
+        }
+
         private void Update()
         {
             RotateView();
@@ -191,7 +205,9 @@ namespace SurvivalFPS.Core.FPS
         private void FixedUpdate()
         {
             GroundCheck();
-            GetInput();
+
+            if(!m_MovementSetting.FreezeMovement)
+                GetInput();
 
             if (m_State == FPSCharacterState.Grounded)
             {
@@ -204,6 +220,25 @@ namespace SurvivalFPS.Core.FPS
             else if (m_State == FPSCharacterState.AirBorne)
             {
                 AirBorneUpdate();
+            }
+
+            if (m_MovementSetting.Running)
+            {
+                m_Stamina = Mathf.Max(0.0f, m_Stamina - m_MovementSetting.StaminaDepletion * Time.deltaTime);
+                if (!Mathf.Approximately(m_Stamina, 0.0f))
+                {
+                    if(OnStaminaChanged!=null)
+                        OnStaminaChanged(Mathf.RoundToInt(m_Stamina));
+                }
+            }
+            else
+            {
+                m_Stamina = Mathf.Min(m_MovementSetting.Maxstamina, m_Stamina + m_MovementSetting.StaminaRecovery * Time.deltaTime);
+                if(!Mathf.Approximately(m_Stamina, m_MovementSetting.Maxstamina))
+                {
+                    if (OnStaminaChanged != null)
+                        OnStaminaChanged(Mathf.RoundToInt(m_Stamina));
+                }
             }
 
             m_JumpKeyPressed = false;
@@ -281,7 +316,10 @@ namespace SurvivalFPS.Core.FPS
 
         private void AnimatorUpdate()
         {
-            m_AnimatorManager.SetBool("Running", running);
+            if(m_Stamina / m_MovementSetting.Maxstamina > 0.2f)
+                m_AnimatorManager.SetBool("Running", running);
+            else
+                m_AnimatorManager.SetBool("Running", false);
         }
 
         private void ResizeCollider()
@@ -341,12 +379,16 @@ namespace SurvivalFPS.Core.FPS
                     desiredMove = forwardXZ * m_Input.y + transform.right * m_Input.x;
                 }
 
-                desiredMove.x = desiredMove.x * m_MovementSetting.CurrentTargetSpeed;
-                desiredMove.z = desiredMove.z * m_MovementSetting.CurrentTargetSpeed;
-                desiredMove.y = desiredMove.y * m_MovementSetting.CurrentTargetSpeed;
+                float speed = m_MovementSetting.CurrentTargetSpeed;
+                float debuff = Mathf.Max(m_MovementSetting.SaminaSlowDownLowerBound, m_Stamina / m_MovementSetting.Maxstamina);
 
-                if (m_RigidBody.velocity.sqrMagnitude <
-                    (m_MovementSetting.CurrentTargetSpeed * m_MovementSetting.CurrentTargetSpeed))
+                speed = m_MovementSetting.CurrentTargetSpeed * debuff;
+
+                desiredMove.x = desiredMove.x * speed;
+                desiredMove.z = desiredMove.z * speed;
+                desiredMove.y = desiredMove.y * speed;
+
+                if (m_RigidBody.velocity.sqrMagnitude < (speed * speed))
                 {
                     m_RigidBody.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
                 }
@@ -400,13 +442,12 @@ namespace SurvivalFPS.Core.FPS
                 x = Input.GetAxis("Horizontal"),
                 y = Input.GetAxis("Vertical")
             };
-            m_MovementSetting.UpdateDesiredTargetSpeed(m_Input);
+            m_MovementSetting.UpdateMovementSetting(m_Input);
 
             if (Input.GetButtonDown("Jump") && !m_JumpKeyPressed)
             {
                 m_JumpKeyPressed = true;
             }
-
             if (Input.GetButton("Crouch"))
             {
                 m_CrouchKeyPressed = true;

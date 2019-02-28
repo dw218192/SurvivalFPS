@@ -6,6 +6,7 @@ using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 using SurvivalFPS.Utility;
+using SurvivalFPS.Core.UI;
 
 namespace SurvivalFPS.Core.Audio
 {
@@ -91,11 +92,15 @@ namespace SurvivalFPS.Core.Audio
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+            PauseMenu.gamePaused += OnGamePaused;
+            PauseMenu.gameResumed += OnGameResumed;
         }
 
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            PauseMenu.gamePaused -= OnGamePaused;
+            PauseMenu.gameResumed -= OnGameResumed;
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
@@ -103,6 +108,36 @@ namespace SurvivalFPS.Core.Audio
             m_ListenerPos = FindObjectOfType<AudioListener>().transform;
 
             m_LayeredAudioSources.Clear();
+        }
+
+        private void OnGamePaused()
+        {
+            //pause all pooled sounds
+            foreach(AudioPoolItem item in m_ActivePool.Values)
+            {
+                item.AudioSource.Pause();
+            }
+
+            //pause all layered sounds
+            foreach (LayeredAudioSource source in m_LayeredAudioSources.Values)
+            {
+                source.Pause();
+            }
+        }
+
+        private void OnGameResumed()
+        {
+            //resume all pooled sounds
+            foreach (AudioPoolItem item in m_ActivePool.Values)
+            {
+                item.AudioSource.UnPause();
+            }
+
+            //resume all layered sounds
+            foreach (LayeredAudioSource source in m_LayeredAudioSources.Values)
+            {
+                source.UnPause();
+            }
         }
 
         private void Update()

@@ -31,7 +31,10 @@ namespace SurvivalFPS.Core.Audio
         public byte priority { get { return m_Priority; } }
         public int bankCount { get { return m_AudioClipBanks.Count; }}
 
-        //random selection
+        /// <summary>
+        /// Randomly chooses a clip from bank i
+        /// </summary>
+        /// <param name="i">The bank index.</param>
         public AudioClip this[int i]
         {
             get
@@ -64,7 +67,11 @@ namespace SurvivalFPS.Core.Audio
             }
         }
 
-        //retrieve a specific clip
+        /// <summary>
+        /// Retrieves the clip at bank i, clip index j.
+        /// </summary>
+        /// <param name="i">The bank index.</param>
+        /// <param name="j">The clip index</param>
         public AudioClip this[int i, int j]
         {
             get

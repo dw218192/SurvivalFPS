@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1845072835014794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4842065219338260}
+  - component: {fileID: 114207674660731744}
+  m_Layer: 0
+  m_Name: GameSceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4842065219338260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845072835014794}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114207674660731744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845072835014794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 928dd60cf8415624aa7866c4f04d3916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BloodParticleSystem: {fileID: 198777712289670192, guid: 5dd71858a785ee445a8e2fac9a2deab4,
+    type: 3}
+  m_MuzzleFlashParticleSystem: {fileID: 3114876941108972571, guid: 26ec9a6123e49bc4e91d136179e7b8f9,
+    type: 3}
+  m_BulletHitSounds: {fileID: 11400000, guid: 2f3bb3a9887ce4c47bccc0ce9f312428, type: 2}
+  m_PlayerInjuredSounds: {fileID: 11400000, guid: 315be67bba8814bfb98eabb9cb73b2d5,
+    type: 2}
+  m_SpeedParameterName: Speed
+  m_SeekingParameterName: Seeking
+  m_FeedingParameterName: Feeding
+  m_AttackParameterName: Attack
+  m_HitParameterName: Hit
+  m_HitTypeParameterName: HitType
+  m_CrawlingParameterName: Crawling
+  m_RightHandAttackParameterName: Right Hand Hit
+  m_LeftHandAttackParameterName: Left Hand Hit
+  m_MouthAttackParameterName: Mouth Hit
+  m_ReanimateFrontParameterName: Reanimate From Front
+  m_ReanimateBackParameterName: Reanimate From Back
+  m_IncapacitatedParameterName: Incapacitated
+  m_NoLegParameterName: No leg
+  m_BehaviourStateParameterName: BehaviourState
+  m_UpperBodyLayer: 2
+  m_LowerBodyLayer: 1
+  m_HitLayer: 4
+  m_FeedingStateName: Feeding_State
+  m_CrawlFeedingStateName: Crawl_Feeding_State
+  m_ReloadParameterName: Reload
+  m_ReloadCurveParameterName: ReloadCurveParam
+  m_FireParameterName: Fire
+  m_BringUpStateName: Bring Up Weapon
+  m_ReloadStateName: Reload
+  m_FireStateName: Fire
+  m_SceneSetup:
+    m_AudioManager: {fileID: 3498464644108655564, guid: 654378e2234066c459185cc9f160f4f3,
+      type: 3}
+    m_MenuManager: {fileID: 839521300576805030, guid: 652196062be864568b137d03c7b99dab,
+      type: 3}
+    m_BulletHoleManager: {fileID: 114013676960140034, guid: 9011d1bcab6bf85418daa32e2ac6f120,
+      type: 3}
+    m_EventSystem: {fileID: 5885711773037058854, guid: 6037b274e30814259bb0e32e6d3d4901,
+      type: 3}

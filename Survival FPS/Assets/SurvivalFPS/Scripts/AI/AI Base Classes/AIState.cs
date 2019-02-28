@@ -22,7 +22,10 @@ namespace SurvivalFPS.AI
         {
             if (m_StateMachine.useRootPosition)
             {
-                m_StateMachine.navAgent.velocity = m_StateMachine.animator.deltaPosition / Time.deltaTime;
+                if(Time.deltaTime > 0.0f)
+                {
+                    m_StateMachine.navAgent.velocity = m_StateMachine.animator.deltaPosition / Time.deltaTime;
+                }
             }
 
             if (m_StateMachine.useRootRotation)

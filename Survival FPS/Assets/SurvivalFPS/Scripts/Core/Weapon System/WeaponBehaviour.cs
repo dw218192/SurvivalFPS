@@ -106,7 +106,7 @@ namespace SurvivalFPS.Core.Weapon
 
             //register events
             m_WeaponController = m_FPSController.GetComponent<PlayerWeaponController>();
-            if (m_WeaponController) m_WeaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
+            if (m_WeaponController) m_WeaponController.weaponChanged += OnWeaponChanged;
         
             //general settings of the muzzle flash particle effect
             m_MuzzleFlash = m_GameSceneManager.muzzleFlashParticleSystem;

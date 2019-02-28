@@ -16,6 +16,8 @@ namespace SurvivalFPS.Core.Audio
             void UnMute(int layerIndex);
             void MuteAll();
             void UnMuteAll();
+            void Pause();
+            void UnPause();
             bool IsPlaying(int layerIndex);
         }
 
@@ -55,6 +57,7 @@ namespace SurvivalFPS.Core.Audio
             private int m_ActiveLayer = -1;
             private bool m_Refresh = false;
             private bool m_AllowSameLayerOverride = false;
+            private bool m_IsPaused = false;
 
             public bool IsPlaying(int layerIndex)
             {
@@ -187,6 +190,18 @@ namespace SurvivalFPS.Core.Audio
                 }
             }
 
+            public void Pause()
+            {
+                m_AudioSource.Pause();
+                m_IsPaused = true;
+            }
+
+            public void UnPause()
+            {
+                m_AudioSource.UnPause();
+                m_IsPaused = false;
+            }
+
             /*
              * cases to consider:
              * 1. new sound issued, its layer lower than the current active highest layer sound
@@ -200,6 +215,9 @@ namespace SurvivalFPS.Core.Audio
              */
             public void UpdateSource()
             {
+                if (m_IsPaused) return;
+
+
                 //each frame we find the highest active layer
                 //this is used to find the highest layer index with a clip assigned
                 int newActiveLayer = -1;

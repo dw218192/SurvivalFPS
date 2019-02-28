@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System;
+
+using SurvivalFPS.Core.UI;
 
 namespace SurvivalFPS.AI
 {
@@ -346,6 +348,10 @@ namespace SurvivalFPS.AI
             {
                 m_CurrentState = null;
             }
+
+            //register game events
+            PauseMenu.gamePaused += PauseMachine;
+            PauseMenu.gameResumed += ResumeMachine;
 
             //statemachine-specific initialization tasks
             Initialize();
@@ -691,10 +697,6 @@ namespace SurvivalFPS.AI
         public void PauseMachine()
         {
             m_UpdateState = false;
-            visualThreat = null;
-            audioThreat = null;
-            m_IsTargetReached = false;
-            m_IsInMeleeRange = false;
         }
 
         public void ResumeMachine()

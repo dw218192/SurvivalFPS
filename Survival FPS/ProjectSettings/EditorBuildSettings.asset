@@ -5,7 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+  - enabled: 0
+    path: Assets/Navigation Example/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/SurvivalFPS/Scenes/MainMenu.unity
+    guid: a11107851beb24ee68937cd76bafab63
+  - enabled: 1
+    path: Assets/SurvivalFPS/Scenes/GunTestLevel.unity
+    guid: 1256b150de4d54d19b2268b56dd3d6af
   m_configObjects: {}

@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
+
 using UnityEngine;
 
 using SurvivalFPS.Core.Audio;
 using SurvivalFPS.Core.FPS;
 using SurvivalFPS.AI;
+
+using SurvivalFPS.Core.UI;
+using SurvivalFPS.Core.PlayerInteraction;
 
 namespace SurvivalFPS.Core
 {
@@ -26,10 +31,9 @@ namespace SurvivalFPS.Core
             public float MaxHealth;
         }
 
-        [SerializeField] PlayerAttributeSettings m_PlayerAttributeSettings;
+        [SerializeField] private PlayerAttributeSettings m_PlayerAttributeSettings;
 
-        //internal variables
-        //runtime
+        //private internal variables
         private float m_Health;
 
         //key to get player info from the game scene manager
@@ -37,10 +41,15 @@ namespace SurvivalFPS.Core
 
         //other
         private Collider m_Collider = null;
+
+        //controllers
         private FirstPersonController m_FPSController = null;
+        private PlayerInteractionController m_InteractionController = null;
+        private IPlayerController[] m_PlayerControllers;
 
         //properties
         public int informationKey { get { return m_InformationKey; } }
+        public Camera playerCamera { get { return m_Camera; } }
         public Transform weaponSocket { get { return m_WeaponSocket; } }
 
         //ref to managers
@@ -53,33 +62,84 @@ namespace SurvivalFPS.Core
         private float m_PainSoundOffset = 0.35f;
 
         //delegates
-        private event Action<int> OnHealthChanged;
-
-        public void RegisterStaminaChangeEvent(Action<int> action)
+        public event Action<int> staminaChanged
         {
-            if (!m_FPSController)
+            add
             {
-                m_FPSController = GetComponent<FirstPersonController>();
-                if (!m_FPSController) return;
+                if (m_FPSController)
+                {
+                    m_FPSController.staminaChanged += value;
+                }
             }
 
-            m_FPSController.OnStaminaChanged += action;
+            remove
+            {
+                if (m_FPSController)
+                {
+                    m_FPSController.staminaChanged -= value;
+                }
+            }
         }
 
-        public void RegisterHealthChangeEvent(Action<int> action)
+        public event Action<int> healthChanged;
+
+        /// <summary>
+        /// subscribe to this event to be informed when the player looks at an interactive
+        /// item (not necessarily interacting with it)
+        /// null will be passed right after the player becomes no longer facing any interactive items
+        /// </summary>
+        public event Action<InteractiveItemConfig> interactiveBeingLookedAt
         {
-            OnHealthChanged += action;
+            add
+            {
+                if(m_InteractionController)
+                {
+                    m_InteractionController.interactiveBeingLookedAt += value;
+                }
+            }
+
+            remove
+            {
+                if (m_InteractionController)
+                {
+                    m_InteractionController.interactiveBeingLookedAt -= value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// subscribe to this event to be informed of the progress of the item interaction,
+        /// if there is any. -1 will be passed once right after the interaction fails.
+        /// </summary>
+        public event Action<float> interactionProgressChanged
+        {
+            add
+            {
+                if (m_InteractionController)
+                {
+                    m_InteractionController.interactiveProgressChanged += value;
+                }
+            }
+
+            remove
+            {
+                if (m_InteractionController)
+                {
+                    m_InteractionController.interactiveProgressChanged -= value;
+                }
+            }
         }
 
         //public properties
         public float maxHealth { get { return m_PlayerAttributeSettings.MaxHealth; } }
         public float maxStamina { get { return m_FPSController ? m_FPSController.maxStamina : 0.0f; } }
 
-        // Use this for initialization
-        void Start()
+        private void Awake()
         {
+            //component setup and communication with the game scene manager
             m_Collider = GetComponent<Collider>();
             m_FPSController = GetComponent<FirstPersonController>();
+            m_InteractionController = GetComponent<PlayerInteractionController>();
             m_GameSceneManager = GameSceneManager.Instance;
             m_AudioManager = AudioManager.Instance;
 
@@ -94,22 +154,31 @@ namespace SurvivalFPS.Core
                 info.collider = m_Collider;
                 info.meleeTrigger = m_MeleeTrigger;
 
-                m_GameSceneManager.RegisterPlayer(m_Collider.GetInstanceID(), info);
+                m_InformationKey = m_Collider.GetInstanceID();
+                m_GameSceneManager.RegisterPlayer(m_InformationKey, info);
 
                 m_PlayerSounds = m_GameSceneManager.playerInjuredSounds;
             }
+        }
 
+        // Use this for initialization
+        private void Start()
+        {
             m_Health = m_PlayerAttributeSettings.MaxHealth;
-            m_InformationKey = m_Collider.GetInstanceID();
+            m_PlayerControllers = Array.ConvertAll(GetComponents(typeof(IPlayerController)), (Component compoent) => (IPlayerController)compoent);
+
+            //subscribe to game pause event
+            PauseMenu.gamePaused += OnGamePaused;
+            PauseMenu.gameResumed += OnGameResumed;
         }
 
         public void TakeDamage(float amountPerSec)
         {
             m_Health = Mathf.Max(m_Health - (amountPerSec * Time.deltaTime), 0.0f);
 
-            if (OnHealthChanged != null)
+            if (healthChanged != null)
             {
-                OnHealthChanged(Mathf.RoundToInt(m_Health));
+                healthChanged(Mathf.RoundToInt(m_Health));
             }
 
             //camera blood
@@ -132,6 +201,22 @@ namespace SurvivalFPS.Core
                                                        m_PlayerSounds.spatialBlend,
                                                        m_PainSoundOffset,
                                                        m_PlayerSounds.priority);
+            }
+        }
+
+        public void OnGamePaused()
+        {
+            foreach (IPlayerController playerController in m_PlayerControllers)
+            {
+                playerController.StopControl();
+            }
+        }
+
+        public void OnGameResumed()
+        {
+            foreach (IPlayerController playerController in m_PlayerControllers)
+            {
+                playerController.ResumeControl();
             }
         }
     }

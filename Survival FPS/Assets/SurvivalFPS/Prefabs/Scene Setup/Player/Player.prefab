@@ -2981,6 +2981,7 @@ GameObject:
   - component: {fileID: 8649547063035078596}
   - component: {fileID: 114597288940846152}
   - component: {fileID: 114422897003315320}
+  - component: {fileID: 6507807524492222856}
   - component: {fileID: 114893468735563778}
   - component: {fileID: 7081822352301043815}
   m_Layer: 12
@@ -3068,19 +3069,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_FootStepSounds: {fileID: 11400000, guid: 57ba9d073ff7547e0962d5a35827697d, type: 2}
+  m_MovementSounds: {fileID: 11400000, guid: 189a6492472b8401c89e7538f902b105, type: 2}
   m_Flashlight: {fileID: 114476769068625424}
   m_Camera: {fileID: 20528234201305626}
   m_ArmAndHand: {fileID: 4947743558071286}
   m_AnimatorManager: {fileID: 114893468735563778}
   m_MovementSetting:
     FreezeMovement: 0
-    SaminaSlowDownLowerBound: 0.4
+    SaminaSlowDownLowerBound: 0.5
     Maxstamina: 100
     StaminaRecovery: 5
     StaminaDepletion: 10
     BodyContactDrag: 30
     GroundedMotionDrag: 10
-    SlowDownRate: 100
+    SlowDownRate: 50
     ForwardSpeed: 4
     BackwardSpeed: 3
     StrafeSpeed: 3
@@ -3274,6 +3276,19 @@ MonoBehaviour:
   m_ArmAndHandController: {fileID: 9100000, guid: 2ac6af7aa83594492bb0d2f077d20cc6,
     type: 2}
   m_CurrentWeaponAmmo: 0
+--- !u!114 &6507807524492222856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676563148279492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26aaee262ade44eb88d1f4beafbe213e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ScanRange: 40
 --- !u!114 &114893468735563778
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -38,7 +38,7 @@ namespace SurvivalFPS.Core.Weapon
             if(m_playerWeaponController)
             {
                 m_CurrentWeapon = m_playerWeaponController.currentWeapon;
-                m_playerWeaponController.RegisterWeaponChangeEvent(OnWeaponChanged);
+                m_playerWeaponController.weaponChanged += OnWeaponChanged;
 
                 if(m_CurrentWeapon)
                     m_AudioCollection = m_CurrentWeapon.audioCollection;

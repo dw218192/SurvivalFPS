@@ -148,6 +148,7 @@ namespace SurvivalFPS.AI
 
             //reduce health
             int actualDamage = (int) (damageData.damagePerShot * GetDamageMultiplier());
+
             m_Owner.currentHealth -= actualDamage;
             SetBodyPartDamage(actualDamage);
 

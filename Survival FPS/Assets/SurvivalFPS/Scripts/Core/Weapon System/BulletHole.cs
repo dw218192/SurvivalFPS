@@ -9,7 +9,6 @@ namespace SurvivalFPS.Core.Weapon
     {
         //clipping prevention
         private Vector3 m_LastBulletHolePos;
-        private float m_MinDistance = 10.0f; //if two bullet holes are within this distance
         private float m_HeightOffset = 0.0001f; //higher a bullet hole a little bit to prevent clipping
 
         private Renderer m_Renderer;

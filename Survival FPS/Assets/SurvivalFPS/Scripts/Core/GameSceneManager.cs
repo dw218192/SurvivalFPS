@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 using SurvivalFPS.Core;
+using SurvivalFPS.Core.PlayerInteraction;
 using SurvivalFPS.Core.FPS;
 using SurvivalFPS.AI;
 using SurvivalFPS.Utility;
@@ -9,7 +11,6 @@ using SurvivalFPS.Core.Audio;
 
 namespace SurvivalFPS
 {
-    //TODO
     public class PlayerInfo
     {
         public Collider collider = null;
@@ -100,13 +101,16 @@ namespace SurvivalFPS
         private int m_AITriggerLayer = -1;
         private int m_AIEntityLayer = -1;
         private int m_AIEntityTriggerLayer = -1;
+        private int m_InteractiveLayer = -1;
 
         //masks used in raycast mostly
         private int m_VisualRaycastLayerMask = -1;
         private int m_ShootableLayerMask = -1;
         private int m_GeometryLayerMask = -1;
+        private int m_InteractiveLayerMask = -1;
 
         private Dictionary<int, AIStateMachine> m_StateMachines = new Dictionary<int, AIStateMachine>();
+        private Dictionary<int, InteractiveItem> m_InteractiveItems = new Dictionary<int, InteractiveItem>();
         private Dictionary<int, PlayerInfo> m_PlayerInfos = new Dictionary<int, PlayerInfo>();
 
         //public properties
@@ -121,9 +125,11 @@ namespace SurvivalFPS
         public int playerLayer { get { return m_PlayerLayer; } }
         public int aIEntityLayer { get { return m_AIEntityLayer; }}
         public int aIEntityTriggerLayer { get { return m_AIEntityTriggerLayer; }}
+        public int interactiveLayer { get { return m_InteractiveLayer; } }
         public int visualRaycastLayerMask { get { return m_VisualRaycastLayerMask; } }
         public int shootableLayerMask { get { return m_ShootableLayerMask; } }
         public int geometryLayerMask { get { return m_GeometryLayerMask; } }
+        public int interactiveLayerMask { get { return m_InteractiveLayerMask; } }
         //zombie animator controller Parameter info
         public int speedParameterName_Hash { get { return m_SpeedParameterName_Hash; } }
         public int seekingParameterName_Hash { get { return m_SeekingParameterName_Hash; } }
@@ -157,7 +163,6 @@ namespace SurvivalFPS
         public int bringUpStateNameHash { get { return m_BringUpStateName_Hash; } }
         public int reloadStateNameHash { get { return m_ReloadStateName_Hash; } }
         public int fireStateNameHash { get { return m_FireStateName_Hash; } }
-
 
         protected override void Awake()
         {
@@ -196,10 +201,12 @@ namespace SurvivalFPS
             m_AITriggerLayer = LayerMask.NameToLayer("AI Trigger");
             m_AIEntityLayer = LayerMask.NameToLayer("AI Entity");
             m_AIEntityTriggerLayer = LayerMask.NameToLayer("AI Entity Trigger");
+            m_InteractiveLayer = LayerMask.NameToLayer("Interactive Items");
 
             m_GeometryLayerMask = LayerMask.GetMask("Obstacle");
             m_VisualRaycastLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");
             m_ShootableLayerMask = LayerMask.GetMask("AI Body Part", "Visual Aggravator", "Obstacle");
+            m_InteractiveLayerMask = LayerMask.GetMask("Interactive Items", "AI Body Part", "Visual Aggravator", "Obstacle");
 
             m_ReloadParameterName_Hash = Animator.StringToHash(m_ReloadParameterName);
             m_ReloadCurveParameterName_Hash = Animator.StringToHash(m_ReloadCurveParameterName);
@@ -213,13 +220,13 @@ namespace SurvivalFPS
             m_FireStateName_Hash = Animator.StringToHash(m_FireStateName);
         }
 
-#region Game Scene Information Registration Functions
+#region Game Scene Item Registration Functions
         // these functions should be called from other scripts that wish to register
         // themselves in the game scene manager
 
 
         /// <summary>
-        /// Registers an AI's collider in the scene; the key is the InstanceID of that collider, and the statemachine is its owner (the AI)
+        /// Registers an AI in the scene; the key is the InstanceID of that collider, and the statemachine is its owner (the AI)
         /// </summary>
         /// <param name="key"> the InstanceID of the collider </param>
         /// <param name="stateMachine"> the AI that owns the collider </param>
@@ -231,7 +238,7 @@ namespace SurvivalFPS
             }
         }
         /// <summary>
-        /// given a collider's instance ID, returns its owner
+        /// given a collider's instance ID, returns its AI owner
         /// </summary>
         /// <param name="key"> the InstanceID of the collider </param>
         /// <returns></returns>
@@ -242,10 +249,37 @@ namespace SurvivalFPS
             {
                 return machine;
             }
-            else
+
+            return null;
+        }
+
+        /// <summary>
+        /// Registers an interactive item in the scene; the key is the InstanceID of that collider
+        /// </summary>
+        /// <param name="key"> the InstanceID of the collider </param>
+        /// <param name="iteractiveItem"> the interactive item that owns the collider </param>
+        public void RegisterInteractiveItemByColliderID(int key, InteractiveItem iteractiveItem)
+        {
+            if (!m_InteractiveItems.ContainsKey(key))
             {
-                return null;
+                m_InteractiveItems[key] = iteractiveItem;
             }
+        }
+
+        /// <summary>
+        /// given a collider's instance ID, returns the interactive item it belongs to
+        /// </summary>
+        /// <param name="key"> the InstanceID of the collider </param>
+        /// <returns></returns>
+        public InteractiveItem GetInteractiveItemByColliderID(int key)
+        {
+            InteractiveItem item = null;
+            if(m_InteractiveItems.TryGetValue(key, out item))
+            {
+                return item;
+            }
+
+            return null;
         }
 
         /// <summary>

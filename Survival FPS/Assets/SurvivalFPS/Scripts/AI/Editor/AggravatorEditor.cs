@@ -8,11 +8,11 @@ namespace SurvivalFPS.AI
     [CustomEditor(typeof(AggravatorData))]
     public class AggravatorEditor : Editor
     {
-        private SerializedProperty m_OverridingListProperty;
+        //private SerializedProperty m_OverridingListProperty;
 
         private void OnEnable()
         {
-            m_OverridingListProperty = serializedObject.FindProperty("m_OverridingList");
+            //m_OverridingListProperty = serializedObject.FindProperty("m_OverridingList");
         }
 
         public override void OnInspectorGUI()

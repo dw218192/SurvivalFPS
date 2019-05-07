@@ -42,8 +42,8 @@ namespace SurvivalFPS.Core.FPS
 
         //delegates
         public event Action<WeaponConfig> weaponChanged;
+        public event Action<WeaponConfig> weaponFired;
 
-        //warning: this script may need to be executed after PlayerManager!
         private void Start()
         {
             m_PlayerManager = gameObject.GetComponent<PlayerManager>();
@@ -97,6 +97,8 @@ namespace SurvivalFPS.Core.FPS
 
                     if (canFire && Input.GetButton("Fire1"))
                     {
+                        //inform listeners
+                        weaponFired(m_CurrentWeapon);
                         m_CurrentWeapon.TryFire();
                         return;
                     }

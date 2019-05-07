@@ -10,8 +10,9 @@ namespace SurvivalFPS.Core.Weapon
     public abstract class WeaponConfig : ScriptableObject
     {
         //an imported asset with model and animator
-        [SerializeField] protected GameObject m_GunModelPrefab;
-
+        [SerializeField] protected GameObject m_StaticModelPrefab;
+        [SerializeField] protected GameObject m_FPSModelPrefab;
+        //TODO: stealth settings
         //damage settings
         [SerializeField] protected DamageData m_DamageSetting;
         //recoil settings
@@ -37,7 +38,6 @@ namespace SurvivalFPS.Core.Weapon
         [SerializeField] protected bool m_RecoilEnabled = true;
         [SerializeField] protected bool m_MuzzleEffect = true;
         [SerializeField] protected bool m_SpitShells = true;
-
         //sounds
         [SerializeField] private AudioCollection m_AudioCollection;
 
@@ -52,6 +52,7 @@ namespace SurvivalFPS.Core.Weapon
         //properties
         public AnimatorOverrideController animatorController { get { return m_AnimatorController; } }
         public Animator animator { get { return m_GunAnimator; } }
+        public GameObject staticModelPrefab { get { return m_StaticModelPrefab; } }
         public GameObject gunGameObject { get { return m_GunGameObject; } }
         public Transform gripTransform { get { return m_GripTransform; } }
         public Transform fireStartSpot { get { return m_FireStartSpot; } }
@@ -75,10 +76,13 @@ namespace SurvivalFPS.Core.Weapon
         public AudioCollection audioCollection { get { return m_AudioCollection; }}
 
         //runtime properties
+        //they need to be abstract because weapon behavior is not defined at this level
         public abstract int currentAmmo { get; }
         public abstract bool isActive { get; set; }
         public abstract bool isFiring { get; }
         public abstract bool isReloading { get; }
+        //TODO: silence
+        public abstract bool isSilenced { get; }
 
         /// <summary>
         /// this function must be called before using the weapon system
@@ -127,6 +131,8 @@ namespace SurvivalFPS.Core.Weapon
         }
         public override bool isFiring { get { return m_WeaponBehaviour.isFiring; } }
         public override bool isReloading { get { return m_WeaponBehaviour.isReloading; } }
+        //TODO
+        public override bool isSilenced { get { throw new System.NotImplementedException(); } }
 
         public override void Initialize(PlayerManager player)
         {
@@ -141,7 +147,7 @@ namespace SurvivalFPS.Core.Weapon
         //initialization functions
         private void SetModel(PlayerManager player)
         {
-            m_GunGameObject = Instantiate(m_GunModelPrefab, player.weaponSocket);
+            m_GunGameObject = Instantiate(m_FPSModelPrefab, player.weaponSocket);
             m_GunMesh = m_GunGameObject.GetComponentInChildren<SkinnedMeshRenderer>();
             m_GunMesh.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }

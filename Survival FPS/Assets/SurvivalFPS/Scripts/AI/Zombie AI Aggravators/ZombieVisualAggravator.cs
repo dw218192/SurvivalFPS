@@ -10,7 +10,7 @@ namespace SurvivalFPS.AI
     {
         //can this threat overwrite the target? i.e. the zombie will give up current target to pursue this threat
         [SerializeField] private bool m_CanOverwriteTarget;
-        public bool canOverwriteTarget { get { return m_CanOverwriteTarget; } }
+        public bool canOverwriteTarget { get { return m_CanOverwriteTarget; } set { m_CanOverwriteTarget = value; } }
 
         private Collider m_Collider;
         public override Collider aggravatorCollider { get { return m_Collider; } }

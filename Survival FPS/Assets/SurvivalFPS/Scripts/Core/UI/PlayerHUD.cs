@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using SurvivalFPS.Core.PlayerInteraction;
+using SurvivalFPS.Core.FPS;
 
 namespace SurvivalFPS.Core.UI
 {
@@ -28,7 +29,7 @@ namespace SurvivalFPS.Core.UI
 
             if(playerManager)
             {
-                playerManager.interactiveBeingLookedAt += OnPlayerLookAtInteractiveItem;
+                playerManager.playerInteractionEvent += OnPlayerInteractionEvent;
                 playerManager.interactionProgressChanged += OnInteractiveProgressChanged;
 
                 playerManager.healthChanged += OnPlayerHealthChanged;
@@ -43,15 +44,33 @@ namespace SurvivalFPS.Core.UI
             m_InteractionProgressImg.fillAmount = 0.0f;
         }
 
-        private void OnPlayerLookAtInteractiveItem(InteractiveItemConfig itemConfig)
+        private void OnPlayerInteractionEvent(InteractiveItem item, InteractionEventType eventType)
         {
-            if(itemConfig == null)
+            if (!item) return;
+
+            //if the player is looking at an item in a valid range
+            if(eventType == InteractionEventType.OnPlayerLookAtInRange)
             {
-                m_InteractiveItemText.text = "";
+                InteractiveItemConfig itemConfig = item.inputConfig;
+
+                if (itemConfig == null)
+                {
+                    return;
+                }
+
+                if(itemConfig.useDefaultPrompt)
+                {
+                    m_InteractiveItemText.text = m_InteractiveItemStartingString + item.itemName;
+                }
+                else
+                {
+                    m_InteractiveItemText.text = itemConfig.promptText + item.itemName;
+                }
                 return;
             }
 
-            m_InteractiveItemText.text = m_InteractiveItemStartingString + itemConfig.itemName;
+            m_InteractiveItemText.text = "";
+            return;
         }
 
         private void OnInteractiveProgressChanged(float newValue)

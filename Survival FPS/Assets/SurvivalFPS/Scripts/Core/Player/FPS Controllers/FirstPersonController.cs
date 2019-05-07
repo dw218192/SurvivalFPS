@@ -7,6 +7,7 @@ using SurvivalFPS.Core.Audio;
 
 namespace SurvivalFPS.Core.FPS
 {
+    [RequireComponent(typeof(CapsuleCollider))]
     public class FirstPersonController : PlayerController
     {
         public enum FPSCharacterState { NoControl, Grounded, AirBorne, Crouching }
@@ -14,7 +15,6 @@ namespace SurvivalFPS.Core.FPS
         [Serializable]
         private class MovementSettings
         {
-            public bool FreezeMovement;
             [Range(0.2f, 1.0f)] public float SaminaSlowDownLowerBound;
             public float Maxstamina;
             public float StaminaRecovery = 5.0f;
@@ -131,10 +131,13 @@ namespace SurvivalFPS.Core.FPS
         private Vector3 m_PunchAngle = Vector3.zero; //set by weapon recoil system
 
         //debug
-        [SerializeField] private FPSCharacterState m_State = FPSCharacterState.AirBorne;
+        private FPSCharacterState m_State = FPSCharacterState.AirBorne;
         private FPSCharacterState m_PrevState;
 
         //public properties
+        public CurveControlledBob headBob { get { return m_HeadBob; } }
+        public CurveControlledBob weaponBob { get { return m_WeaponBob; } }
+
         public float maxStamina { get { return m_MovementSetting.Maxstamina; }}
         public Vector3 velocity { get { return m_RigidBody.velocity; } }
         public Vector2 XZVelocity { get { return new Vector2(m_RigidBody.velocity.x, m_RigidBody.velocity.z); } }
@@ -147,7 +150,7 @@ namespace SurvivalFPS.Core.FPS
         public PlayerAnimatorManager playerAnimatorManager { get { return m_AnimatorManager; } }
         public Vector3 punchAngle { get { return m_PunchAngle; } set { m_PunchAngle = value; } }
 
-        //delegate
+        //delegates
         public event Action<int> staminaChanged;
 
         private void ChangeState(FPSCharacterState newState)
@@ -186,7 +189,10 @@ namespace SurvivalFPS.Core.FPS
 
         private void Update()
         {
-            RotateView();
+            if (m_State != FPSCharacterState.NoControl)
+            {
+                RotateView();
+            }
 
             if (Input.GetKeyDown(KeyCode.F))
             {
@@ -204,8 +210,10 @@ namespace SurvivalFPS.Core.FPS
         {
             GroundCheck();
 
-            if(!m_MovementSetting.FreezeMovement)
+            if(m_State != FPSCharacterState.NoControl)
+            {
                 GetInput();
+            }
 
             if (m_State == FPSCharacterState.Grounded)
             {
@@ -224,6 +232,7 @@ namespace SurvivalFPS.Core.FPS
             {
                 if (m_MovementSetting.Running)
                 {
+                    //decrease stamina if running
                     m_Stamina = Mathf.Max(0.0f, m_Stamina - m_MovementSetting.StaminaDepletion * Time.deltaTime);
                     if (!Mathf.Approximately(m_Stamina, 0.0f))
                     {
@@ -233,6 +242,7 @@ namespace SurvivalFPS.Core.FPS
                 }
                 else
                 {
+                    //regenerate stamina if not running
                     m_Stamina = Mathf.Min(m_MovementSetting.Maxstamina, m_Stamina + m_MovementSetting.StaminaRecovery * Time.deltaTime);
                     if (!Mathf.Approximately(m_Stamina, m_MovementSetting.Maxstamina))
                     {
@@ -462,18 +472,6 @@ namespace SurvivalFPS.Core.FPS
 
         private void RotateView()
         {
-            //avoids the mouse looking if the game is effectively paused
-            if (Mathf.Abs(Time.timeScale) < float.Epsilon)
-            {
-                //unlock the cursor
-                m_FPSCamera.SetCursorLock(false);
-                return;
-            }
-            else
-            {
-                m_FPSCamera.SetCursorLock(true);
-            }
-
             // get the rotation before it's changed
             float oldYRotation = transform.eulerAngles.y;
 
@@ -605,11 +603,13 @@ namespace SurvivalFPS.Core.FPS
 #region interface implementation
         public override void StopControl()
         {
+            m_FPSCamera.SetCursorLock(false);
             ChangeState(FPSCharacterState.NoControl);
         }
 
         public override void ResumeControl()
         {
+            m_FPSCamera.SetCursorLock(true);
             ChangeState(m_PrevState);
         }
 #endregion

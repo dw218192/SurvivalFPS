@@ -11,11 +11,6 @@ namespace SurvivalFPS.Core.UI
         public static event Action gamePaused;
         public static event Action gameResumed;
 
-        public override void Init()
-        {
-            base.Init();
-        }
-
         public override void OnEnterMenu()
         {
             base.OnEnterMenu();

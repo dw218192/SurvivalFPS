@@ -69,16 +69,37 @@ namespace SurvivalFPS
 
         private void Update()
         {
+            MenuManager menuManager = MenuManager.Instance;
+            GameMenu activemenu = menuManager.GetActiveMenu();
+
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                MenuManager menuManager = MenuManager.Instance;
-                if (menuManager.GetActiveMenu() != PauseMenu.Instance)
+                if (activemenu != null)
                 {
-                    MenuManager.Instance.OpenMenu(PauseMenu.Instance);
+                    if(activemenu == PauseMenu.Instance)
+                    {
+                        PauseMenu.Instance.OnResumePressed();
+                    }
+                    else
+                    {
+                        menuManager.CloseCurrentMenu();
+                    }
                 }
                 else
                 {
-                    PauseMenu.Instance.OnResumePressed();
+                    menuManager.OpenMenu(PauseMenu.Instance);
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                if (activemenu != null && activemenu == InventoryUI.Instance)
+                {
+                    menuManager.CloseCurrentMenu();
+                }
+                else
+                {
+                    menuManager.OpenMenu(InventoryUI.Instance);
                 }
             }
         }

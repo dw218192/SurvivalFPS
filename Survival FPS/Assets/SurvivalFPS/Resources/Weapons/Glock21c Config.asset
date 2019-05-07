@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68981670d30c14717b1b4f89f70e6297, type: 3}
   m_Name: Glock21c Config
   m_EditorClassIdentifier: 
-  m_GunModelPrefab: {fileID: 4328608896993873534, guid: 4d80cffea01531b4d8bb91aa58f31652,
+  m_StaticModelPrefab: {fileID: 0}
+  m_FPSModelPrefab: {fileID: 4328608896993873534, guid: 4d80cffea01531b4d8bb91aa58f31652,
     type: 3}
   m_DamageSetting: {fileID: 11400000, guid: a4d39bb84d61648e6807e944eab4ffcf, type: 2}
   m_RecoilSettingWhenStill: {fileID: 11400000, guid: c044b3eb963202a4a8e745fb638c4a33,

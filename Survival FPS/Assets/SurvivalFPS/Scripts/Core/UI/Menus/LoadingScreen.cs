@@ -27,6 +27,8 @@ namespace SurvivalFPS.Core.UI
 
         public override void Init()
         {
+            base.Init();
+
             if (m_LoadingBarImg == null)
             {
                 m_LoadingBarImg = gameObject.GetComponentInChildren<Image>();

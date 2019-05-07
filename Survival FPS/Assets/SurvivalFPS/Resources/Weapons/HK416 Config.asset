@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 498831d81c826ac43adc9d1211152c6f, type: 3}
   m_Name: HK416 Config
   m_EditorClassIdentifier: 
-  m_GunModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
+  m_StaticModelPrefab: {fileID: 0}
+  m_FPSModelPrefab: {fileID: 1604166297139816, guid: 1c7841eaa295f6c40a05d19df589b60b,
     type: 3}
   m_DamageSetting: {fileID: 11400000, guid: a4d39bb84d61648e6807e944eab4ffcf, type: 2}
   m_RecoilSettingWhenStill: {fileID: 11400000, guid: c044b3eb963202a4a8e745fb638c4a33,

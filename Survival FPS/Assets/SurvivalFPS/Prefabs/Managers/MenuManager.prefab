@@ -46,7 +46,9 @@ MonoBehaviour:
   m_MainMenuPrefab: {fileID: 2490998363305509140, guid: 589aa8eff8afc4b76985b967c158368c,
     type: 3}
   m_SettingsMenuPrefab: {fileID: 0}
-  m_PauseMenu: {fileID: 4715229336190170027, guid: 6cc1d556213ba4c35b649d4c0eb420a8,
+  m_PauseMenuPrefab: {fileID: 4715229336190170027, guid: 6cc1d556213ba4c35b649d4c0eb420a8,
     type: 3}
   m_LoadingScreenPrefab: {fileID: 90288744090353235, guid: f8be249c05bc0429fa52f406720c4f47,
+    type: 3}
+  m_InventoryMenuPrefab: {fileID: 1567389709035944154, guid: 79d3809cbe32e4aa18a113b406e59ca0,
     type: 3}

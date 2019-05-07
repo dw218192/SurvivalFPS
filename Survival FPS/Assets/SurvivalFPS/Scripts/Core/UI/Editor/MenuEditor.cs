@@ -113,7 +113,7 @@ namespace SurvivalFPS.Core.UI
 
         private void ScanExistingUIElements()
         {
-            Selectable[] selectables = m_GameMenu.transform.GetComponentsInChildren<Selectable>();
+            Button[] selectables = m_GameMenu.transform.GetComponentsInChildren<Button>();
           
             if(selectables != null)
             {
@@ -136,7 +136,7 @@ namespace SurvivalFPS.Core.UI
                     //push back if needed
                     if (i > m_ButtonList.arraySize - 1)
                     {
-                        AddButtonHelper((Button)selectables[i], m_ButtonList.arraySize, true);
+                        AddButtonHelper(selectables[i], m_ButtonList.arraySize, true);
                         continue;
                     }
 
@@ -144,7 +144,7 @@ namespace SurvivalFPS.Core.UI
                     Object referenceVal = m_ButtonList.GetArrayElementAtIndex(i).objectReferenceValue;
                     if (selectables[i] != referenceVal)
                     {
-                        AddButtonHelper((Button)selectables[i], i, false);
+                        AddButtonHelper(selectables[i], i, false);
                     }
                 }
             }

@@ -10,7 +10,7 @@ namespace SurvivalFPS.AI
     public abstract class ZombieAggravator : MonoBehaviour
     {
         [SerializeField] protected AggravatorData m_OverridingList;
-        public AggravatorData data { get { return m_OverridingList; } }
+        public AggravatorData data { get { return m_OverridingList; }  set { m_OverridingList = value; }}
         public abstract Collider aggravatorCollider { get; }
 
         protected virtual void Awake() 

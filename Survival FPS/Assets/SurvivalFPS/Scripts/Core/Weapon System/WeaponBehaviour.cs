@@ -22,6 +22,7 @@ namespace SurvivalFPS.Core.Weapon
         //states
         protected bool m_IsFiring;
         protected bool m_IsReloading;
+        protected bool m_IsSilenced;
 
         //private internal fields set by config
         protected FirstPersonController m_FPSController;

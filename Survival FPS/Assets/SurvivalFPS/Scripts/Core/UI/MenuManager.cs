@@ -11,8 +11,9 @@ namespace SurvivalFPS.Core.UI
     {
         [SerializeField] private MainMenu m_MainMenuPrefab;
         [SerializeField] private SettingMenu m_SettingsMenuPrefab;
-        [SerializeField] private PauseMenu m_PauseMenu;
+        [SerializeField] private PauseMenu m_PauseMenuPrefab;
         [SerializeField] private LoadingScreen m_LoadingScreenPrefab;
+        [SerializeField] private InventoryUI m_InventoryMenuPrefab;
         //[SerializeField] private WinScreen winScreen;
 
         private Transform m_MenuParent;
@@ -27,6 +28,7 @@ namespace SurvivalFPS.Core.UI
             }
 
             GameMenu topMenu = m_MenuStack.Pop();
+            topMenu.OnLeaveMenu();
             topMenu.gameObject.SetActive(false);
 
             if (m_MenuStack.Count > 0)
@@ -56,6 +58,8 @@ namespace SurvivalFPS.Core.UI
             BindingFlags myFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
             FieldInfo[] fields = this.GetType().GetFields(myFlags);
 
+            List<GameMenu> menuInstances = new List<GameMenu>();
+
             foreach (FieldInfo field in fields)
             {
                 GameMenu prefab = field.GetValue(this) as GameMenu;
@@ -63,16 +67,21 @@ namespace SurvivalFPS.Core.UI
                 if (prefab != null)
                 {
                     GameMenu menuInstance = Instantiate(prefab, m_MenuParent);
-                    menuInstance.Init();
 
-                    if (prefab != m_MainMenuPrefab)
-                    {
-                        menuInstance.gameObject.SetActive(false);
-                    }
-                    else
-                    {
-                        OpenMenu(menuInstance);
-                    }
+                    menuInstances.Add(menuInstance);
+                    menuInstance.Init();
+                }
+            }
+
+            foreach (GameMenu menuInstance in menuInstances)
+            {
+                if (menuInstance != MainMenu.Instance)
+                {
+                    menuInstance.gameObject.SetActive(false);
+                }
+                else
+                {
+                    OpenMenu(menuInstance);
                 }
             }
         }

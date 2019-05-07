@@ -25,13 +25,16 @@ namespace SurvivalFPS.Core
         [SerializeField] private CameraBloodEffect m_CameraBloodEffect = null;
         [SerializeField] private Camera m_Camera = null;
 
+        //an audio trigger for zombies so that they can go to investigate the sound
+        [SerializeField] private ZombieAudioAggravator m_AudioAggravator; 
+
         [Serializable]
         private class PlayerAttributeSettings
         {
             public float MaxHealth;
         }
 
-        [SerializeField] private PlayerAttributeSettings m_PlayerAttributeSettings;
+        [SerializeField] private PlayerAttributeSettings m_PlayerAttributeSettings = new PlayerAttributeSettings();
 
         //private internal variables
         private float m_Health;
@@ -44,13 +47,17 @@ namespace SurvivalFPS.Core
 
         //controllers
         private FirstPersonController m_FPSController = null;
+        private PlayerWeaponController m_WeaponController = null;
         private PlayerInteractionController m_InteractionController = null;
+        private PlayerInventorySystem m_PlayerInventorySystem = null;
         private IPlayerController[] m_PlayerControllers;
 
         //properties
         public int informationKey { get { return m_InformationKey; } }
         public Camera playerCamera { get { return m_Camera; } }
         public Transform weaponSocket { get { return m_WeaponSocket; } }
+        public PlayerWeaponController weaponController { get { return m_WeaponController; } }
+        public PlayerInventorySystem inventorySystem { get { return m_PlayerInventorySystem; } }
 
         //ref to managers
         private GameSceneManager m_GameSceneManager = null;
@@ -84,17 +91,15 @@ namespace SurvivalFPS.Core
         public event Action<int> healthChanged;
 
         /// <summary>
-        /// subscribe to this event to be informed when the player looks at an interactive
-        /// item (not necessarily interacting with it)
-        /// null will be passed right after the player becomes no longer facing any interactive items
+        /// subscribe to this event to be informed at different states of a player interaction
         /// </summary>
-        public event Action<InteractiveItemConfig> interactiveBeingLookedAt
+        public event Action<InteractiveItem, InteractionEventType> playerInteractionEvent
         {
             add
             {
-                if(m_InteractionController)
+                if (m_InteractionController)
                 {
-                    m_InteractionController.interactiveBeingLookedAt += value;
+                    m_InteractionController.interactionEvent += value;
                 }
             }
 
@@ -102,7 +107,7 @@ namespace SurvivalFPS.Core
             {
                 if (m_InteractionController)
                 {
-                    m_InteractionController.interactiveBeingLookedAt -= value;
+                    m_InteractionController.interactionEvent -= value;
                 }
             }
         }
@@ -139,7 +144,9 @@ namespace SurvivalFPS.Core
             //component setup and communication with the game scene manager
             m_Collider = GetComponent<Collider>();
             m_FPSController = GetComponent<FirstPersonController>();
+            m_WeaponController = GetComponent<PlayerWeaponController>();
             m_InteractionController = GetComponent<PlayerInteractionController>();
+            m_PlayerInventorySystem = GetComponent<PlayerInventorySystem>();
             m_GameSceneManager = GameSceneManager.Instance;
             m_AudioManager = AudioManager.Instance;
 
@@ -150,7 +157,8 @@ namespace SurvivalFPS.Core
                 info.playerManager = this;
                 info.playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
                 info.playerMotionController = m_FPSController;
-                info.playerWeaponController = GetComponent<PlayerWeaponController>();
+                info.playerWeaponController = m_WeaponController;
+                info.playerInventorySystem = m_PlayerInventorySystem;
                 info.collider = m_Collider;
                 info.meleeTrigger = m_MeleeTrigger;
 
@@ -170,6 +178,9 @@ namespace SurvivalFPS.Core
             //subscribe to game pause event
             PauseMenu.gamePaused += OnGamePaused;
             PauseMenu.gameResumed += OnGameResumed;
+
+            InventoryUI.inventoryMenuOpened += OnInventoryOpened;
+            InventoryUI.inventoryMenuClosed += OnInventoryClosed;
         }
 
         public void TakeDamage(float amountPerSec)
@@ -213,6 +224,22 @@ namespace SurvivalFPS.Core
         }
 
         public void OnGameResumed()
+        {
+            foreach (IPlayerController playerController in m_PlayerControllers)
+            {
+                playerController.ResumeControl();
+            }
+        }
+
+        public void OnInventoryOpened()
+        {
+            foreach (IPlayerController playerController in m_PlayerControllers)
+            {
+                playerController.StopControl();
+            }
+        }
+
+        public void OnInventoryClosed()
         {
             foreach (IPlayerController playerController in m_PlayerControllers)
             {

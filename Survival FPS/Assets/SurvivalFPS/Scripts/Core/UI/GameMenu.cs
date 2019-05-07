@@ -22,6 +22,11 @@ namespace SurvivalFPS.Core.UI
             
         }
 
+        public virtual void OnLeaveMenu()
+        {
+            
+        }
+
         public virtual void OnBackPressed()
         {
             if (MenuManager.Instance != null)
@@ -34,26 +39,40 @@ namespace SurvivalFPS.Core.UI
     [DisallowMultipleComponent]
     public abstract class GameMenu<MenuType> : GameMenu where MenuType : GameMenu<MenuType>
     {
-        private static MenuType _instance;
-        public static MenuType Instance { get { return _instance; } }
+        private static MenuType m_Instance;
+        public static MenuType Instance { get { return m_Instance; } }
 
-        protected virtual void Awake()
+        public override void Init()
         {
-            if (_instance != null)
+            if (m_Instance != null)
             {
                 Destroy(gameObject);
             }
             else
             {
-                _instance = (MenuType)this;
+                m_Instance = (MenuType)this;
             }
         }
 
+        /*
+        protected virtual void Awake()
+        {
+            if (m_Instance != null)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                m_Instance = (MenuType)this;
+            }
+        }
+        */
+
         protected virtual void OnDestroy()
         {
-            if (_instance == this)
+            if (m_Instance == this)
             {
-                _instance = null;
+                m_Instance = null;
             }
         }
     }

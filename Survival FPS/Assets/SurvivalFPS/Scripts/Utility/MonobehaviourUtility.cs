@@ -65,14 +65,5 @@ namespace SurvivalFPS.Utility
                 radius = Mathf.Max(radius, collider.radius * collider.transform.lossyScale.z);
             }
         }
-
-        public static void PlayRandom(this AudioSource audioSource, AudioClip[] clips)
-        {
-            if (clips.Length > 0)
-            {
-                int randomIndex = Random.Range(0, clips.Length);
-                audioSource.PlayOneShot(clips[randomIndex]);
-            }
-        }
     }
 }

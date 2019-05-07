@@ -4,17 +4,26 @@ using UnityEngine;
 
 namespace SurvivalFPS.Core.PlayerInteraction
 {
-    public class InteractiveItem : MonoBehaviour
+    public abstract class InteractiveItem : MonoBehaviour
     {
+        [SerializeField] protected string m_ItemName;
+
         //inspector assigend
-        [SerializeField] protected InteractiveItemConfig m_ItemData;
+        [SerializeField] protected InteractiveItemConfig m_InputConfig;
         [SerializeField] protected Collider m_Collider;
 
         protected GameSceneManager m_GameSceneManager;
-        public InteractiveItemConfig itemData { get { return m_ItemData; } }
-        public bool isInRange { get; private set; }
 
-        private void Awake()
+        public string itemName { get { return m_ItemName; } }
+        public InteractiveItemConfig inputConfig { get { return m_InputConfig; } }
+        public bool isInRange { get; private set; }
+        public bool isInteracting { get; protected set; }
+
+        protected virtual void Initialize() {}
+        protected virtual void OnBeginInteract(PlayerManager playerManager) {}
+        protected virtual void OnEndInteraction() {}
+
+        protected void Awake()
         {
             if (!m_Collider) m_Collider = GetComponent<Collider>();
 
@@ -36,15 +45,26 @@ namespace SurvivalFPS.Core.PlayerInteraction
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             gameObject.layer = m_GameSceneManager.interactiveLayer;
             m_Collider.isTrigger = true;
+
+            Initialize();
         }
 
         public void Interact(PlayerManager playerManager)
         {
-            m_ItemData.Interact(playerManager);
+            isInteracting = true;
+
+            OnBeginInteract(playerManager);
+        }
+
+        public void EndInteraction()
+        {
+            isInteracting = false;
+
+            OnEndInteraction();
         }
 
         private void OnTriggerExit(Collider other)

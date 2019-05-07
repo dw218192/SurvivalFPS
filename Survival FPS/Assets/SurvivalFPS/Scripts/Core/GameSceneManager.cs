@@ -20,6 +20,7 @@ namespace SurvivalFPS
         public FirstPersonController playerMotionController = null;
         public PlayerAnimatorManager playerAnimatorManager = null;
         public PlayerWeaponController playerWeaponController = null;
+        public PlayerInventorySystem playerInventorySystem = null;
     }
 
     /// <summary>
@@ -102,6 +103,8 @@ namespace SurvivalFPS
         private int m_AIEntityLayer = -1;
         private int m_AIEntityTriggerLayer = -1;
         private int m_InteractiveLayer = -1;
+        private int m_VisualAggLayer = -1;
+        private int m_AudioAggLayer = -1;
 
         //masks used in raycast mostly
         private int m_VisualRaycastLayerMask = -1;
@@ -126,6 +129,9 @@ namespace SurvivalFPS
         public int aIEntityLayer { get { return m_AIEntityLayer; }}
         public int aIEntityTriggerLayer { get { return m_AIEntityTriggerLayer; }}
         public int interactiveLayer { get { return m_InteractiveLayer; } }
+        public int visualAggravatorLayer { get { return m_VisualAggLayer; } }
+        public int audioAggravatorLayer { get { return m_AudioAggLayer; } }
+        //layer masks
         public int visualRaycastLayerMask { get { return m_VisualRaycastLayerMask; } }
         public int shootableLayerMask { get { return m_ShootableLayerMask; } }
         public int geometryLayerMask { get { return m_GeometryLayerMask; } }
@@ -202,6 +208,8 @@ namespace SurvivalFPS
             m_AIEntityLayer = LayerMask.NameToLayer("AI Entity");
             m_AIEntityTriggerLayer = LayerMask.NameToLayer("AI Entity Trigger");
             m_InteractiveLayer = LayerMask.NameToLayer("Interactive Items");
+            m_AudioAggLayer = LayerMask.NameToLayer("Audio Aggravator");
+            m_VisualAggLayer = LayerMask.NameToLayer("Visual Aggravator");
 
             m_GeometryLayerMask = LayerMask.GetMask("Obstacle");
             m_VisualRaycastLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");

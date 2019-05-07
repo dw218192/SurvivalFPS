@@ -1,10 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+
 using UnityEngine;
 
 using SurvivalFPS.Core.PlayerInteraction;
 
 namespace SurvivalFPS.Core.FPS
 {
+    public enum InteractionEventType
+    {
+        OnPlayerInRange, //TODO
+        OnPlayerOutOfRange, //TODO
+        OnPlayerLookAtOutOfRange,
+        OnPlayerLookAwayOutOfRange,
+        OnPlayerLookAtInRange,
+        OnPlayerLookAwayInRange,
+        OnPlayerBeginInput,
+        OnInteractionFail,
+        OnInteractionSuccess,
+        OnInteractionLimitReached //TODO
+    }
+
     [DisallowMultipleComponent]
     public class PlayerInteractionController : PlayerController
     {
@@ -29,8 +46,7 @@ namespace SurvivalFPS.Core.FPS
         private string m_UseButtonName = "Use";
         private ControllerState m_ControllerState = ControllerState.Scanning;
 
-        //events
-        public event Action<InteractiveItemConfig> interactiveBeingLookedAt;
+        public event Action<InteractiveItem, InteractionEventType> interactionEvent;
         public event Action<float> interactiveProgressChanged;
 
         private void ChangeState(ControllerState newstate)
@@ -89,20 +105,33 @@ namespace SurvivalFPS.Core.FPS
             {
                 if(m_CurrentItem.isInRange)
                 {
-                    //Debug.Log("looked at");
-                    interactiveBeingLookedAt(m_CurrentItem.itemData);
+                    //Debug.Log("looking at and in range");
+                    interactionEvent(m_CurrentItem, 
+                                     InteractionEventType.OnPlayerLookAtInRange);
                 }
-                //too far away from this item
                 else
                 {
-                    interactiveBeingLookedAt(null);
+                    //Debug.Log("looking at but out of range");
+                    interactionEvent(m_CurrentItem, 
+                                     InteractionEventType.OnPlayerLookAtOutOfRange);
                 }
             }
             //just looked away from this item
-            else if (m_ItemLastFrame && m_ItemLastFrame.isInRange && !m_CurrentItem)
+            else if (m_ItemLastFrame && m_CurrentItem != m_ItemLastFrame)
             {
-                //Debug.Log("looked away");
-                interactiveBeingLookedAt(null);
+                if(m_ItemLastFrame.isInRange)
+                {
+                    //Debug.Log("looked away and in range");
+                    interactionEvent(m_ItemLastFrame,
+                                     InteractionEventType.OnPlayerLookAwayInRange);
+                }
+                else
+                {
+                    //Debug.Log("looked away and out of range");
+                    interactionEvent(m_ItemLastFrame,
+                                     InteractionEventType.OnPlayerLookAwayOutOfRange);
+                }
+
             }
 
             bool usePressed = Input.GetButtonDown(m_UseButtonName);
@@ -112,6 +141,7 @@ namespace SurvivalFPS.Core.FPS
             if (usePressed && m_CurrentItem && m_CurrentItem.isInRange)
             {
                 m_LastInputTime = Time.time;
+                interactionEvent(m_CurrentItem, InteractionEventType.OnPlayerBeginInput);
                 ChangeState(ControllerState.InteractionInput);
             }
         }
@@ -120,24 +150,29 @@ namespace SurvivalFPS.Core.FPS
         {
             m_InputTimer += Time.deltaTime;
 
-            InteractiveItemConfig itemInfo = m_CurrentItem.itemData;
+            InteractiveItemConfig itemInfo = null;
+
+            if(m_CurrentItem)
+            {
+                itemInfo = m_CurrentItem.inputConfig;
+            }
 
             do
             {
-                //if we have reached the desired input time, begin interaction
-                if (m_InputTimer > itemInfo.inputTime)
-                {
-                    OnInteractionSuccess();
-                    ChangeState(ControllerState.Interaction);
-                    break;
-                }
-
                 //the scanned item has been changed (the player is not facing the item)
                 //the interaction will fail
                 if (m_ItemLastFrame != m_CurrentItem)
                 {
                     OnInteractionFail();
                     ChangeState(ControllerState.Scanning);
+                    break;
+                }
+
+                //if we have reached the desired input time, begin interaction
+                if (m_InputTimer > itemInfo.inputTime)
+                {
+                    OnInteractionSuccess();
+                    ChangeState(ControllerState.Interaction);
                     break;
                 }
 
@@ -150,38 +185,18 @@ namespace SurvivalFPS.Core.FPS
                     break;
                 }
 
-                //if the item has a max input interval of 0, which means the player
-                //needs to hold the use button for a certain duration to interact with
-                //the item
-                if (itemInfo.inputInterval <= float.Epsilon)
+                //if the player lifts up the button, the interaction will fail
+                if (!Input.GetButton(m_UseButtonName))
                 {
-                    //if the player lifts up the button, the interaction will fail
-                    if (!Input.GetButton(m_UseButtonName))
-                    {
-                        OnInteractionFail();
-                        break;
-                    }
-
-                    //inform progress change listeners
-                    interactiveProgressChanged(m_InputTimer / itemInfo.inputTime);
-
-                    return;
+                    OnInteractionFail();
+                    ChangeState(ControllerState.Scanning);
+                    break;
                 }
 
-                //TODO: otherwise, it's a tapping interaction
-                else
-                {
-                    if (Input.GetButtonDown(m_UseButtonName))
-                    {
-                        m_LastInputTime = Time.time;
-                    }
+                //inform progress change listeners
+                interactiveProgressChanged(m_InputTimer / itemInfo.inputTime);
 
-                    if (Time.time - m_LastInputTime > itemInfo.inputInterval)
-                    {
-                        OnInteractionFail();
-                        break;
-                    }
-                }
+                return;
             }
             while (false);
 
@@ -191,7 +206,7 @@ namespace SurvivalFPS.Core.FPS
 
         private void InteractionUpdate()
         {
-            if (m_CurrentItem.itemData.isInteracting)
+            if (m_CurrentItem && m_CurrentItem.isInteracting)
             {
                 return;
             }
@@ -219,11 +234,15 @@ namespace SurvivalFPS.Core.FPS
         private void OnInteractionFail()
         {
             interactiveProgressChanged(-1.0f);
+
+            interactionEvent(m_CurrentItem, InteractionEventType.OnInteractionFail);
         }
 
         private void OnInteractionSuccess()
         {
             interactiveProgressChanged(1.0f);
+
+            interactionEvent(m_CurrentItem, InteractionEventType.OnInteractionSuccess);
 
             m_CurrentItem.Interact(m_PlayerManager);
         }

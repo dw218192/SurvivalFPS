@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8351550169e0a40da83e53066de41f19, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: 
-  m_ItemSprite: {fileID: 0}
+  m_SectionType: 0
+  m_ItemName: Test Item
+  m_ItemSprite: {fileID: 21300000, guid: 5485e2f56028a3c4cb54f5caa167377e, type: 3}
   m_PhysicalRepresentation: {fileID: 7398054079425794262, guid: 01547e4e9faa84c4cb7391a92a553cf2,
     type: 3}
   m_StackSize: 1

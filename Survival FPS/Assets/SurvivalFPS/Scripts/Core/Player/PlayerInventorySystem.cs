@@ -1,35 +1,88 @@
 ﻿using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
 
-using SurvivalFPS.Core.PlayerInteraction;
+using SurvivalFPS.Core.UI;
 using SurvivalFPS.Core.Inventory;
 
 namespace SurvivalFPS.Core.FPS
 {
     public class PlayerInventorySystem : MonoBehaviour
     {
-        [SerializeField] private int m_InventorySize;
-        private List<ItemInstance> m_Items;
+        public interface ISection
+        {
+            SectionType sectionType { get; }
+            int size { get; }
+        }
+
+        [Serializable]
+        private class Section : ISection
+        {
+            [SerializeField] private SectionType m_SectionType = SectionType.Item;
+            [SerializeField] private int m_Size = 10;
+            public SectionType sectionType { get { return m_SectionType; } }
+            public int size { get { return m_Size; } }
+
+            public List<ItemInstance> content = new List<ItemInstance>();
+
+            public int FindEmptySpot()
+            {
+                for(int i=0; i<size; i++)
+                {
+                    if (content[i] == null) return i;
+                }
+
+                return -1;
+            }
+        }
+
+        [SerializeField] private Section[] m_Sections;
+
+        public ISection[] GetSectionInfo()
+        {
+            return m_Sections.ToArray();
+        }
 
         private void Awake()
         {
-            m_Items = new List<ItemInstance>();
-
-            for (int i = 0; i < m_InventorySize; i ++)
+            foreach(Section sectionSetting in m_Sections)
             {
-                m_Items.Add(null);
+                for (int i = 0; i < sectionSetting.size; i++)
+                {
+                    sectionSetting.content.Add(null);
+                }
             }
+
+            //sort the array based on enum value
+            m_Sections.OrderBy(sectionSetting => (int)sectionSetting.sectionType);
+        }
+
+        /// <summary>
+        /// Gets the capacity of a particular inventory section
+        /// </summary>
+        /// <param name="sectionType"></param>
+        /// <returns>returns -1 if the section does not exist</returns>
+        public int GetSectionCapacity(SectionType sectionType)
+        {
+            Section section = m_Sections[(int)sectionType];
+            return section == null ? -1 : section.size;
         }
 
         /// <summary>
         /// Removes the item entirely.
         /// </summary>
-        public void RemoveItem(int index)
+        public void RemoveItem(SectionType sectionType, int index)
         {
-            m_Items[index] = null;
+            Section section = m_Sections[(int)sectionType];
+
+            if (section == null)
+            {
+                return;
+            }
+
+            section.content[index] = null;
         }
 
         /// <summary>
@@ -38,24 +91,23 @@ namespace SurvivalFPS.Core.FPS
         /// <returns>The item inventory id if the item can be added. -1 if the item cannot be added </returns>
         public int AddItem(ItemInstance item)
         {
-            int emptyIndex = FindEmptySlot();
+            Section section = m_Sections[(int)item.itemTemplate.sectionType];
+
+            if (section == null)
+            {
+                return -1;
+            }
+
+            int emptyIndex = section.FindEmptySpot();
 
             if (emptyIndex != -1) 
             {
-                m_Items[emptyIndex] = item;
+                section.content[emptyIndex] = item;
+                //inform the UI menu
+                InventoryUI.Instance.SetSlot(item, emptyIndex);
             }
 
             return emptyIndex;
-        }
-
-        private int FindEmptySlot()
-        {
-            for (int i = 0; i < m_InventorySize; i++)
-            {
-                if (m_Items[i] == null) return i;
-            }
-
-            return -1;
         }
     }
 

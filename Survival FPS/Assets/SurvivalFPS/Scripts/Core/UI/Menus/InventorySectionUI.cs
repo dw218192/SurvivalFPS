@@ -60,5 +60,10 @@ namespace SurvivalFPS.Core.UI
         {
             m_ItemSlots[index].SetItem(item);
         }
+
+        public void UnsetSlot(int index)
+        {
+            m_ItemSlots[index].UnsetItem();
+        }
     }
 }

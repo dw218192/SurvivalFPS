@@ -17,4 +17,8 @@ MonoBehaviour:
   m_ItemSprite: {fileID: 21300000, guid: 5485e2f56028a3c4cb54f5caa167377e, type: 3}
   m_PhysicalRepresentation: {fileID: 7398054079425794262, guid: 01547e4e9faa84c4cb7391a92a553cf2,
     type: 3}
+  m_ItemOptionMenuPrefab: {fileID: 4732276232311137099, guid: 44f72f70c69e7194baabf0d435cb7da4,
+    type: 3}
   m_StackSize: 1
+  m_ConsumptionLimit: 1
+  m_StartingQuality: 100

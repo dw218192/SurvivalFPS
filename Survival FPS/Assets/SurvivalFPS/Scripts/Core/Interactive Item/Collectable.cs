@@ -54,7 +54,7 @@ namespace SurvivalFPS.Core.PlayerInteraction
 
         private ItemInstance CreateItem()
         {
-            return new ItemInstance(m_ItemTemplate, new ItemProperty());
+            return new ItemInstance(m_ItemTemplate);
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 using UnityEngine;
 
 using SurvivalFPS.Core.UI;
 using SurvivalFPS.Core.Inventory;
+using SurvivalFPS.Messaging;
 
 namespace SurvivalFPS.Core.FPS
 {
@@ -79,8 +81,19 @@ namespace SurvivalFPS.Core.FPS
 
             if (section == null)
             {
+                Debug.LogWarning("PlayerInventorySystem.RemoveItem(): attempt to remove an item in an unknown section");
                 return;
             }
+
+            if (index < 0 || index >= section.content.Count - 1)
+            {
+                Debug.LogWarning("PlayerInventorySystem.RemoveItem(): attempt to remove an item with an invalid index");
+                return;
+            }
+
+            //broadcast the event
+            InventoryEventData eventData = new InventoryEventData(sectionType, index, section.content[index]);
+            Messenger.Broadcast(M_DataEventType.OnInventoryItemRemoved, eventData);
 
             section.content[index] = null;
         }
@@ -103,11 +116,19 @@ namespace SurvivalFPS.Core.FPS
             if (emptyIndex != -1) 
             {
                 section.content[emptyIndex] = item;
-                //inform the UI menu
-                InventoryUI.Instance.SetSlot(item, emptyIndex);
+
+                //broadcast the event
+                InventoryEventData eventData = new InventoryEventData(item.itemTemplate.sectionType, emptyIndex, item);
+                Messenger.Broadcast(M_DataEventType.OnInventoryItemAdded, eventData);
             }
 
             return emptyIndex;
+        }
+
+        public void SaveToJSON(string path)
+        {
+            Debug.LogFormat("Saving player inventory to {0}", path);
+            File.WriteAllText(path, JsonUtility.ToJson(this, true));
         }
     }
 

@@ -7,26 +7,34 @@ using System;
 namespace SurvivalFPS.Core.Inventory
 {
     [Serializable]
-    public class ItemProperty
+    public class ItemStatus
     {
-        public float quality;
+        public ItemStatus() { }
+        public uint RemainingUseCnt { get; set; }
+        public float quality { get; set; }
     }
 
+    /// <summary>
+    /// The runtime instance of an inventory item
+    /// </summary>
     [Serializable]
     public class ItemInstance
     {
         public InventoryItemTemplate itemTemplate;
-        public ItemProperty itemProperty;
+        public ItemStatus itemStatus;
 
         //the runtime section index of this item in the inventory
         public int inventoryIndex { get; set; }
 
         private ItemInstance() { }
 
-        public ItemInstance(InventoryItemTemplate itemTemplate, ItemProperty itemProperty)
+        public ItemInstance(InventoryItemTemplate itemTemplate)
         {
             this.itemTemplate = itemTemplate;
-            this.itemProperty = itemProperty;
+            this.itemStatus = new ItemStatus();
+            itemStatus.RemainingUseCnt = itemTemplate.consumptionLimit;
+            itemStatus.quality = itemTemplate.startingQuality;
+
             inventoryIndex = -1;
         }
     }

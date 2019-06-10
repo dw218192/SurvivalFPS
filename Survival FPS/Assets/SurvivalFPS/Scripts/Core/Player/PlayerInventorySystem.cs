@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.IO;
+using System.Runtime.Serialization;
 
 using UnityEngine;
 
 using SurvivalFPS.Core.UI;
-using SurvivalFPS.Core.Inventory;
 using SurvivalFPS.Messaging;
+using SurvivalFPS.Saving;
 
-namespace SurvivalFPS.Core.FPS
+namespace SurvivalFPS.Core.Inventory
 {
     public class PlayerInventorySystem : MonoBehaviour
     {
@@ -20,7 +20,7 @@ namespace SurvivalFPS.Core.FPS
         }
 
         [Serializable]
-        private class Section : ISection
+        private sealed class Section : ISection
         {
             [SerializeField] private SectionType m_SectionType = SectionType.Item;
             [SerializeField] private int m_Size = 10;
@@ -40,6 +40,25 @@ namespace SurvivalFPS.Core.FPS
             }
         }
 
+        [Serializable]
+        private sealed class InventorySaveData : ISerializable
+        {
+            public Section[] sections;
+
+            public InventorySaveData() { }
+
+            private InventorySaveData(SerializationInfo info, StreamingContext context)
+            {
+                sections = (Section[]) info.GetValue("sections", typeof(Section[]));
+            }
+
+            public void GetObjectData(SerializationInfo info, StreamingContext context)
+            {
+                info.AddValue("sections", sections, typeof(Section[]));
+            }
+        }
+
+        [SerializeField] private bool m_UseFileData;
         [SerializeField] private Section[] m_Sections;
 
         public ISection[] GetSectionInfo()
@@ -49,16 +68,28 @@ namespace SurvivalFPS.Core.FPS
 
         private void Awake()
         {
-            foreach(Section sectionSetting in m_Sections)
+            bool successfulLoad = false;
+
+            if(m_UseFileData)
             {
-                for (int i = 0; i < sectionSetting.size; i++)
+                successfulLoad = LoadInventory();
+            }
+
+            if(!successfulLoad)
+            {
+                foreach (Section sectionSetting in m_Sections)
                 {
-                    sectionSetting.content.Add(null);
+                    for (int i = 0; i < sectionSetting.size; i++)
+                    {
+                        sectionSetting.content.Add(null);
+                    }
                 }
             }
 
             //sort the array based on enum value
             m_Sections.OrderBy(sectionSetting => (int)sectionSetting.sectionType);
+
+            Messenger.AddListener(M_EventType.OnGameSaving, SaveInventory);
         }
 
         /// <summary>
@@ -125,11 +156,42 @@ namespace SurvivalFPS.Core.FPS
             return emptyIndex;
         }
 
-        public void SaveToJSON(string path)
+        public void DeleteSaveFile()
         {
-            Debug.LogFormat("Saving player inventory to {0}", path);
-            File.WriteAllText(path, JsonUtility.ToJson(this, true));
+            BinarySaver.Delete(SaveFileNameConfig.inventorySaveFileName);
+        }
+
+        private void SaveInventory()
+        {
+            InventorySaveData inventorySaveData = new InventorySaveData();
+            inventorySaveData.sections = m_Sections;
+
+            BinarySaver.Save(inventorySaveData, SaveFileNameConfig.inventorySaveFileName);
+        }
+
+        private bool LoadInventory()
+        {
+            InventorySaveData inventorySaveData;
+            if ( BinarySaver.Load(out inventorySaveData, SaveFileNameConfig.inventorySaveFileName) )
+            {
+                m_Sections = inventorySaveData.sections;
+
+                for (int i=0; i<m_Sections.Length; i++)
+                {
+                    List<ItemInstance> items = m_Sections[i].content;
+
+                    for (int j=0; j<items.Count; j++)
+                    {
+                        //broadcast the event
+                        InventoryEventData eventData = new InventoryEventData(m_Sections[i].sectionType, j, items[j]);
+                        Messenger.Broadcast(M_DataEventType.OnInventoryItemAdded, eventData);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
     }
-
 }

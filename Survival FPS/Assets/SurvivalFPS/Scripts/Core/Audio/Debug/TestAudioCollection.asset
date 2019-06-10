@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4725d5eb65cf54802a27a5025f3add21, type: 3}
-  m_Name: test
+  m_Name: TestAudioCollection
   m_EditorClassIdentifier: 
   m_AudioGroup: Player
   m_Volume: 1

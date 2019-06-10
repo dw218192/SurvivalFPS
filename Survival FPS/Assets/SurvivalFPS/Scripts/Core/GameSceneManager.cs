@@ -8,6 +8,7 @@ using SurvivalFPS.Core.FPS;
 using SurvivalFPS.AI;
 using SurvivalFPS.Utility;
 using SurvivalFPS.Core.Audio;
+using SurvivalFPS.Core.Inventory;
 
 namespace SurvivalFPS
 {

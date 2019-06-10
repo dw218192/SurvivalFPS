@@ -27,6 +27,7 @@ namespace SurvivalFPS
 
             public void SetupManagers()
             {
+                //singleton managers
                 BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
                 FieldInfo[] fields = GetType().GetFields(bindingFlags);
 
@@ -39,6 +40,9 @@ namespace SurvivalFPS
                         UnityEngine.Object.Instantiate(managerPrefab);
                     }
                 }
+
+                //static managers
+                GameAssetManager.Init();
             }
         }
 

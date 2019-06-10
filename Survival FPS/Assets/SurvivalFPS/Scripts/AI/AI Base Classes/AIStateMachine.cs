@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-using SurvivalFPS.Core.UI;
+using SurvivalFPS.Messaging;
 
 namespace SurvivalFPS.AI
 {
@@ -350,8 +350,8 @@ namespace SurvivalFPS.AI
             }
 
             //register game events
-            PauseMenu.gamePaused += PauseMachine;
-            PauseMenu.gameResumed += ResumeMachine;
+            Messenger.AddListener(M_EventType.OnGamePaused, PauseMachine);
+            Messenger.AddListener(M_EventType.OnGameResumed, ResumeMachine);
 
             //statemachine-specific initialization tasks
             Initialize();

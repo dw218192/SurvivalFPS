@@ -2,21 +2,18 @@
 using UnityEngine;
 
 using SurvivalFPS.Core.LevelManagement;
+using SurvivalFPS.Messaging;
 
 namespace SurvivalFPS.Core.UI
 {
     public class PauseMenu : GameMenu<PauseMenu>
     {
-        //events
-        public static event Action gamePaused;
-        public static event Action gameResumed;
-
         public override void OnEnterMenu()
         {
             base.OnEnterMenu();
             Time.timeScale = 0;
 
-            gamePaused();
+            Messenger.Broadcast(M_EventType.OnGamePaused);
         }
 
         public void OnResumePressed()
@@ -24,7 +21,7 @@ namespace SurvivalFPS.Core.UI
             Time.timeScale = 1;
             base.OnBackPressed();
 
-            gameResumed();
+            Messenger.Broadcast(M_EventType.OnGameResumed);
         }
 
         public void OnRestartPressed()
@@ -39,6 +36,11 @@ namespace SurvivalFPS.Core.UI
             Time.timeScale = 1;
             LevelLoader.LoadMainMenuScene();
             base.OnBackPressed();
+        }
+
+        public void OnSavePressed()
+        {
+            Messenger.Broadcast(M_EventType.OnGameSaving);
         }
 
         public void OnQuitPressed()

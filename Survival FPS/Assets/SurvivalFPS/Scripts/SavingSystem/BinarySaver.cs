@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using System.Collections;
@@ -10,13 +11,22 @@ namespace SurvivalFPS.Saving
 {
     public static class BinarySaver
     {
-        [Serializable]
-        public class SaveData {}
-
         private static readonly string m_SavePath = Application.persistentDataPath + "/SurvivalFPS/SavedGames/";
         private static readonly string m_Extension = ".sav";
 
-        public static void Save(SaveData data, string fileName)
+        static BinarySaver()
+        {
+            bool exist = Directory.Exists(m_SavePath);
+
+            if(!exist)
+            {
+                Directory.CreateDirectory(m_SavePath);
+            }
+
+            Debug.Log("BinarySaver: data path is " + m_SavePath);
+        }
+
+        public static void Save<T>(T data, string fileName) where T : class, ISerializable
         {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             FileStream fileStream = File.Create(m_SavePath + fileName + m_Extension);
@@ -24,7 +34,7 @@ namespace SurvivalFPS.Saving
             fileStream.Close();
         }
 
-        public static bool Load(out SaveData data, string fileName)
+        public static bool Load<T>(out T data, string fileName) where T : class, ISerializable
         {
             data = null;
             string file = m_SavePath + fileName + m_Extension;
@@ -44,7 +54,7 @@ namespace SurvivalFPS.Saving
                     return false;
                 }
 
-                data = (SaveData)binaryFormatter.Deserialize(fileStream);
+                data = (T)binaryFormatter.Deserialize(fileStream);
                 fileStream.Close();
                 return true;
             }

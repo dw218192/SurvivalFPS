@@ -6,6 +6,10 @@
     public class M_EventType
     {
         public static readonly M_EventType TestEvent = new M_EventType(0);
+        public static readonly M_EventType OnGamePaused = new M_EventType(1);
+        public static readonly M_EventType OnGameResumed = new M_EventType(2);
+        public static readonly M_EventType OnGameSaving = new M_EventType(3);
+        public static readonly M_EventType OnGameSaved = new M_EventType(4);
 
         private int m_Value;
         protected M_EventType(int value)

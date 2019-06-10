@@ -38,6 +38,7 @@ namespace SurvivalFPS.Core.Inventory
     /// <summary>
     /// The data class that defines an item, essentially acting as the template of a type of item.
     /// </summary>
+    [ManagedGameDataAsset]
     public abstract class InventoryItemTemplate : ScriptableObject
     {
         [SerializeField] private SectionType m_SectionType;
@@ -60,11 +61,11 @@ namespace SurvivalFPS.Core.Inventory
 
         public virtual void Use(PlayerManager player, ItemInstance itemInstance)
         {
-            itemInstance.itemStatus.RemainingUseCnt = (uint)Mathf.Max(0, (int)itemInstance.itemStatus.RemainingUseCnt - 1);
+            itemInstance.itemStatus.remainingUseCnt = (uint)Mathf.Max(0, (int)itemInstance.itemStatus.remainingUseCnt - 1);
 
             OnItemBeingUsed(player, itemInstance);
 
-            if(itemInstance.itemStatus.RemainingUseCnt == 0)
+            if(itemInstance.itemStatus.remainingUseCnt == 0)
             {
                 player.inventorySystem.RemoveItem(m_SectionType, itemInstance.inventoryIndex);
             }
@@ -74,31 +75,5 @@ namespace SurvivalFPS.Core.Inventory
 
         protected abstract void OnItemBeingUsed(PlayerManager player, ItemInstance itemInstance);
         protected abstract void OnItemUsed(PlayerManager player, ItemInstance itemInstance);
-    }
-
-    public class EquippableItemTemplate : InventoryItemTemplate
-    {
-        protected override void OnItemBeingUsed(PlayerManager player, ItemInstance itemInstance)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnItemUsed(PlayerManager player, ItemInstance itemInstance)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ConsumableItemTemplate : InventoryItemTemplate
-    {
-        protected override void OnItemBeingUsed(PlayerManager player, ItemInstance itemInstance)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnItemUsed(PlayerManager player, ItemInstance itemInstance)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

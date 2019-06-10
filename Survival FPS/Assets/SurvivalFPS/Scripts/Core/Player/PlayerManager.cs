@@ -11,6 +11,8 @@ using SurvivalFPS.AI;
 
 using SurvivalFPS.Core.UI;
 using SurvivalFPS.Core.PlayerInteraction;
+using SurvivalFPS.Core.Inventory;
+using SurvivalFPS.Messaging;
 
 namespace SurvivalFPS.Core
 {
@@ -176,8 +178,8 @@ namespace SurvivalFPS.Core
             m_PlayerControllers = Array.ConvertAll(GetComponents(typeof(IPlayerController)), (Component compoent) => (IPlayerController)compoent);
 
             //subscribe to game pause event
-            PauseMenu.gamePaused += OnGamePaused;
-            PauseMenu.gameResumed += OnGameResumed;
+            Messenger.AddListener(M_EventType.OnGamePaused, OnGamePaused);
+            Messenger.AddListener(M_EventType.OnGameResumed, OnGameResumed);
 
             InventoryUI.inventoryMenuOpened += OnInventoryOpened;
             InventoryUI.inventoryMenuClosed += OnInventoryClosed;

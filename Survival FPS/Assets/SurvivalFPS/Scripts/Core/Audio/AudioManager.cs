@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 using SurvivalFPS.Utility;
 using SurvivalFPS.Core.UI;
+using SurvivalFPS.Messaging;
 
 namespace SurvivalFPS.Core.Audio
 {
@@ -86,21 +87,21 @@ namespace SurvivalFPS.Core.Audio
                 poolItem.Playing = false;
                 go.SetActive(false);
                 m_Pool.Add(poolItem);
-            }
+            }            
         }
 
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
-            PauseMenu.gamePaused += OnGamePaused;
-            PauseMenu.gameResumed += OnGameResumed;
+            Messenger.AddPersistentListener(M_EventType.OnGamePaused, OnGamePaused);
+            Messenger.AddPersistentListener(M_EventType.OnGameResumed, OnGameResumed);
         }
 
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            PauseMenu.gamePaused -= OnGamePaused;
-            PauseMenu.gameResumed -= OnGameResumed;
+            Messenger.RemovePersistentListener(M_EventType.OnGamePaused, OnGamePaused);
+            Messenger.RemovePersistentListener(M_EventType.OnGameResumed, OnGameResumed);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)

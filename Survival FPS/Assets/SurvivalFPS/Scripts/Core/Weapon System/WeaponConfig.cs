@@ -157,18 +157,15 @@ namespace SurvivalFPS.Core.Weapon
             //the gun's animator
             m_GunAnimator = m_GunGameObject.GetComponent<Animator>();
 
-            int key = player.informationKey;
-            PlayerInfo info = GameSceneManager.Instance.GetPlayerInfo(key);
-
             //set the links to the behaviour component
-            weaponBehaviour.FPSController = info.playerMotionController;
+            weaponBehaviour.FPSController = player.FPSController;
             weaponBehaviour.animator = m_GunAnimator;
-            weaponBehaviour.weaponController = info.playerWeaponController;
-            weaponBehaviour.animatorManager = info.playerAnimatorManager;
-            weaponBehaviour.playerCamera = info.playerCamera;
+            weaponBehaviour.weaponController = player.weaponController;
+            weaponBehaviour.animatorManager = player.animatorManager;
+            weaponBehaviour.playerCamera = player.playerCamera;
 
             //add the animator to the player animator manager
-            info.playerAnimatorManager.AddAnimator(m_GunAnimator);
+            player.animatorManager.AddAnimator(m_GunAnimator);
 
             //set the runtime controller of this gun animator
             m_GunAnimator.runtimeAnimatorController = m_AnimatorController;
@@ -177,7 +174,7 @@ namespace SurvivalFPS.Core.Weapon
             PlayerStateMachineLink[] stateMachineBehaviors = m_GunAnimator.GetBehaviours<PlayerStateMachineLink>();
             foreach (PlayerStateMachineLink stateMachineBehavior in stateMachineBehaviors)
             {
-                stateMachineBehavior.playerWeaponController = info.playerWeaponController;
+                stateMachineBehavior.playerWeaponController = player.weaponController;
             }
         }
         private void SetAudioSource(PlayerManager player)

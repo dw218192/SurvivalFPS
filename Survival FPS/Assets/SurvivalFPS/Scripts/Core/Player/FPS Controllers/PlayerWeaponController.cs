@@ -46,12 +46,9 @@ namespace SurvivalFPS.Core.FPS
 
         private void Start()
         {
-            m_PlayerManager = gameObject.GetComponent<PlayerManager>();
-            int key = m_PlayerManager.informationKey;
-            PlayerInfo info = GameSceneManager.Instance.GetPlayerInfo(key);
-
-            m_PlayerAnimManager = info.playerAnimatorManager;
-            m_FPSController = info.playerMotionController;
+            m_PlayerManager = GetComponent<PlayerManager>();
+            m_PlayerAnimManager = GetComponent<PlayerAnimatorManager>();
+            m_FPSController = GetComponent<FirstPersonController>();
 
             m_PlayerAnimManager.AddAnimator(m_HandAnimator);
             m_PlayerAnimManager.AddAnimator(m_ArmAnimator);

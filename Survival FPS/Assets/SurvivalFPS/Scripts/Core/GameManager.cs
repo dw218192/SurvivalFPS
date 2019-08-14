@@ -9,9 +9,12 @@ using SurvivalFPS.Core.Audio;
 using SurvivalFPS.Core.UI;
 using SurvivalFPS.Core.Weapon;
 using SurvivalFPS.Utility;
+using SurvivalFPS.Core.LevelManagement;
 
 namespace SurvivalFPS
 {
+    public class SceneSpecificManagerAttribute : Attribute { }
+
     public class GameManager : SingletonBehaviour<GameManager>
     {
         [Serializable]
@@ -20,12 +23,12 @@ namespace SurvivalFPS
             [Header("Persistent Managers")]
             [SerializeField] private AudioManager m_AudioManager;
             [SerializeField] private MenuManager m_MenuManager;
-            [Header("Scene Managers")]
+            [Header("Scene Specific")]
+            [SerializeField] private GameSceneManager m_GameSceneManager;
             [SerializeField] private BulletHoleManager m_BulletHoleManager;
-            [Header("Other")]
             [SerializeField] private EventSystem m_EventSystem;
 
-            public void SetupManagers()
+            public void Setup()
             {
                 //singleton managers
                 BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -35,14 +38,30 @@ namespace SurvivalFPS
                 {
                     UnityEngine.Object managerPrefab = field.GetValue(this) as UnityEngine.Object;
 
-                    if (managerPrefab != null && !UnityEngine.Object.FindObjectOfType(managerPrefab.GetType()))
+                    if (managerPrefab != null && !FindObjectOfType(managerPrefab.GetType()))
                     {
-                        UnityEngine.Object.Instantiate(managerPrefab);
+                        //if it's the preload scene or the main menu, don't instantiate scene specific managers
+                        if(SceneManager.GetActiveScene().buildIndex == 0 || SceneManager.GetActiveScene().buildIndex == 1
+                           && managerPrefab.GetType().IsDefined(typeof(SceneSpecificManagerAttribute), true))
+                        {
+                            continue;
+                        }
+
+                        Instantiate(managerPrefab);
                     }
                 }
 
-                //static managers
-                GameAssetManager.Init();
+                //initialization complete, jump out of the preload scene
+                if(SceneManager.GetActiveScene().buildIndex == 0)
+                {
+                    LevelLoader.LoadNextScene();
+                    return;
+                }
+
+                if(!FindObjectOfType(m_EventSystem.GetType()))
+                {
+                    Instantiate(m_EventSystem);
+                }
             }
         }
 
@@ -53,7 +72,7 @@ namespace SurvivalFPS
             base.Awake();
             DontDestroyOnLoad(gameObject);
 
-            m_SceneSetup.SetupManagers();
+            m_SceneSetup.Setup();
         }
 
         private void OnEnable()
@@ -63,7 +82,7 @@ namespace SurvivalFPS
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            m_SceneSetup.SetupManagers();
+            m_SceneSetup.Setup();
         }
 
         private void OnDisable()
@@ -73,6 +92,12 @@ namespace SurvivalFPS
 
         private void Update()
         {
+            //user input is not allowed in preload
+            if(SceneManager.GetActiveScene().buildIndex == 0)
+            {
+                return;
+            }
+
             MenuManager menuManager = MenuManager.Instance;
             GameMenu activemenu = menuManager.GetActiveMenu();
 
@@ -106,6 +131,12 @@ namespace SurvivalFPS
                     menuManager.OpenMenu(InventoryUI.Instance);
                 }
             }
+        }
+
+        //check if the scene is a game level
+        public bool IsGameLevel(int sceneIndex)
+        {
+            return (sceneIndex != 0 && sceneIndex != 1);
         }
     }
 }

@@ -5,8 +5,7 @@ using SurvivalFPS.Utility;
 
 namespace SurvivalFPS.Core.Weapon 
 {
-    
-    //TODO: implement exceptions
+    [SceneSpecificManager]
     public class BulletHoleManager : SingletonBehaviour<BulletHoleManager>
     {
         [SerializeField] private BulletHole m_Prefab;

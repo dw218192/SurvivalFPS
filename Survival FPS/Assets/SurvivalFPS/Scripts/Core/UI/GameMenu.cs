@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
-using SurvivalFPS.Utility;
+using UnityEngine.SceneManagement;
 
 namespace SurvivalFPS.Core.UI
 {
@@ -12,7 +11,20 @@ namespace SurvivalFPS.Core.UI
     {
         [SerializeField] protected List<Button> m_Buttons = new List<Button>();
 
+        /// <summary>
+        /// Init is called when the game starts.
+        /// It is only called once.
+        /// </summary>
         public virtual void Init()
+        {
+            
+        }
+
+        /// <summary>
+        /// Scene-specific initialization.
+        /// It is called every time a scene is loaded. (this excludes _preload and main menu)
+        /// </summary>
+        public virtual void SceneInit(Scene scene)
         {
             
         }

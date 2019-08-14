@@ -76,12 +76,3 @@ MonoBehaviour:
   m_BringUpStateName: Bring Up Weapon
   m_ReloadStateName: Reload
   m_FireStateName: Fire
-  m_SceneSetup:
-    m_AudioManager: {fileID: 3498464644108655564, guid: 654378e2234066c459185cc9f160f4f3,
-      type: 3}
-    m_MenuManager: {fileID: 839521300576805030, guid: 652196062be864568b137d03c7b99dab,
-      type: 3}
-    m_BulletHoleManager: {fileID: 114013676960140034, guid: 9011d1bcab6bf85418daa32e2ac6f120,
-      type: 3}
-    m_EventSystem: {fileID: 5885711773037058854, guid: 6037b274e30814259bb0e32e6d3d4901,
-      type: 3}

@@ -106,7 +106,8 @@ namespace SurvivalFPS.Core.Audio
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
         {
-            m_ListenerPos = FindObjectOfType<AudioListener>().transform;
+            AudioListener audioListener = FindObjectOfType<AudioListener>();
+            if (audioListener) m_ListenerPos = audioListener.transform;
 
             m_LayeredAudioSources.Clear();
         }

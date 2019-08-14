@@ -9,9 +9,8 @@ using System;
 namespace SurvivalFPS.Core.Inventory
 {
     [Serializable]
-    public class ItemStatus
+    public struct ItemStatus
     {
-        public ItemStatus() { }
         public uint remainingUseCnt { get; set; }
         public float quality { get; set; }
     }
@@ -33,24 +32,28 @@ namespace SurvivalFPS.Core.Inventory
         public ItemInstance(InventoryItemTemplate itemTemplate)
         {
             this.itemTemplate = itemTemplate;
-            this.itemStatus = new ItemStatus();
+            itemStatus = new ItemStatus();
             itemStatus.remainingUseCnt = itemTemplate.consumptionLimit;
             itemStatus.quality = itemTemplate.startingQuality;
-
 
             inventoryIndex = -1;
         }
 
         protected ItemInstance(SerializationInfo info, StreamingContext context)
         {
-            itemTemplate = GameAssetManager.GetScriptableObject<InventoryItemTemplate>(info.GetString("itemTemplate"));
+            string address = info.GetString("itemTemplateAssetAddress");
+            if(!GameAssetManager.GetAsset(address, out itemTemplate))
+            {
+                Debug.LogWarning("asset address " + address + " cannot be loaded");
+            }
+            
             itemStatus = (ItemStatus)info.GetValue("itemStatus", typeof(ItemStatus));
             inventoryIndex = info.GetInt32("inventoryIndex");
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("itemTemplate", itemTemplate.name);
+            info.AddValue("itemTemplateAssetAddress", itemTemplate.itemName);
             info.AddValue("itemStatus", itemStatus, typeof(ItemStatus));
             info.AddValue("inventoryIndex", inventoryIndex);
         }

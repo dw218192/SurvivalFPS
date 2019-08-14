@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
 
-namespace SurvivalFPS.Core.UI
+using SurvivalFPS.Core.UI;
+
+namespace SurvivalFPS.ScriptEditor
 {
     [CustomEditor(typeof(GameMenu), true)]
     public class MenuEditor : Editor

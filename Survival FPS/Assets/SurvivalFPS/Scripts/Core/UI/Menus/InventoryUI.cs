@@ -7,10 +7,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using SurvivalFPS.Core.Inventory;
-using SurvivalFPS.Core.FPS;
 using SurvivalFPS.Messaging;
 
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 namespace SurvivalFPS.Core.UI
 {
@@ -35,9 +35,16 @@ namespace SurvivalFPS.Core.UI
         {
             base.Init();
 
+            //subscriptions
+            Messenger.AddPersistentListener<InventoryEventData>(M_DataEventType.OnInventoryItemRemoved, OnItemRemoved);
+            Messenger.AddPersistentListener<InventoryEventData>(M_DataEventType.OnInventoryItemAdded, OnItemAdded);
+        }
+
+        public override void SceneInit(Scene scene)
+        {
             m_PlayerInventory = FindObjectOfType<PlayerInventorySystem>();
 
-            if(!m_PlayerInventory)
+            if (!m_PlayerInventory)
             {
                 Debug.LogWarning("InventoryUI-Init: cannot find player inventory");
                 return;
@@ -47,7 +54,7 @@ namespace SurvivalFPS.Core.UI
             PlayerInventorySystem.ISection[] sections = m_PlayerInventory.GetSectionInfo();
             m_Sections = new InventorySectionUI[sections.Length];
 
-            for (int i=0; i<m_Sections.Length; i++)
+            for (int i = 0; i < m_Sections.Length; i++)
             {
                 InventorySectionUI section = Instantiate(m_SectionPrefab, m_SectionParent);
                 section.Init(m_PlayerInventory.GetSectionCapacity(sections[i].sectionType), sections[i].sectionType);
@@ -60,10 +67,6 @@ namespace SurvivalFPS.Core.UI
 
             //display section
             OnNextSectionClicked();
-
-            //subscriptions
-            Messenger.AddPersistentListener<InventoryEventData>(M_DataEventType.OnInventoryItemRemoved, OnItemRemoved);
-            Messenger.AddPersistentListener<InventoryEventData>(M_DataEventType.OnInventoryItemAdded, OnItemAdded);
         }
 
         //called by backend code

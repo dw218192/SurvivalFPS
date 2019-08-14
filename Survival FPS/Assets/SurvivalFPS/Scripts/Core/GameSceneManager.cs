@@ -28,6 +28,7 @@ namespace SurvivalFPS
     /// a singleton manager that allows for fast lookup of AIs' colliders in the scene
     /// and other general information
     /// </summary>
+    [SceneSpecificManager]
     public class GameSceneManager : SingletonBehaviour<GameSceneManager>
     {
         [Header("Scene Effects")]
@@ -97,16 +98,6 @@ namespace SurvivalFPS
         private int m_BringUpStateName_Hash = -1;
         private int m_ReloadStateName_Hash = -1;
         private int m_FireStateName_Hash = -1;
-        //layers
-        private int m_AIBodyPartLayer = -1;
-        private int m_PlayerLayer = -1;
-        private int m_AITriggerLayer = -1;
-        private int m_AIEntityLayer = -1;
-        private int m_AIEntityTriggerLayer = -1;
-        private int m_InteractiveLayer = -1;
-        private int m_VisualAggLayer = -1;
-        private int m_AudioAggLayer = -1;
-
         //masks used in raycast mostly
         private int m_VisualRaycastLayerMask = -1;
         private int m_ShootableLayerMask = -1;
@@ -123,15 +114,7 @@ namespace SurvivalFPS
         public ParticleSystem muzzleFlashParticleSystem { get { return m_MuzzleFlashParticleSystem_Instance; } }
         public AudioCollection bulletHitSounds { get { return m_BulletHitSounds; } }
         public AudioCollection playerInjuredSounds { get { return m_PlayerInjuredSounds; } }
-        //layer information
-        public int aITriggerLayer { get { return m_AITriggerLayer; }}
-        public int aIBodyPartLayer { get { return m_AIBodyPartLayer; } }
-        public int playerLayer { get { return m_PlayerLayer; } }
-        public int aIEntityLayer { get { return m_AIEntityLayer; }}
-        public int aIEntityTriggerLayer { get { return m_AIEntityTriggerLayer; }}
-        public int interactiveLayer { get { return m_InteractiveLayer; } }
-        public int visualAggravatorLayer { get { return m_VisualAggLayer; } }
-        public int audioAggravatorLayer { get { return m_AudioAggLayer; } }
+
         //layer masks
         public int visualRaycastLayerMask { get { return m_VisualRaycastLayerMask; } }
         public int shootableLayerMask { get { return m_ShootableLayerMask; } }
@@ -202,15 +185,6 @@ namespace SurvivalFPS
             m_IncapacitatedParameterName_Hash = Animator.StringToHash(m_IncapacitatedParameterName);
             m_NoLegParameterName_Hash = Animator.StringToHash(m_NoLegParameterName);
             m_BehaviourStateParameterName_Hash = Animator.StringToHash(m_BehaviourStateParameterName);
-
-            m_PlayerLayer = LayerMask.NameToLayer("Player");
-            m_AIBodyPartLayer = LayerMask.NameToLayer("AI Body Part");
-            m_AITriggerLayer = LayerMask.NameToLayer("AI Trigger");
-            m_AIEntityLayer = LayerMask.NameToLayer("AI Entity");
-            m_AIEntityTriggerLayer = LayerMask.NameToLayer("AI Entity Trigger");
-            m_InteractiveLayer = LayerMask.NameToLayer("Interactive Items");
-            m_AudioAggLayer = LayerMask.NameToLayer("Audio Aggravator");
-            m_VisualAggLayer = LayerMask.NameToLayer("Visual Aggravator");
 
             m_GeometryLayerMask = LayerMask.GetMask("Obstacle");
             m_VisualRaycastLayerMask = LayerMask.GetMask("Player", "AI Body Part", "Visual Aggravator", "Obstacle");

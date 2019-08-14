@@ -255,13 +255,19 @@ namespace SurvivalFPS.AI
             m_Animator = GetComponent<Animator>();
             m_Collider = GetComponent<CapsuleCollider>();
             m_navAgent = GetComponent<NavMeshAgent>();
+        }
 
-            //set layers
-            gameObject.layer = GameSceneManager.Instance.aIEntityLayer;
+        private void Start()
+        {
+            GameSceneManager gameSceneManager = GameSceneManager.Instance;
 
-            if(m_TargetTrigger)
+			//set layers
+			gameObject.layer = GameApplication.LayerData.aIEntityLayer;
+
+
+			if (m_TargetTrigger)
             {
-                m_TargetTrigger.gameObject.layer = GameSceneManager.Instance.aIEntityTriggerLayer;
+                m_TargetTrigger.gameObject.layer = GameApplication.LayerData.aIEntityTriggerLayer;
             }
             else
             {
@@ -270,23 +276,21 @@ namespace SurvivalFPS.AI
 
             if (m_SensorTrigger)
             {
-                m_SensorTrigger.gameObject.layer = GameSceneManager.Instance.aITriggerLayer;
+                m_SensorTrigger.gameObject.layer = GameApplication.LayerData.aITriggerLayer;
             }
             else
             {
                 Debug.LogWarning(gameObject.name + ": " + "AI Sensor Trigger is missing! This AI will not work properly");
             }
-        }
 
-        private void Start()
-        {
-            if (m_Collider) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_Collider.GetInstanceID(), this);
-            if (m_SensorTrigger) GameSceneManager.Instance.RegisterAIStateMachineByColliderID(m_SensorTrigger.GetInstanceID(), this);
+            if (m_Collider) gameSceneManager.RegisterAIStateMachineByColliderID(m_Collider.GetInstanceID(), this);
+            if (m_SensorTrigger) gameSceneManager.RegisterAIStateMachineByColliderID(m_SensorTrigger.GetInstanceID(), this);
             //anything else that may be added
 
             foreach (AIBodyPart bodyPart in m_BodyParts)
             {
-                GameSceneManager.Instance.RegisterAIStateMachineByColliderID(bodyPart.bodyPartCollider.GetInstanceID(), this);
+                Debug.Log(bodyPart);
+                gameSceneManager.RegisterAIStateMachineByColliderID(bodyPart.bodyPartCollider.GetInstanceID(), this);
 
                 bodyPart.owner = this;
                 bodyPart.rigidBody.isKinematic = true;
@@ -302,19 +306,19 @@ namespace SurvivalFPS.AI
             if (m_LeftHandAttackTrigger)
             {
                 m_LeftHandAttackTrigger.owner = this;
-                m_LeftHandAttackTrigger.animatorDamageParameter = GameSceneManager.Instance.leftHandAttackParameterName;
+                m_LeftHandAttackTrigger.animatorDamageParameter = gameSceneManager.leftHandAttackParameterName;
             }
 
             if (m_RightHandAttackTrigger)
             {
                 m_RightHandAttackTrigger.owner = this;
-                m_RightHandAttackTrigger.animatorDamageParameter = GameSceneManager.Instance.rightHandAttackParameterName;
+                m_RightHandAttackTrigger.animatorDamageParameter = gameSceneManager.rightHandAttackParameterName;
             }
 
             if (m_MouthTrigger)
             {
                 m_MouthTrigger.owner = this;
-                m_MouthTrigger.animatorDamageParameter = GameSceneManager.Instance.mouthAttackParameterName;
+                m_MouthTrigger.animatorDamageParameter = gameSceneManager.mouthAttackParameterName;
             }
 
             if (m_Animator)

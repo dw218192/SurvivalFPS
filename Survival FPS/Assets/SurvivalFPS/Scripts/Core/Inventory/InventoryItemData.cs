@@ -38,7 +38,6 @@ namespace SurvivalFPS.Core.Inventory
     /// <summary>
     /// The data class that defines an item, essentially acting as the template of a type of item.
     /// </summary>
-    [ManagedGameDataAsset]
     public abstract class InventoryItemTemplate : ScriptableObject
     {
         [SerializeField] private SectionType m_SectionType;

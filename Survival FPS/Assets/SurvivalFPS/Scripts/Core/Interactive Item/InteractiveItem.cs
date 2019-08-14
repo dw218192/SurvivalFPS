@@ -23,7 +23,7 @@ namespace SurvivalFPS.Core.PlayerInteraction
         protected virtual void OnBeginInteract(PlayerManager playerManager) {}
         protected virtual void OnEndInteraction() {}
 
-        protected void Awake()
+        protected void Start()
         {
             if (!m_Collider) m_Collider = GetComponent<Collider>();
 
@@ -31,7 +31,7 @@ namespace SurvivalFPS.Core.PlayerInteraction
 
             if (!m_GameSceneManager)
             {
-                Debug.LogWarning("IteractiveItem.Awake() - game scene manager cannot be found");
+                Debug.LogWarning("IteractiveItem: game scene manager cannot be found");
                 return;
             }
 
@@ -41,13 +41,10 @@ namespace SurvivalFPS.Core.PlayerInteraction
             }
             else
             {
-                Debug.LogWarning("an interactive item does not have a collider!");
+                Debug.LogWarning("IteractiveItem: an interactive item does not have a collider!");
             }
-        }
 
-        protected void Start()
-        {
-            gameObject.layer = m_GameSceneManager.interactiveLayer;
+            gameObject.layer = GameApplication.LayerData.interactiveLayer;
             m_Collider.isTrigger = true;
 
             Initialize();

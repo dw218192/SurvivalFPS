@@ -42,9 +42,12 @@ namespace SurvivalFPS.AI
         {
             m_RigidBody = GetComponent<Rigidbody>();
             m_Collider = GetComponent<Collider>();
-            m_GameSceneManager = GameSceneManager.Instance;
-            gameObject.layer = m_GameSceneManager.aIBodyPartLayer;
+        }
 
+        private void Start()
+        {
+            m_GameSceneManager = GameSceneManager.Instance;
+            gameObject.layer = GameApplication.LayerData.aIBodyPartLayer;
             m_BulletHitSounds = m_GameSceneManager.bulletHitSounds;
         }
 

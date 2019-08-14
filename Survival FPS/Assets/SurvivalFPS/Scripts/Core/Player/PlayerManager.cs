@@ -16,8 +16,7 @@ using SurvivalFPS.Messaging;
 
 namespace SurvivalFPS.Core
 {
-    [RequireComponent(typeof(FirstPersonController))]
-    [RequireComponent(typeof(PlayerAnimatorManager))]
+    [RequireComponent(typeof(FirstPersonController), typeof(PlayerAnimatorManager))]
     [DisallowMultipleComponent]
     public class PlayerManager : MonoBehaviour, IAIDamageable
     {
@@ -51,15 +50,20 @@ namespace SurvivalFPS.Core
         private FirstPersonController m_FPSController = null;
         private PlayerWeaponController m_WeaponController = null;
         private PlayerInteractionController m_InteractionController = null;
-        private PlayerInventorySystem m_PlayerInventorySystem = null;
+        private PlayerAnimatorManager m_AnimatorManager = null;
+        private PlayerInventorySystem m_InventorySystem = null;
         private IPlayerController[] m_PlayerControllers;
 
         //properties
         public int informationKey { get { return m_InformationKey; } }
         public Camera playerCamera { get { return m_Camera; } }
         public Transform weaponSocket { get { return m_WeaponSocket; } }
+
+        public FirstPersonController FPSController { get { return m_FPSController; }}
         public PlayerWeaponController weaponController { get { return m_WeaponController; } }
-        public PlayerInventorySystem inventorySystem { get { return m_PlayerInventorySystem; } }
+        public PlayerInteractionController interactionController { get { return m_InteractionController; }}
+        public PlayerAnimatorManager animatorManager { get { return m_AnimatorManager; }}
+        public PlayerInventorySystem inventorySystem { get { return m_InventorySystem; } }
 
         //ref to managers
         private GameSceneManager m_GameSceneManager = null;
@@ -147,8 +151,18 @@ namespace SurvivalFPS.Core
             m_Collider = GetComponent<Collider>();
             m_FPSController = GetComponent<FirstPersonController>();
             m_WeaponController = GetComponent<PlayerWeaponController>();
+            m_AnimatorManager = GetComponent<PlayerAnimatorManager>();
             m_InteractionController = GetComponent<PlayerInteractionController>();
-            m_PlayerInventorySystem = GetComponent<PlayerInventorySystem>();
+            m_InventorySystem = GetComponent<PlayerInventorySystem>();
+        }
+
+        // Use this for initialization
+        private void Start()
+        {
+            m_Health = m_PlayerAttributeSettings.MaxHealth;
+            m_PlayerControllers = Array.ConvertAll(GetComponents(typeof(IPlayerController)), (Component compoent) => (IPlayerController)compoent);
+
+            //manager references
             m_GameSceneManager = GameSceneManager.Instance;
             m_AudioManager = AudioManager.Instance;
 
@@ -157,10 +171,10 @@ namespace SurvivalFPS.Core
                 PlayerInfo info = new PlayerInfo();
                 info.playerCamera = m_Camera;
                 info.playerManager = this;
-                info.playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
+                info.playerAnimatorManager = m_AnimatorManager;
                 info.playerMotionController = m_FPSController;
                 info.playerWeaponController = m_WeaponController;
-                info.playerInventorySystem = m_PlayerInventorySystem;
+                info.playerInventorySystem = m_InventorySystem;
                 info.collider = m_Collider;
                 info.meleeTrigger = m_MeleeTrigger;
 
@@ -169,13 +183,6 @@ namespace SurvivalFPS.Core
 
                 m_PlayerSounds = m_GameSceneManager.playerInjuredSounds;
             }
-        }
-
-        // Use this for initialization
-        private void Start()
-        {
-            m_Health = m_PlayerAttributeSettings.MaxHealth;
-            m_PlayerControllers = Array.ConvertAll(GetComponents(typeof(IPlayerController)), (Component compoent) => (IPlayerController)compoent);
 
             //subscribe to game pause event
             Messenger.AddListener(M_EventType.OnGamePaused, OnGamePaused);

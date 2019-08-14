@@ -15,10 +15,10 @@ namespace SurvivalFPS.AI
         public AIStateMachine owner { get { return m_Owner; } set { m_Owner = value; } }
         public string animatorDamageParameter { get { return m_AnimatorDamageParameter; } set { m_AnimatorDamageParameter = value; } }
 
-        private void Awake()
+        private void Start()
         {
             GetComponent<Collider>().isTrigger = true;
-            gameObject.layer = GameSceneManager.Instance.aITriggerLayer;
+            gameObject.layer = GameApplication.LayerData.aITriggerLayer;
         }
 
         private void OnTriggerStay(Collider other)

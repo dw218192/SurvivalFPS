@@ -4,11 +4,14 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a21de1f182533ca4ba51246edd78a79e, type: 3}
-  m_Name: ZombieFood
+  m_Name: PlayerVisual_Visual
   m_EditorClassIdentifier: 
-  m_OverridingList: []
+  m_OverridingList:
+  - {fileID: 11400000, guid: 2ccb8dfdb99672c45ae731cdab34654f, type: 2}
+  - {fileID: 11400000, guid: 54497972af4a1134db45efb80cd96c46, type: 2}

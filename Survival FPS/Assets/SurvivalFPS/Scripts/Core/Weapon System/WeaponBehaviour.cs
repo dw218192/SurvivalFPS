@@ -93,16 +93,15 @@ namespace SurvivalFPS.Core.Weapon
         private int m_CrossHairLength;
 
 
-        //don't use these
-        protected sealed override void Awake()
-        {
-            //reference to singleton managers
-            m_GameSceneManager = GameSceneManager.Instance;
-        }
-        protected sealed override void Start() { }
+        //don't use these in derived classes
+        protected sealed override void Awake() {}
+        protected sealed override void Start() {}
 
         public override void Initialize()
         {
+            //reference to singleton managers
+            m_GameSceneManager = GameSceneManager.Instance;
+
             m_CurrentAmmo = m_WeaponConfig.ammoCapacity;
 
             //register events

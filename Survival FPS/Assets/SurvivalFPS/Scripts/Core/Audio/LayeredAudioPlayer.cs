@@ -15,7 +15,6 @@ namespace SurvivalFPS.AI
         [SerializeField] private bool m_StartOverOnEnter = true;
         [SerializeField] private bool m_StopOnExit = true;
 
-
         private static AudioManager.ILayeredAudioSource m_LayeredAudioSource;
         private AudioManager m_AudioManager;
         private bool m_Played = false;

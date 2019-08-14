@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace SurvivalFPS.AI
+using SurvivalFPS.AI;
+
+namespace SurvivalFPS.ScriptEditor
 {
     [CustomEditor(typeof(AggravatorData))]
     public class AggravatorEditor : Editor

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using SurvivalFPS.Utility;
 
 namespace SurvivalFPS.Core.UI
@@ -16,7 +17,8 @@ namespace SurvivalFPS.Core.UI
         [SerializeField] private InventoryUI m_InventoryMenuPrefab;
         //[SerializeField] private WinScreen winScreen;
 
-        private Transform m_MenuParent;
+        List<GameMenu> m_MenuInstances = new List<GameMenu>();
+
         private Stack<GameMenu> m_MenuStack = new Stack<GameMenu>();
 
         public void CloseCurrentMenu()
@@ -41,16 +43,19 @@ namespace SurvivalFPS.Core.UI
         protected override void Awake()
         {
             base.Awake();
-            if (m_MenuParent == null)
-            {
-                GameObject menuParentObject = new GameObject("menus");
-                m_MenuParent = menuParentObject.transform;
-            }
 
             DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(m_MenuParent.gameObject);
-
             InitializeMenus();
+        }
+
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
         private void InitializeMenus()
@@ -58,22 +63,20 @@ namespace SurvivalFPS.Core.UI
             BindingFlags myFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
             FieldInfo[] fields = this.GetType().GetFields(myFlags);
 
-            List<GameMenu> menuInstances = new List<GameMenu>();
-
             foreach (FieldInfo field in fields)
             {
                 GameMenu prefab = field.GetValue(this) as GameMenu;
 
                 if (prefab != null)
                 {
-                    GameMenu menuInstance = Instantiate(prefab, m_MenuParent);
+                    GameMenu menuInstance = Instantiate(prefab, transform);
 
-                    menuInstances.Add(menuInstance);
+                    m_MenuInstances.Add(menuInstance);
                     menuInstance.Init();
                 }
             }
 
-            foreach (GameMenu menuInstance in menuInstances)
+            foreach (GameMenu menuInstance in m_MenuInstances)
             {
                 if (menuInstance != MainMenu.Instance)
                 {
@@ -83,6 +86,16 @@ namespace SurvivalFPS.Core.UI
                 {
                     OpenMenu(menuInstance);
                 }
+            }
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (!GameManager.Instance.IsGameLevel(scene.buildIndex)) return;
+            
+            foreach (GameMenu menuInstance in m_MenuInstances)
+            {
+                menuInstance.SceneInit(scene);
             }
         }
 

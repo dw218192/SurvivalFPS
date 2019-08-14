@@ -60,7 +60,7 @@ namespace SurvivalFPS.Core.FPS
                 GameObject aggravatorHolder = new GameObject("VisualAggravator");
                 aggravatorHolder.transform.parent = gameObject.transform;
                 aggravatorHolder.transform.localPosition = Vector3.zero;
-                aggravatorHolder.layer = GameSceneManager.Instance.visualAggravatorLayer;
+                aggravatorHolder.layer = GameApplication.LayerData.visualAggravatorLayer;
 
                 CapsuleCollider playerCollider = GetComponent<CapsuleCollider>();
 
@@ -79,7 +79,7 @@ namespace SurvivalFPS.Core.FPS
                 GameObject aggravatorHolder = new GameObject("AudioAggravator");
                 aggravatorHolder.transform.parent = gameObject.transform;
                 aggravatorHolder.transform.localPosition = Vector3.zero;
-                aggravatorHolder.layer = GameSceneManager.Instance.audioAggravatorLayer;
+                aggravatorHolder.layer = GameApplication.LayerData.audioAggravatorLayer;
 
                 SphereCollider sphereCollider = aggravatorHolder.AddComponent<SphereCollider>();
                 sphereCollider.isTrigger = true;

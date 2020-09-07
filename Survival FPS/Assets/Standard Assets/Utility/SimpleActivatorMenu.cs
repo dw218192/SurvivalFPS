@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace UnityStandardAssets.Utility
 {
+    /*
     public class SimpleActivatorMenu : MonoBehaviour
     {
         // An incredibly simple menu which, when given references
@@ -35,4 +36,5 @@ namespace UnityStandardAssets.Utility
             camSwitchButton.text = objects[m_CurrentActiveObject].name;
         }
     }
+    */
 }
